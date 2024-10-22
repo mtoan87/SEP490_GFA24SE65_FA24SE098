@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/charts": "^2.2.1",
+    "@ant-design/charts": "^1.4.3",
     "@ant-design/icons": "^5.5.1",
     "@headlessui/react": "^2.1.7",
     "@heroicons/react": "^2.1.5",

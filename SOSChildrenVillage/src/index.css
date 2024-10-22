@@ -1,44 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Root custom styles with prefix */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --custom-font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --custom-line-height: 1.5;
+  --custom-font-weight: 400;
+  --custom-color-scheme: light dark;
+  --custom-color: rgba(255, 255, 255, 0.87);
+  --custom-bg-color: #242424;
+  --custom-font-synthesis: none;
+  --custom-text-rendering: optimizeLegibility;
+  --custom-webkit-font-smoothing: antialiased;
+  --custom-moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* Custom body styles */
+body.custom-body {
+  font-family: var(--custom-font-family);
+  line-height: var(--custom-line-height);
+  font-weight: var(--custom-font-weight);
+  color-scheme: var(--custom-color-scheme);
+  color: var(--custom-color);
+  background-color: var(--custom-bg-color);
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-synthesis: var(--custom-font-synthesis);
+  text-rendering: var(--custom-text-rendering);
+  -webkit-font-smoothing: var(--custom-webkit-font-smoothing);
+  -moz-osx-font-smoothing: var(--custom-moz-osx-font-smoothing);
 }
 
-h1 {
+/* Custom anchor styles */
+a.custom-link {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a.custom-link:hover {
+  color: #535bf2;
+}
+
+/* Custom heading styles */
+h1.custom-heading {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
-button {
+/* Custom button styles */
+button.custom-button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -49,23 +63,31 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button.custom-button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+button.custom-button:focus,
+button.custom-button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light mode custom styles */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --custom-color: #213547;
+    --custom-bg-color: #ffffff;
   }
-  a:hover {
+  
+  body.custom-body {
+    color: var(--custom-color);
+    background-color: var(--custom-bg-color);
+  }
+
+  a.custom-link:hover {
     color: #747bff;
   }
-  button {
+
+  button.custom-button {
     background-color: #f9f9f9;
   }
 }
