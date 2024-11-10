@@ -25,5 +25,14 @@ export const getHouses = async () => {
     throw error;
   }
 };
+export const getAccount = async () => {
+  try {
+    const response = await api.get('/api/UserAccount');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching User Account:', error);
+    throw error;
+  }
+};
 
 export default api;

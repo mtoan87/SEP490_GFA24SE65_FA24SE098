@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, Button, Row, Col } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Nav = () => {
     return (
@@ -14,10 +15,18 @@ const Nav = () => {
                 {/* Navigation Links */}
                 <Col>
                     <Menu mode="horizontal" defaultSelectedKeys={['home']}>
-                        <Menu.Item key="home">Trang chủ</Menu.Item>
-                        <Menu.Item key="about">Giới thiệu</Menu.Item>
-                        <Menu.Item key="help">Giúp đỡ</Menu.Item>
-                        <Menu.Item key="info">Thông tin</Menu.Item>
+                        <Menu.Item key="home">
+                            <Link to="/home">Trang chủ</Link> {/* Link to /home */}
+                        </Menu.Item>
+                        <Menu.Item key="about">
+                            <Link to="/about">Giới thiệu</Link> {/* Link to /about */}
+                        </Menu.Item>
+                        <Menu.Item key="help">
+                            <Link to="/help">Giúp đỡ</Link> {/* Link to /help */}
+                        </Menu.Item>
+                        <Menu.Item key="info">
+                            <Link to="/info">Thông tin</Link> {/* Link to /info */}
+                        </Menu.Item>
                     </Menu>
                 </Col>
 

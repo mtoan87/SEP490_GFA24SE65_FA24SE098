@@ -5,42 +5,56 @@ import UserManagement from '../pages/Admin/User/UserManagement';
 import HouseManagement from '../pages/Admin/Houses/HouseManagement';
 import ChildManagement from '../pages/Admin/Child/ChildrenManagement';
 import HomePages from '../pages/Home/HomePage';
+import Login from '../pages/Authenication/Login';
+import UserDetail from '../pages/User/UserProfile';
+import Register from '../pages/Authenication/Register';
 
+// Corrected router
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Navigate to="/admin" replace />,
-    element: <Navigate to="/home" replace />,
+    path: '/',  // Redirect root path
+    element: <Navigate to="/home" replace />,  // Redirect root to login (you can change to '/home' if needed)
   },
   {
-    path: '/admin',
+    path: '/admin',  // Admin layout with nested routes
     element: <AdminLayout />,
     children: [
       {
-        path: '',
+        path: '',  // Admin dashboard as default
         element: <AdminDashboard />,
       },
       {
-        path: 'user-management',
+        path: 'user-management',  // Admin User management
         element: <UserManagement />,
       },
       {
-        path: 'house-management',
+        path: 'house-management',  // Admin House management
         element: <HouseManagement />,
       },
       {
-        path: 'child-management',
+        path: 'child-management',  // Admin Child management
         element: <ChildManagement />,
       },
     ],
   },
   {
-    path: '/home',
+    path: '/home',  // Home page route
     element: <HomePages />,
-
   },
   {
-    path: '*',
+    path: '/login',  // Login page route
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
+  {
+    path: '/userdetail',  // User detail route
+    element: <UserDetail />,
+  },
+  {
+    path: '*',  // Fallback route for unknown paths
     element: <Navigate to="/home" replace />,
   },
 ]);

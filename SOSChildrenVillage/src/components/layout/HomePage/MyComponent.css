@@ -1,0 +1,44 @@
+.scroll-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Căn giữa toàn bộ vùng chứa cuộn */
+  position: relative;
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.scrollable-cards {
+  display: flex;
+  justify-content: center; /* Căn giữa các thẻ trong vùng nhìn thấy */
+  gap: 16px; /* Khoảng cách giữa các thẻ */
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 10px 0;
+  scroll-behavior: smooth; /* Tạo hiệu ứng cuộn mượt */
+}
+
+.card-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center; /* Căn giữa các thẻ trong hàng */
+}
+
+.custom-card {
+  width: 280px;
+  flex: 0 0 auto;
+}
+
+.scroll-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.scroll-button.left {
+  left: 10px;
+}
+
+.scroll-button.right {
+  right: 10px;
+}

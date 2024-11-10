@@ -1,16 +1,45 @@
+import React, { useEffect, useState } from 'react';
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 import HeaderComponent from '../Common/Header/Header';
 import Sidebar from '../Common/Sidebar/Sidebar';
+import axios from 'axios';
 
 const { Content } = Layout;
 
 const AdminLayout = () => {
+  const [userInfo, setUserInfo] = useState(null);
+
+  // Fetch user details after component mounts
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUserInfo(token);
+    } else {
+      // Optionally redirect to login if token is missing
+      console.log('User not logged in');
+    }
+  }, []);
+
+  const fetchUserInfo = async (token) => {
+    try {
+      const response = await axios.get('https://localhost:7073/api/UserAccount/GetUserById/1', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserInfo(response.data); // Assuming the user data is in response.data
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      // Handle token expiration or errors (e.g., redirect to login)
+    }
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
       <Layout>
-        <HeaderComponent />
+        <HeaderComponent userInfo={userInfo} /> {/* Pass user info to header */}
         <Content style={{ margin: '24px 16px 0' }}>
           <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>
             <Outlet />
