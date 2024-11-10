@@ -91,3 +91,49 @@ button.custom-button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* index.css */
+.custom-footer {
+  padding: 32px;
+  background-color: #535bf2; /* Màu nền xanh đậm */
+  color: #ffffff; /* Màu chữ trắng */
+}
+
+.custom-footer h2 {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.custom-divider {
+  border-top: 1px solid #ffffff; /* Màu sắc của đường kẻ */
+  margin: 8px 0;
+}
+
+.custom-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+}
+
+.custom-footer .footer-center {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.custom-footer .footer-bottom {
+  margin-top: 16px;
+  text-align: center;
+  border-top: 1px solid #ffffff;
+  padding-top: 16px;
+}
+
+.custom-footer .footer-bottom a {
+  color: #ffffff;
+  margin: 0 8px;
+}
+
+.custom-footer .footer-bottom span {
+  margin: 0 8px;
+}
