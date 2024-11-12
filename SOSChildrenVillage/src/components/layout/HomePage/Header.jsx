@@ -59,12 +59,12 @@ const Header = () => {
             <>
               <Link to="/login">
                 <Button type="primary" style={{ marginRight: '10px' }}>
-                  Đăng nhập
+                  Login
                 </Button>
               </Link>
               <Link to="/register">
                 <Button type="default">
-                  Đăng ký
+                  Register
                 </Button>
               </Link>
             </>

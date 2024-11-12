@@ -1,106 +1,162 @@
-import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, DatePicker, Select, Upload, Typography, Space } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, message, DatePicker, Select, Upload, Typography } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import moment from 'moment';
 
 const { Title, Text } = Typography;
 
-export const RegisterScreen = () => {
-  const [form] = Form.useForm();
+const EditUserDetail = () => {
   const navigate = useNavigate();
-  const [img, setImg] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [imgs, setImgs] = useState([]); // For handling uploaded image
 
-  const handleImageUpload = (file) => {
-    setImg(file);
-    return false; // Prevent default upload
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId'); // Retrieve userId from localStorage
 
-  const handleRegister = async (values) => {
-    const formData = new FormData();
-    formData.append("UserName", values.UserName);
-    formData.append("UserEmail", values.UserEmail);
-    formData.append("Password", values.Password);
-    formData.append("Phone", values.Phone);
-    formData.append("Address", values.Address);
-    formData.append("Dob", values.Dob.format("YYYY-MM-DD"));
-    formData.append("Gender", values.Gender);
-    formData.append("Country", values.Country);
-    formData.append("Img", img);
+    if (!token || !userId) {
+      message.error('User not logged in. Redirecting to login...');
+      navigate('/login');
+      return;
+    }
 
-    try {
-        const response = await axios.post(
-          "https://localhost:7073/api/UserAccount/CreateUser",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(
+          `https://localhost:7073/api/UserAccount/GetUserById/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-      
-        if (response.status === 200) {
-          navigate("/login"); // Redirect after successful registration
+
+        if (response.data) {
+          setUserInfo(response.data);
         } else {
-          console.log("Registration failed:", response);
+          message.error('No user information found.');
         }
       } catch (error) {
-        console.log("Error registering:", error);
-      }      
+        console.error('Error fetching user details:', error);
+        message.error('Failed to fetch user details.');
+      }
+    };
+
+    fetchUserDetails();
+  }, [navigate]);
+
+  // Handle image upload (keeping it as it was)
+  const handleImageUpload = (file) => {
+    setImgs(file); // Set selected image file
+    return false; // Prevent default upload behavior
   };
 
+  // Handle form submission
+  const onFinish = async (values) => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId'); // Retrieve userId from localStorage
+
+    const formData = new FormData();
+    formData.append('Id', userId); // Include userId
+    formData.append('UserName', values.userName);
+    formData.append('UserEmail', values.userEmail);
+    formData.append('Phone', values.phone);
+    formData.append('Address', values.address);
+    formData.append('Dob', values.dob ? values.dob.format('YYYY-MM-DD') : null); // Date formatted as string
+    formData.append('Gender', values.gender);
+    formData.append('Country', values.country);
+    formData.append('RoleId', 2); // Default RoleId
+    formData.append('Status', 'Active'); // Default status
+    formData.append('Password', values.password || ''); // Optional password field
+
+    // Handle image upload (if an image is selected)
+    if (imgs && imgs.length > 0) {
+      formData.append('Img', imgs[0]); // Assuming only one image file is uploaded
+    }
+
+    try {
+      const response = await axios.put(
+        `https://localhost:7073/api/UserAccount/UpdateUser?id=${userId}`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        message.success('Profile updated successfully!');
+        navigate('/userdetail'); // Redirect back to the profile page
+      } else {
+        message.error('Failed to update profile.');
+      }
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      message.error('Failed to update profile.');
+    }
+  };
+
+  if (!userInfo) return null;
+
   return (
-    <div style={{
-      maxWidth: "400px",
-      margin: "auto",
-      padding: "2rem",
-      background: "#f9f9f9",
-      borderRadius: "12px",
-      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-    }}>
+    <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+      <Title level={3}>Edit Profile</Title>
       <Form
-        form={form}
-        onFinish={handleRegister}
+        name="editProfile"
+        onFinish={onFinish}
+        initialValues={{
+          userName: userInfo.userName,
+          userEmail: userInfo.userEmail,
+          phone: userInfo.phone,
+          address: userInfo.address,
+          dob: userInfo.dob ? moment(userInfo.dob) : null,
+          gender: userInfo.gender,
+          country: userInfo.country,
+        }}
         layout="vertical"
-        initialValues={{ Gender: "Other" }}
       >
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <Title level={3} style={{ marginBottom: 0 }}>Create an Account</Title>
-          <Text type="secondary">Please fill in the details below</Text>
-        </div>
-
-        <Form.Item name="UserName" label="User Name" rules={[{ required: true }]}>
-          <Input placeholder="Enter your name" />
+        <Form.Item label="Username" name="userName" rules={[{ required: true }]}>
+          <Input />
         </Form.Item>
 
-        <Form.Item name="UserEmail" label="Email" rules={[{ required: true, type: "email" }]}>
-          <Input placeholder="Enter your email" />
+        <Form.Item label="Email" name="userEmail" rules={[{ required: true, type: 'email' }]}>
+          <Input />
         </Form.Item>
 
-        <Form.Item name="Password" label="Password" rules={[{ required: true }]}>
-          <Input.Password placeholder="Enter your password" />
+        <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
+          <Input />
         </Form.Item>
 
-        <Form.Item name="Phone" label="Phone Number">
-          <Input placeholder="Enter your phone number" />
+        <Form.Item label="Address" name="address">
+          <Input />
         </Form.Item>
 
-        <Form.Item name="Address" label="Address">
-          <Input placeholder="Enter your address" />
+        <Form.Item label="Date of Birth" name="dob">
+          <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
         </Form.Item>
 
-        <Form.Item name="Dob" label="Date of Birth">
-          <DatePicker style={{ width: "100%" }} />
+        <Form.Item label="Gender" name="gender">
+          <Select>
+            <Select.Option value="Male">Male</Select.Option>
+            <Select.Option value="Female">Female</Select.Option>
+            <Select.Option value="Other">Other</Select.Option>
+          </Select>
         </Form.Item>
 
-        <Form.Item name="Gender" label="Gender">
-          <Select options={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "Female" },
-            { label: "Other", value: "Other" },
-          ]} />
+        <Form.Item label="Country" name="country">
+          <Input />
         </Form.Item>
 
-        <Form.Item name="Country" label="Country">
-          <Input placeholder="Enter your country" />
+        {/* Password Field */}
+        <Form.Item label="Password" name="password">
+          <Input.Password />
         </Form.Item>
 
+        {/* Profile Image Upload Field */}
         <Form.Item name="Img" label="Profile Image">
           <Upload beforeUpload={handleImageUpload} showUploadList={false}>
             <Button icon={<UploadOutlined />}>Upload Image</Button>
@@ -108,19 +164,13 @@ export const RegisterScreen = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-            Register
+          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+            Update Profile
           </Button>
         </Form.Item>
-
-        <div style={{ textAlign: "center", marginTop: "16px" }}>
-          <Text>
-            Already have an account? <Button type="link" onClick={() => navigate("/login")}>Login here</Button>
-          </Text>
-        </div>
       </Form>
     </div>
   );
 };
 
-export default RegisterScreen;
+export default EditUserDetail;
