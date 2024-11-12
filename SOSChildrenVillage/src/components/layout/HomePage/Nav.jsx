@@ -1,40 +1,56 @@
-import React from 'react';
-import { Menu, Button, Row, Col } from 'antd';
+import React, { useRef } from 'react';
+import { Menu, Button, Row, Col, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom';
 
 const Nav = () => {
+    const navigate = useNavigate();
+    const footerRef = useRef(null); // Create a ref for the footer
+
+    // Handle click event for "Donate Now"
+    const handleDonateClick = () => {
+        const token = localStorage.getItem('token');  // Check if the user is logged in
+
+        if (token) {
+            navigate('/donate');  // Navigate to /donate if logged in
+        } else {
+            message.warning('Please log in before donating.');
+            navigate('/login');  // Navigate to /login if not logged in
+        }
+    };
+
+    // Scroll to footer when "About" is clicked
+    const handleAboutClick = (e) => {
+        e.preventDefault();  // Prevent default anchor link behavior
+        if (footerRef.current) {
+            footerRef.current.scrollIntoView({ behavior: 'smooth' });  // Scroll smoothly to footer
+        }
+    };
+
     return (
         <nav className="nav">
             <Row justify="space-between" align="middle">
-                {/* Logo */}
                 <Col>
-                    <img src="https://placehold.co/150x50" alt="SOS Children's Village Vietnam Logo" className="logo" />
+                    <img src="/src/assets/images/logo3.png" alt="Logo" className="logo" />
                 </Col>
                 
-                {/* Navigation Links */}
                 <Col>
                     <Menu mode="horizontal" defaultSelectedKeys={['home']}>
-                        <Menu.Item key="home">
-                            <Link to="/home">Trang chủ</Link> {/* Link to /home */}
+                        <Menu.Item key="home" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                            <Link to="/home">Home</Link>
                         </Menu.Item>
-                        <Menu.Item key="about">
-                            <Link to="/about">Giới thiệu</Link> {/* Link to /about */}
+                        <Menu.Item key="about" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                            <a href="#" onClick={handleAboutClick}>About</a>
                         </Menu.Item>
-                        <Menu.Item key="help">
-                            <Link to="/help">Giúp đỡ</Link> {/* Link to /help */}
-                        </Menu.Item>
-                        <Menu.Item key="info">
-                            <Link to="/info">Thông tin</Link> {/* Link to /info */}
+                        <Menu.Item key="help" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                            <Link to="/help">Help</Link>
                         </Menu.Item>
                     </Menu>
                 </Col>
 
-                {/* Search Icon and Donate Button */}
                 <Col>
                     <Row align="middle">
-                        <Button type="link" icon={<SearchOutlined />} />
-                        <Button type="primary">Tài trợ ngay</Button>
+                        <Button type="primary" onClick={handleDonateClick}>Donate Now</Button>
                     </Row>
                 </Col>
             </Row>

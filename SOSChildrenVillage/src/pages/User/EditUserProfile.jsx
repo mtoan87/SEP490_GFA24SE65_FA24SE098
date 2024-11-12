@@ -3,6 +3,7 @@ import Header from "../../components/layout/HomePage/Header";
 import Nav from "../../components/layout/HomePage/Nav";
 import UserDetail from "../../components/layout/User/UserDetail";
 import Footer from "../../components/layout/HomePage/Footer";
+import EditUserDetail from "../../components/layout/User/EditUserDetail";
 
 const App = () => {
     return (
@@ -10,7 +11,7 @@ const App = () => {
             <Header />
             <Nav />
             <main>
-                <UserDetail />
+                <EditUserDetail />
             </main>
             <Footer />
         </div>

@@ -137,3 +137,7 @@ button.custom-button:focus-visible {
 .custom-footer .footer-bottom span {
   margin: 0 8px;
 }
+.logo {
+  width: 70px;
+  height: auto;
+}

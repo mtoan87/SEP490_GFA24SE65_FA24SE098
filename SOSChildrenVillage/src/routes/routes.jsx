@@ -8,6 +8,10 @@ import HomePages from '../pages/Home/HomePage';
 import Login from '../pages/Authenication/Login';
 import UserDetail from '../pages/User/UserProfile';
 import Register from '../pages/Authenication/Register';
+import Donate from '../pages/Donates/DonatePage';
+import { element } from 'prop-types';
+import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
+import EditUserProfile from '../pages/User/EditUserProfile';
 
 // Corrected router
 const router = createBrowserRouter([
@@ -52,6 +56,18 @@ const router = createBrowserRouter([
   {
     path: '/userdetail',  // User detail route
     element: <UserDetail />,
+  },
+  {
+    path: '/edituserprofile',  // User detail route
+    element: <EditUserProfile />,
+  },
+  {
+    path: '/donate',
+    element: <Donate />,
+  },
+  {
+    path: '/paymentreturn',
+    element: <PaymentReturnPage/>
   },
   {
     path: '*',  // Fallback route for unknown paths

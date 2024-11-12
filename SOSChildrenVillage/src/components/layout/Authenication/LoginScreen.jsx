@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Checkbox, Typography, Space, Divider } from "antd";
+import { Form, Input, Button, Checkbox, Typography, Space, Divider, message } from "antd";
 import { FacebookOutlined, GoogleOutlined, TwitterOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -38,10 +38,11 @@ export const LoginScreen = () => {
           localStorage.setItem("userId", userId);  // Store userId in localStorage
         }
       } else {
-        console.log("Login failed");
+        message.error("Invalid email or password. Please try again."); // Show error message
       }
     } catch (error) {
       console.log("Error fetching:", error);
+      message.error("An error occurred while logging in. Please try again later.");
     }
   };
 
@@ -61,6 +62,8 @@ export const LoginScreen = () => {
           navigate("/user");   // For other roles
         }
       }
+    } else {
+      message.error("Please enter both email and password."); // Show error if fields are empty
     }
   };
 
