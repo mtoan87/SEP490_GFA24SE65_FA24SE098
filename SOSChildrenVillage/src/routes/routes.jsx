@@ -12,6 +12,7 @@ import Donate from '../pages/Donates/DonatePage';
 import { element } from 'prop-types';
 import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
 import EditUserProfile from '../pages/User/EditUserProfile';
+import EventDetailPage from '../pages/EventPage/EventDetailPage';
 
 // Corrected router
 const router = createBrowserRouter([
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
   {
     path: '/edituserprofile',  // User detail route
     element: <EditUserProfile />,
+  },
+  {
+    path: '/eventdetail/:id',
+    element: <EventDetailPage />,
   },
   {
     path: '/donate',

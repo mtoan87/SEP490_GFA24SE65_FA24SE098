@@ -21,12 +21,17 @@
   display: flex;
   gap: 16px;
   justify-content: center; /* Căn giữa các thẻ trong hàng */
+  box-shadow: black;
+  border-bottom: 1000px;
 }
 
 .custom-card {
   width: 280px;
   flex: 0 0 auto;
+  background-color: rgb(24, 144, 255); /* Thêm nền màu xanh biển nhạt */
+  padding: 16px; /* Tùy chọn: thêm khoảng cách giữa viền và nội dung */
 }
+
 
 .scroll-button {
   position: absolute;
@@ -36,9 +41,9 @@
 }
 
 .scroll-button.left {
-  left: 10px;
+  left: 50px;
 }
 
 .scroll-button.right {
-  right: 10px;
+  right: 50px;
 }

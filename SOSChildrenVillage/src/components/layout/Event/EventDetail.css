@@ -1,0 +1,195 @@
+/* Overall container styling */
+.event-detail-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* To prevent content from overflowing */
+  }
+  
+  /* Header Section */
+  .event-header {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .event-title {
+    font-size: 3.5rem;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  
+  /* Event Body */
+  .event-body {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  
+  /* Left Column (Description and Images) */
+  .left-column {
+    flex: 1;
+    padding-right: 20px;
+  }
+  
+  .event-description {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 30px;
+    font-family: 'Arial', sans-serif;
+    text-align: justify;
+  }
+  
+  .event-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  .event-image {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  .event-image:hover {
+    transform: scale(1.05); /* Adds hover effect for images */
+  }
+  
+  /* Right Column (Event Info and Donation) */
+  .right-column {
+    flex: 0 0 30%;
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+/* Right Column (Event Info and Donation) */
+.event-info p {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  .event-info p strong {
+    font-weight: bold;
+    color: #000000; /* Add blue color for labels like Start Time and End Time */
+  }
+  
+  .event-info p span {
+    color: #666;
+  }
+  
+  .event-info p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  .donation-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Donation Progress Bar */
+  .donation-progress-container {
+    margin-bottom: 20px;
+  }
+  
+  .donation-progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+  }
+  
+  .donation-progress-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .donation-progress-container p {
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  /* Input Field for Donation Amount */
+  .donation-input {
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #333;
+    transition: border-color 0.3s ease;
+  }
+  
+  .donation-input:focus {
+    border-color: #28a745;
+    outline: none;
+  }
+  
+  /* Donate Button */
+  .donate-button {
+    background-color: #1677ff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .donate-button:hover {
+    background-color: #6aa7fd;
+    transform: translateY(-2px); /* Slight raise effect on hover */
+  }
+  
+  .donate-button:active {
+    transform: translateY(0); /* Button returns to normal position when clicked */
+  }
+  
+  /* Loading State */
+  .loading {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #555;
+    margin-top: 50px;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .event-body {
+      flex-direction: column;
+    }
+  
+    .right-column {
+      margin-top: 20px;
+      width: 100%;
+    }
+  
+    .left-column {
+      width: 100%;
+    }
+  }
+  
