@@ -11,11 +11,11 @@ const Header = () => {
   // Check login state on mount
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const storedUserName = localStorage.getItem('User'); // Assuming you store user's name after login
+    const storedUserName = localStorage.getItem('userName'); // Fixed key for user name
 
     if (token) {
       setIsLoggedIn(true);
-      setUserName(storedUserName ); // Set userName if available
+      setUserName(storedUserName || ''); // Set userName if available
     }
   }, []);
 
