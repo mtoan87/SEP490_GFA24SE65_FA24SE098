@@ -79,11 +79,13 @@ const UserDetail = () => {
               borderRadius: '10px',
               textAlign: 'center',
             }}
-            headStyle={{
-              fontSize: '1.5rem',
-              color: '#1f1f1f',
-              background: '#f5f5f5',
-              borderRadius: '10px 10px 0 0',
+            styles={{
+              header: {
+                fontSize: '1.5rem',
+                color: '#1f1f1f',
+                background: '#f5f5f5',
+                borderRadius: '10px 10px 0 0',
+              },
             }}
           >
             {/* Display User Images */}
