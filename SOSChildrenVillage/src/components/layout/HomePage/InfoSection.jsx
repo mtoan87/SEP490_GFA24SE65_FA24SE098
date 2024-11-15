@@ -2,87 +2,144 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Col, Button } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom'; // Import Link từ react-router-dom
+import { Link } from 'react-router-dom';
 import './MyComponent.css';
 
 const MyComponent = () => {
   const [events, setEvents] = useState([]);
-  const [visibleStart, setVisibleStart] = useState(0);
-  const visibleCount = 6;
+  const [children, setChildren] = useState([]);
+  const [visibleEventStart, setVisibleEventStart] = useState(0);
+  const [visibleChildStart, setVisibleChildStart] = useState(0);
+  const visibleCount = 5;
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await axios.get('https://localhost:7073/api/Event');
         if (Array.isArray(response.data)) {
-          const updatedEvents = response.data.map((event) => {
-            const imageUrl = event.imageUrls?.[0] || '';
-            return {
+          const updatedEvents = response.data
+            .map((event) => ({
               ...event,
-              imageUrl: imageUrl,
-            };
-          });
+              imageUrl: event.imageUrls?.[0] || '',
+            }))
+            .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)); // Sort by createdDate descending
           setEvents(updatedEvents);
         } else {
-          console.error('Dữ liệu không phải là mảng');
+          console.error('Data is not an array');
         }
       } catch (error) {
         console.error('Error fetching events:', error);
       }
     };
+
+    const fetchChildren = async () => {
+      try {
+        const response = await axios.get('https://localhost:7073/api/Children/GetAllChildWithImg');
+        if (Array.isArray(response.data)) {
+          const updatedChildren = response.data
+            .map((child) => ({
+              ...child,
+              imageUrl: child.imageUrls?.[0] || '',
+            }))
+            .sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate)); // Sort by createdDate descending
+          setChildren(updatedChildren);
+        } else {
+          console.error('Data is not an array');
+        }
+      } catch (error) {
+        console.error('Error fetching children:', error);
+      }
+    };
+
     fetchEvents();
+    fetchChildren();
   }, []);
 
-  const handleNext = () => {
-    if (visibleStart + visibleCount < events.length) {
-      setVisibleStart(visibleStart + 1);
+  const handleNext = (setVisibleStart, currentStart, totalLength) => {
+    if (currentStart + visibleCount < totalLength) {
+      setVisibleStart(currentStart + 1);
     }
   };
 
-  const handlePrev = () => {
-    if (visibleStart > 0) {
-      setVisibleStart(visibleStart - 1);
+  const handlePrev = (setVisibleStart, currentStart) => {
+    if (currentStart > 0) {
+      setVisibleStart(currentStart - 1);
     }
   };
+
+  const renderCard = (data, isEvent) => (
+    <Col key={data.id} style={{ flex: '0 0 280px', maxWidth: '280px' }}>
+      <Link to={isEvent ? `/eventdetail/${data.id}` : `/childdetail/${data.id}`}>
+        <Card
+          hoverable
+          cover={<img alt={data.name || data.childName} src={data.imageUrl} className="custom-card-image" />}
+          bordered={false}
+          className="custom-card"
+        >
+          <h2 style={{ margin: '5px' }} className="custom-title">
+            {data.name || data.childName}
+          </h2>
+          {data.healthStatus && <p>Health Status: {data.healthStatus}</p>}
+        </Card>
+      </Link>
+    </Col>
+  );
 
   return (
-    <div className="scroll-container">
-      <Button
-        className="scroll-button left"
-        onClick={handlePrev}
-        icon={<LeftOutlined />}
-        disabled={visibleStart === 0}
-      />
-      <div className="scrollable-cards">
-        <div className="card-row">
-          {Array.isArray(events) &&
-            events.length > 0 &&
-            events.slice(visibleStart, visibleStart + visibleCount).map((event) => (
-              <Col key={event.id} style={{ flex: '0 0 280px', maxWidth: '280px' }}>
-                {/* Chỉnh sửa Link để truyền id vào URL */}
-                <Link to={`/eventdetail/${event.id}`}>
-                  <Card
-                    hoverable
-                    cover={<img alt={event.name} src={event.imageUrl} className="custom-card-image" />}
-                    bordered={false}
-                    className="custom-card"
-                  >
-                    <h2 style={{ margin: '5px' }} className="custom-title">
-                      {event.name}
-                    </h2>
-                  </Card>
-                </Link>
+    <div>
+      <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
+        List of Support Events
+      </p>
 
-              </Col>
-            ))}
+      <div className="scroll-container">
+        <Button
+          className="scroll-button left"
+          onClick={() => handlePrev(setVisibleEventStart, visibleEventStart)}
+          icon={<LeftOutlined />}
+          disabled={visibleEventStart === 0}
+        />
+        <div className="scrollable-cards">
+          <div className="card-row">
+            {Array.isArray(events) &&
+              events
+                .slice(visibleEventStart, visibleEventStart + visibleCount)
+                .map((event) => renderCard(event, true))}
+          </div>
         </div>
+        <Button
+          className="scroll-button right"
+          onClick={() => handleNext(setVisibleEventStart, visibleEventStart, events.length)}
+          icon={<RightOutlined />}
+          disabled={visibleEventStart + visibleCount >= events.length}
+        />
       </div>
-      <Button
-        className="scroll-button right"
-        onClick={handleNext}
-        icon={<RightOutlined />}
-        disabled={visibleStart + visibleCount >= events.length}
-      />
+
+      <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
+        List of Children Needing Support
+      </p>
+
+      <div className="scroll-container">
+        <Button
+          className="scroll-button left"
+          onClick={() => handlePrev(setVisibleChildStart, visibleChildStart)}
+          icon={<LeftOutlined />}
+          disabled={visibleChildStart === 0}
+        />
+        <div className="scrollable-cards">
+          <div className="card-row">
+            {Array.isArray(children) &&
+              children
+                .slice(visibleChildStart, visibleChildStart + visibleCount)
+                .map((child) => renderCard(child, false))}
+          </div>
+        </div>
+        <Button
+          className="scroll-button right"
+          onClick={() => handleNext(setVisibleChildStart, visibleChildStart, children.length)}
+          icon={<RightOutlined />}
+          disabled={visibleChildStart + visibleCount >= children.length}
+        />
+      </div>
     </div>
   );
 };
