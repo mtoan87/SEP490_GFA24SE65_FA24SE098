@@ -28,16 +28,20 @@ const Header = () => {
   };
 
   // Menu for the user icon dropdown
-  const userMenu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Link to="/userDetail">View Profile</Link>
-      </Menu.Item>
-      <Menu.Item key="2" onClick={handleLogout}>
-        Logout
-      </Menu.Item>
-    </Menu>
-  );
+// Updated user menu in Header
+const userMenu = (
+  <Menu>
+    <Menu.Item key="1">
+      <Link to="/userDetail">View Profile</Link>
+    </Menu.Item>
+    <Menu.Item key="2">
+      <Link to="/donateHistory">Donate History</Link> {/* Added Donate History */}
+    </Menu.Item>
+    <Menu.Item key="3" onClick={handleLogout}>
+      Logout
+    </Menu.Item>
+  </Menu>
+);
 
   return (
     <header style={{ backgroundColor: '#f0f2f5', padding: '15px 0' }}>

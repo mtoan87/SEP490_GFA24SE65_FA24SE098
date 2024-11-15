@@ -13,6 +13,8 @@ import { element } from 'prop-types';
 import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
 import EditUserProfile from '../pages/User/EditUserProfile';
 import EventDetailPage from '../pages/EventPage/EventDetailPage';
+import ChildDetailPage from '../pages/ChildPage/ChildDetailPage';
+import DonateHistoryPage from '../pages/User/DonateHistoryPage';
 
 // Corrected router
 const router = createBrowserRouter([
@@ -65,6 +67,14 @@ const router = createBrowserRouter([
   {
     path: '/eventdetail/:id',
     element: <EventDetailPage />,
+  },
+  {
+    path: '/childdetail/:id',
+    element: <ChildDetailPage />,
+  },
+  {
+    path: '/donateHistory',
+    element: <DonateHistoryPage />,
   },
   {
     path: '/donate',

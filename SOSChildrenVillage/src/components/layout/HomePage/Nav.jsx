@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Menu, Button, Row, Col, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
+import './Nav.css';
 
 const Nav = () => {
     const navigate = useNavigate();
@@ -31,18 +32,18 @@ const Nav = () => {
         <nav className="nav">
             <Row justify="space-between" align="middle">
                 <Col>
-                    <img src="/src/assets/images/logo3.png" alt="Logo" className="logo" />
+                    <img src="/src/assets/images/logo3.png" alt="Logo" className="logo logo-shift" />
                 </Col>
                 
                 <Col>
                     <Menu mode="horizontal" defaultSelectedKeys={['home']}>
-                        <Menu.Item key="home" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                        <Menu.Item key="home" style={{ lineHeight: '64px', fontWeight: 'bold' }}>
                             <Link to="/home">Home</Link>
                         </Menu.Item>
-                        <Menu.Item key="about" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                        <Menu.Item key="about" style={{ lineHeight: '64px', fontWeight: 'bold' }}>
                             <a href="#" onClick={handleAboutClick}>About</a>
                         </Menu.Item>
-                        <Menu.Item key="help" style={{ lineHeight: '64px', fontWeight: 'bold' }}> {/* Adjust line height to raise the text */}
+                        <Menu.Item key="help" style={{ lineHeight: '64px', fontWeight: 'bold' }}>
                             <Link to="/help">Help</Link>
                         </Menu.Item>
                     </Menu>

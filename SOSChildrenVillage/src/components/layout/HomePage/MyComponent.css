@@ -1,7 +1,7 @@
 .scroll-container {
   display: flex;
   align-items: center;
-  justify-content: center; /* Căn giữa toàn bộ vùng chứa cuộn */
+  justify-content: center; /* Center the entire scroll container */
   position: relative;
   overflow: hidden;
   padding: 20px 0;
@@ -9,41 +9,58 @@
 
 .scrollable-cards {
   display: flex;
-  justify-content: center; /* Căn giữa các thẻ trong vùng nhìn thấy */
-  gap: 16px; /* Khoảng cách giữa các thẻ */
+  justify-content: center; /* Center the cards within the visible area */
+  gap: 16px; /* Space between cards */
   overflow-x: auto;
   max-width: 100%;
   padding: 10px 0;
-  scroll-behavior: smooth; /* Tạo hiệu ứng cuộn mượt */
+  scroll-behavior: smooth; /* Smooth scrolling effect */
 }
 
 .card-row {
   display: flex;
   gap: 16px;
-  justify-content: center; /* Căn giữa các thẻ trong hàng */
-  box-shadow: black;
-  border-bottom: 1000px;
+  justify-content: center; /* Center the cards in the row */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px 0; /* Optional: Add some padding around the card row */
 }
 
 .custom-card {
   width: 280px;
   flex: 0 0 auto;
-  background-color: rgb(24, 144, 255); /* Thêm nền màu xanh biển nhạt */
-  padding: 16px; /* Tùy chọn: thêm khoảng cách giữa viền và nội dung */
+  background-color: #1890ff; /* Light blue background */
+  padding: 16px;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for better focus */
 }
 
+.custom-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
 
 .scroll-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
+  background-color: #1890ff;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
 }
 
 .scroll-button.left {
-  left: 50px;
+  left: 10px;
 }
 
 .scroll-button.right {
-  right: 50px;
+  right: 10px;
+}
+
+.scroll-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

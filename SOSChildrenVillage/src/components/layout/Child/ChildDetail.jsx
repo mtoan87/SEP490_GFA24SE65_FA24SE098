@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './EventDetail.css';
+import './ChildDetail.css';
 
-const EventDetail = () => {
-  const { id: eventId } = useParams();
-  const [event, setEvent] = useState(null);
+const ChildDetail = () => {
+  const { id: childId } = useParams();
+  const [child, setChild] = useState(null);
   const [amount, setAmount] = useState('');
   const [userId, setUserId] = useState(null);
 
@@ -13,27 +13,21 @@ const EventDetail = () => {
     const storedUserId = localStorage.getItem('userId');
     setUserId(storedUserId);
 
-    const fetchEventDetails = async () => {
+    const fetchChildDetails = async () => {
       try {
-        const response = await axios.get(`https://localhost:7073/api/Event/GetEventById/${eventId}`);
-        setEvent(response.data);
+        const response = await axios.get(`https://localhost:7073/api/Children/GetChildWithImg/${childId}`);
+        setChild(response.data);
       } catch (error) {
-        console.error('Error fetching event details:', error);
+        console.error('Error fetching child details:', error);
       }
     };
-    fetchEventDetails();
-  }, [eventId]);
 
-  if (!event) {
+    fetchChildDetails();
+  }, [childId]);
+
+  if (!child) {
     return <div className="loading">Loading...</div>;
   }
-
-  const extractImagesFromDescription = (description) => {
-    const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/g;
-    return description.match(imageUrlRegex) || [];
-  };
-
-  const imageUrlsInDescription = extractImagesFromDescription(event.description);
 
   const handleDonate = async () => {
     if (!amount || isNaN(amount) || amount <= 0) {
@@ -47,7 +41,7 @@ const EventDetail = () => {
     }
 
     try {
-      const response = await axios.put(`https://localhost:7073/api/EventDonate/EventDonate?id=${eventId}`, {
+      const response = await axios.put(`https://localhost:7073/api/EventDonate/ChildDonate?id=${childId}`, {
         amount: amount,
         userAccountId: userId
       });
@@ -63,8 +57,8 @@ const EventDetail = () => {
     }
   };
 
-  // Calculate the donation progress
-  const donationProgress = event.currentAmount / event.amountLimit * 100;
+  // Calculate donation progress
+  const donationProgress = child.currentAmount / child.amountLimit * 100;
 
   // Function to format date into "Thu, Nov 28 • 5:30 PM"
   const formatDate = (dateString) => {
@@ -87,41 +81,32 @@ const EventDetail = () => {
   };
 
   return (
-    <div className="event-detail-container">
-      <div className="event-header">
-        <h1 className="event-title">{event.name}</h1>
+    <div className="child-detail-container">
+      <div className="child-header">
+        <h1 className="child-title">{child.childName}</h1>
       </div>
 
-      <div className="event-body">
+      <div className="child-body">
         {/* Left layout: Description and images */}
         <div className="left-column">
-          <p className="event-description">{event.description}</p>
+          <p className="child-description">Health Status: {child.healthStatus}</p>
 
-          {/* Display images extracted from description */}
-          {imageUrlsInDescription.length > 0 && (
-            <div className="event-images">
-              {imageUrlsInDescription.map((url, index) => (
-                <img key={index} src={url} alt={`Event Image ${index + 1}`} className="event-image" />
-              ))}
-            </div>
-          )}
-
-          {/* Additional images from the event API */}
-          {event.imageUrls && event.imageUrls.length > 0 && (
-            <div className="event-images">
-              {event.imageUrls.map((url, index) => (
-                <img key={index} src={url} alt={`Event Image ${index + 1}`} className="event-image" />
+          {/* Display images of the child */}
+          {child.imageUrls && child.imageUrls.length > 0 && (
+            <div className="child-images">
+              {child.imageUrls.map((url, index) => (
+                <img key={index} src={url} alt={`Child Image ${index + 1}`} className="child-image" />
               ))}
             </div>
           )}
         </div>
 
-        {/* Right layout: Event details and Donate button */}
+        {/* Right layout: Child details and Donate button */}
         <div className="right-column">
-          <div className="event-info">
-            <p><strong>Start Time:</strong> {formatDate(event.startTime)}</p>
-            <p><strong>End Time:</strong> {formatDate(event.endTime)}</p>
-            <p><strong>Amount Limit:</strong> {formatCurrency(event.amountLimit)}</p>
+          <div className="child-info">
+            <p><strong>Gender:</strong> {child.gender}</p>
+            <p><strong>Date of Birth:</strong> {formatDate(child.dob)}</p>
+            <p><strong>Amount Limit:</strong> {formatCurrency(child.amountLimit)}</p>
           </div>
 
           {/* Donation progress bar */}
@@ -155,4 +140,4 @@ const EventDetail = () => {
   );
 };
 
-export default EventDetail;
+export default ChildDetail;
