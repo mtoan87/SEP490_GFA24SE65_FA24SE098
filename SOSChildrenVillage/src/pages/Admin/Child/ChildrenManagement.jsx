@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Table, Space, Button, Modal, Form, Input, Select, DatePicker, message, Checkbox } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-import { getChild } from '../../../services/api';
+import { Table, Space, Button, Modal, Form, Input, Select, DatePicker, message, Checkbox, Upload } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, InboxOutlined } from '@ant-design/icons';
+import { getChildWithImages } from '../../../services/api';
 import axios from 'axios';
 import moment from 'moment';
 
 const { Option } = Select;
+const { Dragger } = Upload;
 
 const ChildrenManagement = () => {
 
@@ -16,6 +17,7 @@ const ChildrenManagement = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [uploadFiles, setUploadFiles] = useState([]);
 
   useEffect(() => {
     fetchChildren();
@@ -24,17 +26,17 @@ const ChildrenManagement = () => {
   const fetchChildren = async () => {
     try {
       setLoading(true);
-      const data = await getChild();
-      setChildren(data);
-      //console.log('Fetched children data:', data);
+      const data = await getChildWithImages(); // Sử dụng API mới
+      setChildren(Array.isArray(data) ? data : []);
+      console.log('Fetched children data with images:', data);
     } catch (error) {
       console.log(error);
-      message.error('Can not get children data');
+      message.error('Can not get children data with images');
+      setChildren([]);
     } finally {
       setLoading(false);
     }
   };
-
   const showModal = (child = null) => {
     setEditingChild(child);
     if (child) {
@@ -48,59 +50,128 @@ const ChildrenManagement = () => {
     setIsModalVisible(true);
   };
 
+  const uploadProps = {
+    name: 'images',
+    multiple: true,
+    fileList: uploadFiles,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith('image/');
+      if (!isImage) {
+        message.error(`${file.name} is not an image file`);
+        return Upload.LIST_IGNORE;
+      }
+      return false;
+    },
+    onChange: (info) => {
+      setUploadFiles(info.fileList);
+    }
+  };
+
   const handleOk = () => {
     form.validateFields().then(async (values) => {
       try {
-        /* const formData = new FormData();
-        Object.keys(values).forEach(key => {
-          if (key === 'dob') {
-            formData.append(key, values[key].format('YYYY-MM-DD'));
-          } else {
-            formData.append(key, values[key]);
-          }
-          console.log([...formData]);
-          console.log(values);
-        }); */
-
-        const formData = {
-          childName: values.childName,
-          healthStatus: values.healthStatus,
-          houseId: values.houseId,
-          gender: values.gender,
-          dob: values.dob.format('YYYY-MM-DD'),
-          status: values.status,
-          isDeleted: values.isDeleted || false,
-        };
-        //console.log(formData);
-
-      if (editingChild) {
-        await axios.put(`https://localhost:7073/api/Children/UpdateChild?id=${editingChild.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+        const formData = new FormData();
+        
+        // Append basic form data
+        formData.append('childName', values.childName);
+        formData.append('healthStatus', values.healthStatus || '');
+        formData.append('houseId', values.houseId || '');
+        formData.append('gender', values.gender);
+        formData.append('dob', values.dob.format('YYYY-MM-DD'));
+        formData.append('status', values.status || '');
+        formData.append('isDeleted', values.isDeleted ? 'true' : 'false');
+  
+        // Debug form values
+        console.log('Form Values:', values);
+  
+        // Append image files
+        if (uploadFiles && uploadFiles.length > 0) {
+          uploadFiles.forEach(file => {
+            if (file.originFileObj) {
+              formData.append('Img', file.originFileObj);
+              console.log('Appending file:', file.originFileObj.name);
+            }
+          });
+        }
+  
+        // Log FormData content
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+  
+        if (editingChild) {
+          const updateUrl = `https://localhost:7073/api/Children/UpdateChild?id=${editingChild.id}`;
+          console.log('Updating child with ID:', editingChild.id);
+          console.log('Update URL:', updateUrl);
+  
+          const updateResponse = await axios.put(updateUrl, formData, {
+            headers: { 
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          
+          console.log('Update response:', updateResponse.data);
+          message.success('Update Children Successfully');
+        } else {
+          const createResponse = await axios.post(
+            'https://localhost:7073/api/Children/CreateChild', 
+            formData, 
+            {
+              headers: { 
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+          
+          console.log('Create response:', createResponse.data);
+          message.success('Add Children Successfully');
+        }
+        
+        setIsModalVisible(false);
+        setUploadFiles([]); 
+        form.resetFields();
+        fetchChildren();
+      } catch (error) {
+        console.error('Error details:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          endpoint: editingChild ? 'UpdateChild' : 'CreateChild'
         });
-        message.success('Update Children Successfully');
-      } else {
-        await axios.post('https://localhost:7073/api/Children/CreateChild', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        message.success('Add Children Successfully');
+        
+        message.error(
+          error.response?.data?.message || 
+          `Unable to ${editingChild ? 'update' : 'create'} child. Please try again.`
+        );
       }
-      setIsModalVisible(false);
-      fetchChildren();
-    } catch (error) {
-      console.error('Error occurred when save data:', error);
-      message.error('Unable to save data');
-    }
-  });
-};
-
+    }).catch(formError => {
+      console.error('Form validation errors:', formError);
+      message.error('Please check all required fields');
+    });
+  };
+  
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://localhost:7073/api/Children/DeleteChild?id=${id}`);
-      message.success('Delete ChildrenSuccessfully');
+      const deleteUrl = `https://localhost:7073/api/Children/DeleteChild?id=${id}`;
+      console.log('Deleting child with ID:', id);
+      
+      const response = await axios.delete(deleteUrl);
+      console.log('Delete response:', response.data);
+      
+      message.success('Delete Children Successfully');
       fetchChildren();
     } catch (error) {
-      console.error('Error occurred when delete children:', error);
-      message.error('Unable to delete children');
+      console.error('Delete error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      message.error(
+        error.response?.data?.message || 
+        'Unable to delete children. Please try again.'
+      );
     }
   };
 
@@ -138,6 +209,24 @@ const ChildrenManagement = () => {
       render: (date) => moment(date).isValid() ? moment(date).format('DD/MM/YYYY') : '',
     },
     {
+      title: 'Image',
+      dataIndex: 'imageUrls',
+      key: 'imageUrls',
+      render: (imageUrls) => (
+        <div>
+          {imageUrls?.map((url, index) => (
+            <img
+              key={index}
+              src={url}
+              alt="Child Image"
+              style={{ width: 50, height: 50, marginRight: 8, cursor: 'pointer' }}
+              onClick={() => window.open(url, '_blank')}
+            />
+          ))}
+        </div>
+      ),
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -156,20 +245,48 @@ const ChildrenManagement = () => {
   ];
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Input placeholder="Search for children" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
-          <Button onClick={() => showModal()} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
+    <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '8px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center' 
+        }}>
+          <Input 
+            placeholder="Search for children" 
+            prefix={<SearchOutlined />} 
+            style={{ width: 350, marginRight: 8 }} 
+          />
+          
+          <Button 
+            onClick={() => showModal()} 
+            type="primary" 
+            icon={<PlusOutlined />} 
+            style={{ marginRight: 8 }}
+          >
             Add New Children
           </Button>
-          <Button type="default" style={{ marginRight: 8 }}>
+
+          <Button 
+            type="default" 
+            style={{ marginRight: 8 }}
+          >
             Filter options
           </Button>
         </div>
       </div>
 
-      <Table 
+      <div style={{ 
+        width: '100%',
+        overflow: 'auto'
+      }}>
+        <Table 
         columns={columns} 
         dataSource={children}
         loading={loading}
@@ -191,7 +308,7 @@ const ChildrenManagement = () => {
             setCurrentPage(page);
             setPageSize(pageSize);
           },
-          position: ['bottomCenter'],
+          position: ['Left'],
           itemRender: (_, type, originalElement) => {
             if (type === 'prev') {
               return <Button>Previous</Button>;
@@ -203,6 +320,7 @@ const ChildrenManagement = () => {
           },
         }}
       />
+      </div>  
 
       <Modal
         title={editingChild ? "Update Children" : "Add New Children"}
@@ -229,6 +347,18 @@ const ChildrenManagement = () => {
           </Form.Item>
           <Form.Item name="dob" label="Date of Birth" rules={[{ required: true, message: 'Please select date of birth' }]}>
             <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+          <Form.Item label="Images">
+            <Dragger {...uploadProps}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Click or drag files to upload</p>
+              <p className="ant-upload-hint">
+                Support for single or bulk upload. Strictly prohibited from uploading company data or other
+                banned files.
+              </p>
+            </Dragger>
           </Form.Item>
           <Form.Item name="status" label="Status">
             <Input />

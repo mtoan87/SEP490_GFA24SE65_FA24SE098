@@ -6,13 +6,23 @@ const api = axios.create({
   baseURL: baseURL,
 });
 
-export const getChild = async () => {
+// export const getChild = async () => {
+//   try {
+//     const response = await api.get('/api/Children');
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error fetching children:', error);
+//     throw error;
+//   }
+// };
+
+export const getChildWithImages = async () => {
   try {
-    const response = await api.get('/api/Children');
+    const response = await api.get('/api/Children/GetAllChildWithImg');
     return response.data;
   } catch (error) {
-    console.error('Error fetching children:', error);
-    throw error;
+    console.error('Error fetching children with images:', error);
+    return [];
   }
 };
 

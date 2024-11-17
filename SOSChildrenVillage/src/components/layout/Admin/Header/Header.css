@@ -1,0 +1,199 @@
+.site-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 250px;
+    height: 64px;
+    background: #fff;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.2s;
+}
+  
+.site-header.collapsed {
+    left: 80px;
+}
+  
+.header-left {
+    display: flex;
+    align-items: center;
+}
+  
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+  
+.header-right {
+    display: flex;
+    align-items: center;
+}
+  
+.header-icon-btn {
+    padding: 4px 12px;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.header-icon-btn:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+  
+.user-dropdown {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+  
+.user-dropdown:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+  
+.username {
+    font-size: 14px;
+    color: #1a1a1a;
+    margin-left: 8px;
+}
+
+/* Styles mới cho profile modal */
+.profile-info {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.profile-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+}
+
+.profile-item strong {
+    display: inline-block;
+    width: 120px;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .username {
+        display: none;
+    }
+    
+    .site-header {
+        left: 80px;
+        padding: 0 16px;
+    }
+    
+    .page-title {
+        font-size: 16px;
+    }
+
+    .profile-item {
+        padding: 8px;
+    }
+
+    .profile-item strong {
+        width: 100px;
+        font-size: 13px;
+    }
+}
+
+/* Profile Modal Styles */
+.ant-modal-content {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-modal-header {
+  background-color: #f8f9fa;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.profile-info {
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.profile-item {
+  display: flex;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #fafafa;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.profile-item:hover {
+  background-color: #f0f0f0;
+}
+
+.profile-item:last-child {
+  margin-bottom: 0;
+}
+
+.profile-item strong {
+  display: inline-block;
+  min-width: 120px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Responsive styles for modal */
+@media screen and (max-width: 768px) {
+  .ant-modal {
+      max-width: 90% !important;
+      margin: 10px;
+  }
+
+  .profile-info {
+      padding: 16px;
+  }
+
+  .profile-item {
+      padding: 10px;
+      flex-direction: column;
+  }
+
+  .profile-item strong {
+      margin-bottom: 4px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .profile-item {
+      background-color: rgba(255, 255, 255, 0.04);
+  }
+
+  .profile-item:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .profile-item strong {
+      color: rgba(255, 255, 255, 0.85);
+  }
+}

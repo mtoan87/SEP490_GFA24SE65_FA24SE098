@@ -1,0 +1,114 @@
+.admin-layout {
+    min-height: 100vh;
+  }
+  
+  .main-layout {
+    margin-left: 250px;
+    transition: all 0.2s;
+  }
+  
+  .main-layout.collapsed {
+    margin-left: 80px;
+  }
+  
+  .content-layout {
+    padding: 64px 16px 16px;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    background: #fff;
+    padding: 24px;
+    min-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+  
+  .site-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 250px;
+    height: 64px;
+    background: #fff;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.2s;
+  }
+  
+  .site-header.collapsed {
+    left: 80px;
+  }
+  
+  .site-sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #001529;
+    z-index: 1001;
+    transition: all 0.2s;
+  }
+  
+  .sidebar-header {
+    height: 64px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #002140;
+  }
+  
+  .logo-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .collapse-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .sidebar-menu {
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  /* Custom scrollbar styles */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .main-layout {
+      margin-left: 80px;
+    }
+    
+    .site-header {
+      left: 80px;
+    }
+  }
+  
