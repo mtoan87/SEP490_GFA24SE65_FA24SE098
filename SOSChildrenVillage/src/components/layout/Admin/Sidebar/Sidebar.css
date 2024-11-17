@@ -1,0 +1,48 @@
+.site-sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #001529;
+    z-index: 1001;
+  }
+  
+  .sidebar-header {
+    height: 64px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1a2531;
+  }
+  
+  .logo-text {
+    color: white;
+    font-size: 20px;
+    transition: opacity 0.3s;
+  }
+  
+  .sidebar-menu {
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .collapse-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .collapse-button:hover {
+    background-color: #2c3a47;
+  }

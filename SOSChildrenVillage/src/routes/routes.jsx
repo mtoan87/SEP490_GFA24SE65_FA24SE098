@@ -1,69 +1,173 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import AdminLayout from '../components/layout/Admin/AdminLayout';
-import AdminDashboard from '../pages/Admin/Dashboard/AdminDashboard';
-import UserManagement from '../pages/Admin/User/UserManagement';
-import HouseManagement from '../pages/Admin/Houses/HouseManagement';
-import ChildManagement from '../pages/Admin/Child/ChildrenManagement';
-import HomePages from '../pages/Home/HomePage';
-import Login from '../pages/Authenication/Login';
-import UserDetail from '../pages/User/UserProfile';
-import Register from '../pages/Authenication/Register';
-import Donate from '../pages/Donates/DonatePage';
-import { element } from 'prop-types';
-import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
-import EditUserProfile from '../pages/User/EditUserProfile';
-import EventDetailPage from '../pages/EventPage/EventDetailPage';
-import ChildDetailPage from '../pages/ChildPage/ChildDetailPage';
-import DonateHistoryPage from '../pages/User/DonateHistoryPage';
+import { createBrowserRouter, Navigate } from './routerConfig';
+import {
+    TableLayout,
+    DashboardLayout,
+    AdminDashboard,
+    UserManagement,
+    HouseManagement,
+    ChildManagement,
+    AcademicReport,
+    BookingManagement,
+    BookingSlotManagement,
+    DonationManagement,
+    EventManagement,
+    ExpenseManagement,
+    FacilitiesWallet,
+    FoodStuffWallet,
+    HealthReport,
+    HealthWallet,
+    IncomeManagement,
+    NecessitiesWallet,
+    PaymentsManagement,
+    RolesManagement,
+    SystemWallet,
+    TransactionManagement,
+    VillageManagement,
+    HomePages,
+    Login,
+    Register,
+    UserDetail,
+    EditUserProfile,
+    ChildDetailPage,
+    EventDetailPage,
+    Donate,
+    DonateHistoryPage,
+    PaymentReturnPage
+} from './imports';
 
-// Corrected router
 const router = createBrowserRouter([
   {
-    path: '/',  // Redirect root path
-    element: <Navigate to="/home" replace />,  // Redirect root to login (you can change to '/home' if needed)
+    path: '/',
+    element: <Navigate to="/home" replace />
   },
   {
-    path: '/admin',  // Admin layout with nested routes
-    element: <AdminLayout />,
-    children: [
-      {
-        path: '',  // Admin dashboard as default
-        element: <AdminDashboard />,
-      },
-      {
-        path: 'user-management',  // Admin User management
-        element: <UserManagement />,
-      },
-      {
-        path: 'house-management',  // Admin House management
-        element: <HouseManagement />,
-      },
-      {
-        path: 'child-management',  // Admin Child management
-        element: <ChildManagement />,
-      },
-    ],
-  },
-  {
-    path: '/home',  // Home page route
+    path: '/home',
     element: <HomePages />,
   },
   {
-    path: '/login',  // Login page route
+    path: '/admin',
+    children: [
+      // Dashboard Route
+      {
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: '',
+            element: <AdminDashboard />,
+          },
+        ],
+      },
+
+      // Table Routes
+      {
+        element: <TableLayout />,
+        children: [
+          {
+            path: 'user-management',
+            element: <UserManagement />,
+          },
+          {
+            path: 'house-management',
+            element: <HouseManagement />,
+          },
+          {
+            path: 'child-management',
+            element: <ChildManagement />,
+          },
+          {
+            path: 'village-management',
+            element: <VillageManagement />,
+          },
+          {
+            path: 'academic-report',
+            element: <AcademicReport />,
+          },
+          {
+            path: 'booking-management',
+            element: <BookingManagement />,
+          },
+          {
+            path: 'booking-slot-management',
+            element: <BookingSlotManagement />,
+          },
+          {
+            path: 'donation-management',
+            element: <DonationManagement />,
+          },
+          {
+            path: 'event-management',
+            element: <EventManagement />,
+          },
+          {
+            path: 'expense-management',
+            element: <ExpenseManagement />,
+          },
+          {
+            path: 'facilities-wallet',
+            element: <FacilitiesWallet />,
+          },
+          {
+            path: 'foodstuff-wallet',
+            element: <FoodStuffWallet />,
+          },
+          {
+            path: 'health-report',
+            element: <HealthReport />,
+          },
+          {
+            path: 'health-wallet',
+            element: <HealthWallet />,
+          },
+          {
+            path: 'income-management',
+            element: <IncomeManagement />,
+          },
+          {
+            path: 'necessities-wallet',
+            element: <NecessitiesWallet />,
+          },
+          {
+            path: 'payment-management',
+            element: <PaymentsManagement />,
+          },
+          {
+            path: 'roles-management',
+            element: <RolesManagement />,
+          },
+          {
+            path: 'system-wallet',
+            element: <SystemWallet />,
+          },
+          {
+            path: 'transaction-management',
+            element: <TransactionManagement />,
+          },
+        ],
+      },
+    ],
+  },
+
+  // Authentication routes
+  {
+    path: '/login',
     element: <Login />,
   },
   {
     path: '/register',
     element: <Register />,
   },
+
+  // User routes
   {
-    path: '/userdetail',  // User detail route
+    path: '/userdetail',
     element: <UserDetail />,
   },
   {
-    path: '/edituserprofile',  // User detail route
+    path: '/edituserprofile',
     element: <EditUserProfile />,
   },
+
+  // Event and Child routes
   {
     path: '/eventdetail/:id',
     element: <EventDetailPage />,
@@ -72,6 +176,8 @@ const router = createBrowserRouter([
     path: '/childdetail/:id',
     element: <ChildDetailPage />,
   },
+
+  // Financial routes
   {
     path: '/donateHistory',
     element: <DonateHistoryPage />,
@@ -82,10 +188,12 @@ const router = createBrowserRouter([
   },
   {
     path: '/paymentreturn',
-    element: <PaymentReturnPage/>
+    element: <PaymentReturnPage />,
   },
+
+  // Fallback route
   {
-    path: '*',  // Fallback route for unknown paths
+    path: '*',
     element: <Navigate to="/home" replace />,
   },
 ]);
