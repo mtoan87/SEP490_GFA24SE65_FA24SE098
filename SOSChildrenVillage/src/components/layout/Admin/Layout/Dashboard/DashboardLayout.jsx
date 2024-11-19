@@ -254,234 +254,243 @@ const DashboardLayout = () => {
           </Row>
         </Card>
 
-        <Card title="Child Trend Over Time" className="mb-6 shadow-md">
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={childTrendData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {years.map((year, index) => (
-            <Line
-              key={year}
-              type="monotone"
-              dataKey={year}
-              stroke={colors[index]}
-              activeDot={{ r: 8 }}
-            />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
-    </Card>
-
-        {/* Financial Overview */}
-        <Card title="Financial Overview" className="mb-6 shadow-md">
+        {/* Main Dashboard Tabs */}
+        <Card className="mb-6 shadow-md">
           <Tabs defaultActiveKey="1">
-            <TabPane tab="Income vs Expense" key="1">
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={financialData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    stackId="1"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expense"
-                    stackId="1"
-                    stroke="#82ca9d"
-                    fill="#82ca9d"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <TabPane tab="Child Trends" key="1">
+              <Card title="Child Trend Over Time">
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={childTrendData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    {years.map((year, index) => (
+                      <Line
+                        key={year}
+                        type="monotone"
+                        dataKey={year}
+                        stroke={colors[index]}
+                        activeDot={{ r: 8 }}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </Card>
             </TabPane>
-            <TabPane tab="Donations" key="2">
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={financialData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="donation" stroke="#ffc658" />
-                </LineChart>
-              </ResponsiveContainer>
+
+            <TabPane tab="Financial Overview" key="2">
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="Income vs Expense" key="1">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={financialData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Area
+                        type="monotone"
+                        dataKey="income"
+                        stackId="1"
+                        stroke="#8884d8"
+                        fill="#8884d8"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="expense"
+                        stackId="1"
+                        stroke="#82ca9d"
+                        fill="#82ca9d"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </TabPane>
+                <TabPane tab="Donations" key="2">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={financialData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="donation" stroke="#ffc658" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </TabPane>
+              </Tabs>
+            </TabPane>
+
+            <TabPane tab="Resource Distribution" key="3">
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Card title="Wallet Distribution">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={walletDistribution}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label
+                        >
+                          {walletDistribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Card title="Booking Trends">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={bookingStats}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="count" stroke="#8884d8" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+              </Row>
+            </TabPane>
+
+            <TabPane tab="Donation Analytics" key="4">
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Card title="Donation Trends">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <AreaChart data={donationData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Area
+                          type="monotone"
+                          dataKey="individual"
+                          stackId="1"
+                          stroke="#8884d8"
+                          fill="#8884d8"
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="corporate"
+                          stackId="1"
+                          stroke="#82ca9d"
+                          fill="#82ca9d"
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="ngo"
+                          stackId="1"
+                          stroke="#ffc658"
+                          fill="#ffc658"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Card title="Payment Methods">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={paymentMethodData} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" />
+                        <YAxis dataKey="method" type="category" />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="count" fill="#1890ff" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+              </Row>
+            </TabPane>
+
+            <TabPane tab="Village Statistics" key="5">
+              <Card title="Villages and Houses Distribution">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={villageHouseData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="village" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="houses" fill="#722ed1" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </TabPane>
+
+            <TabPane tab="Demographics & Academic" key="6">
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Card title="Children Demographics">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={childrenDemographics}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="age" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="male" fill="#8884d8" />
+                        <Bar dataKey="female" fill="#82ca9d" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Card title="Academic Performance Distribution">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={academicData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="level" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar
+                          dataKey="excellent"
+                          name="Excellent"
+                          stackId="a"
+                          fill="#52c41a"
+                        />
+                        <Bar
+                          dataKey="good"
+                          name="Good"
+                          stackId="a"
+                          fill="#1890ff"
+                        />
+                        <Bar
+                          dataKey="average"
+                          name="Average"
+                          stackId="a"
+                          fill="#faad14"
+                        />
+                        <Bar
+                          dataKey="belowAverage"
+                          name="Below Average"
+                          stackId="a"
+                          fill="#ff4d4f"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </Col>
+              </Row>
             </TabPane>
           </Tabs>
         </Card>
-
-        {/* Wallet Distribution and Booking Trends */}
-        <Row gutter={[16, 16]} className="mb-6">
-          <Col xs={24} lg={12}>
-            <Card title="Wallet Distribution" className="shadow-md">
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={walletDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label
-                  >
-                    {walletDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Card title="Booking Trends" className="shadow-md">
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={bookingStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="count" stroke="#8884d8" />
-                </LineChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Donation Trends and Payment Methods */}
-        <Row gutter={[16, 16]} className="mb-6">
-          <Col xs={24} lg={12}>
-            <Card title="Donation Trends" className="shadow-md">
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={donationData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="individual"
-                    stackId="1"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="corporate"
-                    stackId="1"
-                    stroke="#82ca9d"
-                    fill="#82ca9d"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="ngo"
-                    stackId="1"
-                    stroke="#ffc658"
-                    fill="#ffc658"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Card title="Payment Methods" className="shadow-md">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={paymentMethodData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="method" type="category" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="count" fill="#1890ff" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Villages and Houses Distribution */}
-        <Card
-          title="Villages and Houses Distribution"
-          className="mb-6 shadow-md"
-        >
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={villageHouseData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="village" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="houses" fill="#722ed1" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-
-        {/* Children Demographics and Academic Progress */}
-        <Row gutter={[16, 16]} className="mb-6">
-          <Col xs={24} lg={12}>
-            <Card title="Children Demographics" className="shadow-md">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={childrenDemographics}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="age" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="male" fill="#8884d8" />
-                  <Bar dataKey="female" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Card
-              title="Academic Performance Distribution"
-              className="shadow-md"
-            >
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={academicData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="level" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="excellent"
-                    name="Excellent"
-                    stackId="a"
-                    fill="#52c41a"
-                  />
-                  <Bar dataKey="good" name="Good" stackId="a" fill="#1890ff" />
-                  <Bar
-                    dataKey="average"
-                    name="Average"
-                    stackId="a"
-                    fill="#faad14"
-                  />
-                  <Bar
-                    dataKey="belowAverage"
-                    name="Below Average"
-                    stackId="a"
-                    fill="#ff4d4f"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-          </Col>
-        </Row>
         <Outlet />
       </Content>
     </AdminLayout>

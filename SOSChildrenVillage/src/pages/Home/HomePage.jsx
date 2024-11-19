@@ -1,4 +1,3 @@
-import React from 'react';
 import Header from '../../components/layout/HomePage/Header';
 import Nav from '../../components/layout/HomePage/Nav';
 import HeroSection from '../../components/layout/HomePage/HeroSection';
