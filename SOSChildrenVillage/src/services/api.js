@@ -35,6 +35,7 @@ export const getHouses = async () => {
     throw error;
   }
 };
+
 export const getAccount = async () => {
   try {
     const response = await api.get('/api/UserAccount');
