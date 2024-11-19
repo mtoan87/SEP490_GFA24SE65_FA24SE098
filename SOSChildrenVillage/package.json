@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ant-design/charts": "^1.4.3",
+    "@ant-design/charts": "^2.2.3",
     "@ant-design/icons": "^5.5.1",
     "@headlessui/react": "^2.1.7",
     "@heroicons/react": "^2.1.5",
@@ -20,6 +20,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-modal-image": "^2.6.0",
     "react-router-dom": "^6.26.2",
     "recharts": "^2.13.3"
   },

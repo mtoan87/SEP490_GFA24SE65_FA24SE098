@@ -1,0 +1,37 @@
+/* EditUserDetail.css */
+.form-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .ant-form-item {
+    margin-bottom: 30px;
+  }
+  
+  .ant-form-item-label {
+    text-align: left;
+    padding-right: 10px; /* Khoảng cách giữa label và input */
+  }
+  
+  .ant-form-item-control-input {
+    width: 100%;
+  }
+  
+  .ant-btn {
+    width: 100%;
+  }
+  
+  .upload-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .upload-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  

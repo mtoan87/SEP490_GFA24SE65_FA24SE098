@@ -31,6 +31,7 @@ import Login from '../pages/Authenication/Login';
 import Register from '../pages/Authenication/Register';
 import UserDetail from '../pages/User/UserProfile';
 import EditUserProfile from '../pages/User/EditUserProfile';
+import ChangePasswordPage from '../pages/User/ChangePasswordPage';
 
 // Event and Child Page imports
 import ChildDetailPage from '../pages/ChildPage/ChildDetailPage';
@@ -40,6 +41,9 @@ import EventDetailPage from '../pages/EventPage/EventDetailPage';
 import Donate from '../pages/Donates/DonatePage';
 import DonateHistoryPage from '../pages/User/DonateHistoryPage';
 import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
+import VillageHistoryPage from '../pages/User/VillageHistoryPage';
+import ListHousePage from '../pages/BookingPage/ListHousePage';
+import BookingHistoryPage from '../pages/BookingPage/BookingHistoryPage';
 
 export {
     // Admin Layout
@@ -75,6 +79,7 @@ export {
     Register,
     UserDetail,
     EditUserProfile,
+    ChangePasswordPage,
 
     // Event and Child Pages
     ChildDetailPage,
@@ -83,7 +88,10 @@ export {
     // Financial Pages
     Donate,
     DonateHistoryPage,
-    PaymentReturnPage
+    PaymentReturnPage,
+    VillageHistoryPage,
+    ListHousePage,
+    BookingHistoryPage
 };
 
 

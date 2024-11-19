@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import ModalImage from 'react-modal-image';
 import './EventDetail.css';
 
 const EventDetail = () => {
@@ -96,12 +97,17 @@ const EventDetail = () => {
         {/* Left layout: Description and images */}
         <div className="left-column">
           <p className="event-description">{event.description}</p>
-
           {/* Display images extracted from description */}
           {imageUrlsInDescription.length > 0 && (
             <div className="event-images">
               {imageUrlsInDescription.map((url, index) => (
-                <img key={index} src={url} alt={`Event Image ${index + 1}`} className="event-image" />
+                <ModalImage
+                  key={index}
+                  small={url} // Ảnh nhỏ hiển thị
+                  large={url} // Ảnh lớn khi phóng to
+                  alt={`Event Image ${index + 1}`}
+                  className="event-image"
+                />
               ))}
             </div>
           )}
@@ -110,7 +116,13 @@ const EventDetail = () => {
           {event.imageUrls && event.imageUrls.length > 0 && (
             <div className="event-images">
               {event.imageUrls.map((url, index) => (
-                <img key={index} src={url} alt={`Event Image ${index + 1}`} className="event-image" />
+                <ModalImage
+                  key={index}
+                  small={url}
+                  large={url}
+                  alt={`Event Image ${index + 1}`}
+                  className="event-image"
+                />
               ))}
             </div>
           )}
@@ -128,9 +140,9 @@ const EventDetail = () => {
           <div className="donation-progress-container">
             <label>Donation Progress</label>
             <div className="donation-progress-bar">
-              <div 
-                className="donation-progress-fill" 
-                style={{ width: `${donationProgress}%`, backgroundColor: donationProgress === 100 ? '#28a745' : '#1677ff' }} 
+              <div
+                className="donation-progress-fill"
+                style={{ width: `${donationProgress}%`, backgroundColor: donationProgress === 100 ? '#28a745' : '#1677ff' }}
               />
             </div>
             <p>{Math.round(donationProgress)}% of goal reached</p>
@@ -139,13 +151,13 @@ const EventDetail = () => {
           {/* Donation input and button */}
           <div className="donation-section">
             <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
-            <input 
-              type="number" 
-              id="donationAmount" 
-              value={amount} 
-              onChange={(e) => setAmount(e.target.value)} 
-              placeholder="Enter amount" 
-              className="donation-input" 
+            <input
+              type="number"
+              id="donationAmount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              className="donation-input"
             />
             <button className="donate-button" onClick={handleDonate}>Donate</button>
           </div>

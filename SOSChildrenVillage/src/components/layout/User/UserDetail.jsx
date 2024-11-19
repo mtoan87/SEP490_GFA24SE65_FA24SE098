@@ -142,14 +142,22 @@ const UserDetail = () => {
               <p><strong>Status:</strong> {userInfo.status || 'N/A'}</p>
             </div>
 
-            {/* Edit Profile Button */}
-            <Button
-              type="primary"
-              style={{ marginTop: '20px' }}
-              onClick={() => navigate(`/edituserprofile`)}
-            >
-              Edit Profile
-            </Button>
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <Button
+                type="primary"
+                onClick={() => navigate(`/edituserprofile`)}
+              >
+                Edit Profile
+              </Button>
+              <Button
+                type="default"
+                onClick={() => navigate(`/changepassword`)}
+              >
+                Change Password
+              </Button>
+            </div>
+
+
           </Card>
         </Col>
       </Row>
