@@ -47,7 +47,7 @@ const HeroSection = () => {
         <Button
           type="primary"
           size="large"
-          style={{ marginTop: '20px' }}
+          style={{ marginTop: '20px' , width: '120px' }}
           onClick={handleDonateClick}
         >
           Donate Now

@@ -32,7 +32,11 @@ import {
     EventDetailPage,
     Donate,
     DonateHistoryPage,
-    PaymentReturnPage
+    PaymentReturnPage,
+    ChangePasswordPage,
+    VillageHistoryPage,
+    ListHousePage,
+    BookingHistoryPage
 } from './imports';
 
 const router = createBrowserRouter([
@@ -166,7 +170,18 @@ const router = createBrowserRouter([
     path: '/edituserprofile',
     element: <EditUserProfile />,
   },
-
+  {
+    path: '/changepassword',
+    element: <ChangePasswordPage />,
+  },
+  {
+    path: '/list-house/:villageId',
+    element: <ListHousePage/>,
+  },
+  {
+    path: '/bookinghistory',
+    element: <BookingHistoryPage />,
+  },
   // Event and Child routes
   {
     path: '/eventdetail/:id',
@@ -181,6 +196,10 @@ const router = createBrowserRouter([
   {
     path: '/donateHistory',
     element: <DonateHistoryPage />,
+  },
+  {
+    path: '/villageHistory',
+    element: <VillageHistoryPage />,
   },
   {
     path: '/donate',

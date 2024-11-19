@@ -1,86 +1,170 @@
-import React, { useEffect, useState } from 'react';
-import { message, Button, Spin, Result, Card } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { notification, Spin, Card, Row, Col, Divider, Button } from 'antd';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom'; // React Router v6 (useNavigate)
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function PaymentReturnPage() {
-  const location = useLocation(); // Access URL search params
-  const navigate = useNavigate(); // Use to navigate after payment verification
-  const [paymentStatus, setPaymentStatus] = useState(null); // To store payment status
-  const [isLoading, setIsLoading] = useState(true); // To manage loading state
+const PaymentReturn = () => {
+  const [loading, setLoading] = useState(true);
+  const [paymentResult, setPaymentResult] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate(); // Using useNavigate for routing
 
-  // Extract query parameters from the URL
+  // Extracting query parameters from the URL
   const queryParams = new URLSearchParams(location.search);
-  const vnp_TxnRef = queryParams.get('vnp_TxnRef');
+  let vnp_TxnRef = queryParams.get('vnp_TxnRef');
   const vnp_ResponseCode = queryParams.get('vnp_ResponseCode');
-  const vnp_SecureHash = queryParams.get('vnp_SecureHash');
+  const vnp_OrderInfo = queryParams.get('vnp_OrderInfo');
+
+  // Clean the vnp_TxnRef by removing everything after the underscore
+  vnp_TxnRef = vnp_TxnRef.split('_')[0];
+
+  // Parsing orderInfo to get childId, walletId, eventId, systemWalletId
+  const orderInfo = decodeURIComponent(vnp_OrderInfo); // Decode to get the correct format
+  const childIdMatch = orderInfo.match(/childId\s*([A-Za-z0-9]+)/);
+  const walletIdMatch = orderInfo.match(/walletId\s*(\d+)/);
+  const eventIdMatch = orderInfo.match(/eventId\s*(\d+)/);
+  const systemWalletIdMatch = orderInfo.match(/systemWalletId\s*(\d+)/);
+  const facilitiesWalletMatch = orderInfo.match(/FacilitiesWallet\s*(\d+)/);
+  const necessitiesWalletMatch = orderInfo.match(/NecessitiesWallet\s*(\d+)/);
+  const foodStuffWalletMatch = orderInfo.match(/FoodStuffWallet\s*(\d+)/);
+  const healthWalletMatch = orderInfo.match(/HealthWallet\s*(\d+)/);
+
+  const childId = childIdMatch ? childIdMatch[1] : null;
+  const walletId = walletIdMatch ? walletIdMatch[1] : null;
+  const eventId = eventIdMatch ? parseInt(eventIdMatch[1], 10) : null;
+  const systemWalletId = systemWalletIdMatch ? systemWalletIdMatch[1] : null;
+  const facilitiesWallet = facilitiesWalletMatch ? facilitiesWalletMatch[1] : null;
+  const necessitiesWallet = necessitiesWalletMatch ? necessitiesWalletMatch[1] : null;
+  const foodStuffWallet = foodStuffWalletMatch ? foodStuffWalletMatch[1] : null;
+  const healthWallet = healthWalletMatch ? healthWalletMatch[1] : null;
+
+  // If systemWalletId is still null, let's log an error for better debugging
+  if (!systemWalletId) {
+    console.error("systemWalletId not found in the orderInfo:", orderInfo);
+  }
+
+  // Build the API URL dynamically, conditionally including walletId and new wallet params
+  let apiUrl = `https://localhost:7073/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&childId=${childId || ""}&eventId=${eventId || ""}&systemWalletId=${systemWalletId || ""}`;
+
+  if (walletId) {
+    apiUrl += `&walletId=${walletId}`; // Add walletId if available
+  }
+
+  // Add new wallet params if available
+  if (facilitiesWallet) {
+    apiUrl += `&FacilitiesWallet=${facilitiesWallet}`;
+  }
+  if (necessitiesWallet) {
+    apiUrl += `&NecessitiesWallet=${necessitiesWallet}`;
+  }
+  if (foodStuffWallet) {
+    apiUrl += `&FoodStuffWallet=${foodStuffWallet}`;
+  }
+  if (healthWallet) {
+    apiUrl += `&HealthWallet=${healthWallet}`;
+  }
+
+  console.log('Generated API URL:', apiUrl);
+  
 
   useEffect(() => {
-    // Validate if necessary parameters exist
-    if (!vnp_TxnRef || !vnp_ResponseCode || !vnp_SecureHash) {
-      message.error("Missing payment information. Please check again.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Prepare the query string with the required parameters
-    const url = `https://localhost:7073/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&vnp_SecureHash=${vnp_SecureHash}`;
-
-    // Send request to backend to verify the payment
-    axios
-      .get(url) // Using GET request as the API expects query params in the URL
-      .then((response) => {
-        setIsLoading(false);
-        if (response.status === 200 && response.data.success) {
-          setPaymentStatus({
-            success: true,
-            donationId: response.data.donationId,
-            paymentId: response.data.paymentId,
-            amount: response.data.amount,
-            status: response.data.status
-          });
-        } else {
-          setPaymentStatus({
-            success: false,
-            amount: response.data.amount,
-            message: "Payment failed"
+    let timeoutId; // To store the timeout reference
+  
+    const fetchPaymentResult = async () => {
+      // Set a timeout to handle processing timeouts
+      timeoutId = setTimeout(() => {
+        if (loading) {
+          setLoading(false);
+          notification.error({
+            message: 'Payment Processing Timeout',
+            description: 'The payment processing took too long. Please try again.',
           });
         }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        setPaymentStatus({ success: false, message: "An error occurred. Please try again." });
-        console.error("Error:", error);
-      });
-  }, [vnp_TxnRef, vnp_ResponseCode, vnp_SecureHash]);
+      }, 120000); // Set a 2-minute timeout
+  
+      try {
+        // Attempt to get the payment result from the API
+        const response = await axios.get(apiUrl);
+  
+        // Once the response is received, clear the timeout
+        clearTimeout(timeoutId);
+  
+        setPaymentResult(response.data);
+        setLoading(false);
+  
+        // Show the appropriate notification based on success or failure
+        if (response.data.success) {
+          notification.success({
+            message: 'Payment Successful',
+            description: `Donation ID: ${response.data.donationId}, Amount: ${response.data.amount}`,
+          });
+        } else {
+          // Show error notification for already paid donations
+          if (response.data.message === "This donation has already been paid.") {
+            notification.info({
+              message: 'Payment Already Made',
+              description: `Donation ID: ${response.data.donationId} has already been paid.`,
+            });
+          } else {
+            notification.error({
+              message: 'Payment Failed',
+              description: `Donation ID: ${response.data.donationId}, Amount: ${response.data.amount}`,
+            });
+          }
+        }
+      } catch (error) {
+        // Remove error notification for processing error
+        clearTimeout(timeoutId);
+        setLoading(false);
+  
+        // Do not show "Payment Processing Error" notification
+        // We leave the catch block empty to avoid showing any error message
+      }
+    };
+  
+    // Call the function to fetch the payment result
+    fetchPaymentResult();
+  
+    // Cleanup timeout when the component is unmounted
+    return () => {
+      clearTimeout(timeoutId); // Clear timeout on component unmount
+    };
+  }, [apiUrl, loading]);
+  
+  const goToHome = () => {
+    navigate('/home'); // Redirect to the home page
+  };
 
   return (
-    <div style={{ padding: "40px 20px", backgroundColor: "#f9f9f9", minHeight: "10vh" }}>
-      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <Card title="Payment Result" bordered={false} style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.1)", padding: "20px" }}>
-          {isLoading ? (
-            <div style={{ textAlign: 'center' }}>
-              <Spin size="large" />
-              <p>Validating payment...</p>
-            </div>
-          ) : (
-            <>
-              <Result
-                status={paymentStatus.success ? "success" : "error"}
-                title={paymentStatus.success ? "Payment Successful!" : "Payment Failed"}
-                subTitle={paymentStatus.success ? `Amount: ${paymentStatus.amount} VND` : `Amount: ${paymentStatus.amount}`}
-                extra={[
-                  <Button key="home" type="primary" onClick={() => navigate('/')} style={{ width: '100%' }}>
-                    Go back to Home
-                  </Button>
-                ]}
-              />
-            </>
-          )}
+    <div style={{ padding: '40px', backgroundColor: '#f0f2f5' }}>
+      <Spin spinning={loading}>
+        <Card bordered={false} style={{ width: '100%', maxWidth: '600px', margin: 'auto' }}>
+          <Row justify="center">
+            <Col span={24} style={{ textAlign: 'center' }}>
+              <h2 style={{ color: '#1890ff' }}>Payment Return</h2>
+              <Divider />
+              {paymentResult && (
+                <div>
+                  <p><strong>Donation ID:</strong> {paymentResult.donationId}</p>
+                  <p><strong>Status:</strong> {paymentResult.status}</p>
+                  <p><strong>Amount:</strong> {paymentResult.amount}</p>
+                  {facilitiesWallet && <p><strong>Facilities Wallet:</strong> {facilitiesWallet}</p>}
+                  {necessitiesWallet && <p><strong>Necessities Wallet:</strong> {necessitiesWallet}</p>}
+                  {foodStuffWallet && <p><strong>Food Stuff Wallet:</strong> {foodStuffWallet}</p>}
+                  {healthWallet && <p><strong>Health Wallet:</strong> {healthWallet}</p>}
+                  {paymentResult.success ? (
+                    <Button type="primary" onClick={goToHome}>Go to Home</Button>
+                  ) : (
+                    <Button type="danger" onClick={goToHome}>Go to Home</Button>
+                  )}
+                </div>
+              )}
+            </Col>
+          </Row>
         </Card>
-      </div>
+      </Spin>
     </div>
   );
-}
+};
 
-export default PaymentReturnPage;
+export default PaymentReturn;

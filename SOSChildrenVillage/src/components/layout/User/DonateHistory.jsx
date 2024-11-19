@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Spin, message, Result } from 'antd';
+import { Table, Spin, message, Result, Typography } from 'antd';
 import axios from 'axios';
+
+const { Title } = Typography;
 
 const DonateHistory = () => {
   const [donations, setDonations] = useState([]);
@@ -8,45 +10,41 @@ const DonateHistory = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const fetchDonations = async () => {
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
 
       if (!userId || !token) {
-        message.error('User not logged in or token missing');
+        message.error('You must be logged in to view donation history.');
         setLoading(false);
         return;
       }
 
-      const fetchDonations = async () => {
-        try {
-          console.log('Sending request to fetch donations for userId:', userId);
-          const response = await axios.get(`https://localhost:7073/api/Donation/GetDonationByUserId/${userId}`, {
+      try {
+        const response = await axios.get(
+          `https://localhost:7073/api/Donation/GetDonationByUserId/${userId}`,
+          {
             headers: {
-              Authorization: `Bearer ${token}`,  // Gửi token trong header Authorization
+              Authorization: `Bearer ${token}`, // Token for authentication
             },
-          });
-
-          // Log response data
-          console.log('Received response:', response.data);
-
-          const donationData = response.data?.$values || [];
-
-          if (donationData.length > 0) {
-            setDonations(donationData);
-          } else {
-            message.info('No donations found');
           }
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching donations:', error);
-          setError('Error fetching donations');
-          setLoading(false);
-        }
-      };
+        );
 
-      fetchDonations();
-    }
+        const donationData = response.data?.$values || [];
+        if (donationData.length > 0) {
+          setDonations(donationData);
+        } else {
+          message.info('No donations found.');
+        }
+      } catch (err) {
+        console.error('Error fetching donations:', err);
+        setError('Failed to fetch donation history. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDonations();
   }, []);
 
   const columns = [
@@ -59,14 +57,23 @@ const DonateHistory = () => {
       title: 'Date Time',
       dataIndex: 'dateTime',
       key: 'dateTime',
-      render: (dateTime) => new Date(dateTime).toLocaleString(),
+      render: (dateTime) =>
+        dateTime
+          ? new Date(dateTime).toLocaleString('vi-VN', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : 'N/A',
     },
     {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
       render: (amount) =>
-        amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+        amount?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || '0 VND',
     },
     {
       title: 'Description',
@@ -81,26 +88,27 @@ const DonateHistory = () => {
   ];
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
+      <Title level={2}>Donation History</Title>
       {loading ? (
         <Spin size="large" />
       ) : error ? (
         <Result
           status="error"
-          title="Failed to Load Donations"
-          subTitle={error || 'There was an error while fetching your donations. Please try again later.'}
+          title="Error Loading Donation History"
+          subTitle={error}
         />
       ) : donations.length === 0 ? (
         <Result
           status="info"
           title="No Donations Found"
-          subTitle="It seems like you have not made any donations yet."
+          subTitle="It seems like you haven't made any donations yet."
         />
       ) : (
         <Table
           columns={columns}
           dataSource={donations}
-          rowKey="id"
+          rowKey={(record) => record.id}
           bordered
           pagination={{ pageSize: 5 }}
           style={{

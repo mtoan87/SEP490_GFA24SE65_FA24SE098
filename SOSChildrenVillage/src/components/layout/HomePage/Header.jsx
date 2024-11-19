@@ -9,6 +9,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
   const [userName, setUserName] = useState(''); // User's name
   const [userImage, setUserImage] = useState(''); // User's profile image URL
+  const [userRoleId, setUserRoleId] = useState(null); // User's role ID
   const [loading, setLoading] = useState(true); // API loading state
   const navigate = useNavigate();
 
@@ -34,10 +35,11 @@ const Header = () => {
       }
       const data = await response.json();
 
-      // Extract userName and image URL from response
+      // Extract userName, image URL, and roleId from response
       setUserName(data.userName || 'Guest'); // Set userName or default to 'Guest'
       const imageUrl = data.images?.$values?.[0]?.urlPath; // Extract image URL if available
       setUserImage(imageUrl || ''); // Default to empty if no image
+      setUserRoleId(data.roleId || null); // Set roleId or null if undefined
     } catch (error) {
       console.error('Error fetching user info:', error);
     } finally {
@@ -91,13 +93,38 @@ const Header = () => {
           </Button>
         </Link>
       </div>
-      <div style={{ marginBottom: '15px' }}>
+      <div style={{ marginBottom: '10px' }}>
         <Link to="/donateHistory">
           <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
             Donate History
           </Button>
         </Link>
       </div>
+      <div style={{ marginBottom: '10px' }}>
+        <Link to="/villageHistory">
+          <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+            Village History
+          </Button>
+        </Link>
+      </div>
+      {/* Nút "Booking History" */}
+      <div style={{ marginBottom: '10px' }}>
+        <Link to="/bookingHistory">
+          <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+            Booking History
+          </Button>
+        </Link>
+      </div>
+      {/* Hiển thị nút Dashboard nếu roleId là 1 */}
+      {Number(localStorage.getItem("roleId")) === 1 && (
+        <div style={{ marginBottom: '15px' }}>
+          <Link to="/admin">
+            <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+              Dashboard
+            </Button>
+          </Link>
+        </div>
+      )}
       <Button
         type="primary"
         danger
@@ -111,7 +138,6 @@ const Header = () => {
       </Button>
     </div>
   );
-  
 
   return (
     <header style={{ backgroundColor: '#f0f2f5', padding: '15px 0' }}>
@@ -143,29 +169,32 @@ const Header = () => {
               </Button>
             </Popover>
           ) : (
-            <>
-              <Link to="/login">
-                <Button
-                  type="primary"
-                  style={{
-                    marginRight: '10px',
-                    borderRadius: '8px',
-                  }}
-                >
-                  Login
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button
-                  type="default"
-                  style={{
-                    borderRadius: '8px',
-                  }}
-                >
-                  Register
-                </Button>
-              </Link>
-            </>
+            <Row gutter={10}>
+              <Col>
+                <Link to="/login">
+                  <Button
+                    type="primary"
+                    style={{
+                      borderRadius: '8px',
+                    }}
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </Col>
+              <Col>
+                <Link to="/register">
+                  <Button
+                    type="default"
+                    style={{
+                      borderRadius: '8px',
+                    }}
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </Col>
+            </Row>
           )}
         </Col>
       </Row>

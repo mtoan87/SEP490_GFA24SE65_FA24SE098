@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, message, Select, DatePicker, Upload } from 'antd';
+import { Form, Input, Button, message, Select, DatePicker, Upload, Typography, Space } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
+import './EditUserDetail.css'; // Import CSS file
+
+const { Title, Text } = Typography;
 
 const EditUserDetail = () => {
   const navigate = useNavigate();
@@ -58,7 +61,7 @@ const EditUserDetail = () => {
     try {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-
+  
       const formData = new FormData();
       formData.append('Id', userId);
       formData.append('UserName', values.userName);
@@ -70,15 +73,19 @@ const EditUserDetail = () => {
       formData.append('Country', values.country);
       formData.append('RoleId', 2);
       formData.append('Status', 'Active');
-      formData.append('Password', values.password || '');
-
-      // Handle images
+  
+      // Chỉ thêm mật khẩu nếu userInfo đã có hoặc muốn giữ lại
+      if (userInfo.password) {
+        formData.append('Password', userInfo.password);
+      }
+  
+      // Xử lý ảnh
       imageList.forEach((file) => {
         if (file.originFileObj) {
           formData.append('Img', file.originFileObj);
         }
       });
-
+  
       const response = await axios.put(
         `https://localhost:7073/api/UserAccount/UpdateUser?id=${userId}`,
         formData,
@@ -89,7 +96,7 @@ const EditUserDetail = () => {
           },
         }
       );
-
+  
       if (response.status === 200) {
         message.success('Profile updated successfully!');
         navigate('/userdetail');
@@ -105,7 +112,14 @@ const EditUserDetail = () => {
   if (!userInfo) return null;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{
+      maxWidth: "400px",
+      margin: "auto",
+      padding: "2rem",
+      background: "#f9f9f9",
+      borderRadius: "12px",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+    }}>
       <Form
         name="editProfile"
         onFinish={onFinish}
@@ -118,7 +132,13 @@ const EditUserDetail = () => {
           gender: userInfo.gender,
           country: userInfo.country,
         }}
+        layout="vertical"
       >
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>Edit Profile</Title>
+          <Text type="secondary">Update your details below</Text>
+        </div>
+
         <Form.Item
           label="Username"
           name="userName"
@@ -152,7 +172,7 @@ const EditUserDetail = () => {
         </Form.Item>
 
         <Form.Item label="Date of Birth" name="dob">
-          <DatePicker format="YYYY-MM-DD" />
+          <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
         </Form.Item>
 
         <Form.Item label="Gender" name="gender">
@@ -167,10 +187,6 @@ const EditUserDetail = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Password" name="password">
-          <Input.Password />
-        </Form.Item>
-
         <Form.Item label="Profile Picture" valuePropName="fileList">
           <Upload
             listType="picture-card"
@@ -182,9 +198,11 @@ const EditUserDetail = () => {
           </Upload>
         </Form.Item>
 
-        <Button type="primary" htmlType="submit">
-          Update Profile
-        </Button>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+            Update Profile
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );

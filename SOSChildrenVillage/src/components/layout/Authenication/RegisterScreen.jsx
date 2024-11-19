@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, DatePicker, Select, Upload, Typography, Space } from "antd";
+import { Form, Input, Button, DatePicker, Select, Upload, Typography, Space, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -9,9 +9,10 @@ const { Title, Text } = Typography;
 export const RegisterScreen = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [img, setImg] = useState(null);
+  const [imageList, setImageList] = useState([]);
+
   const handleImageUpload = (file) => {
-    setImg(file);
+    setImageList([file]); // Set uploaded image as the fileList
     return false; // Prevent default upload
   };
 
@@ -25,23 +26,33 @@ export const RegisterScreen = () => {
     formData.append("Dob", values.Dob.format("YYYY-MM-DD"));
     formData.append("Gender", values.Gender);
     formData.append("Country", values.Country);
-    formData.append("Img", img);
+  
+    // Upload image
+    if (imageList.length > 0 && imageList[0].originFileObj) {
+      formData.append("Img", imageList[0].originFileObj);
+    }
+  
     try {
       const response = await axios.post(
         "https://localhost:7073/api/UserAccount/CreateUser",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-
+  
       if (response.status === 200) {
-        navigate("/login"); // Redirect after successful registration
+        // Display success message
+        message.success("Registration successful!");
+        
+        // Redirect to login page after success
+        navigate("/login");
       } else {
-        console.log("Registration failed:", response);
+        message.error("Registration failed.");
       }
     } catch (error) {
-      console.log("Error registering:", error);
+      message.error("Error registering: " + error.message);
     }
   };
+  
 
   return (
     <div style={{
@@ -102,9 +113,15 @@ export const RegisterScreen = () => {
           <Input placeholder="Enter your country" />
         </Form.Item>
 
-        <Form.Item name="Img" label="Profile Image">
-          <Upload beforeUpload={handleImageUpload} showUploadList={false}>
-            <Button icon={<UploadOutlined />}>Upload Image</Button>
+        {/* Image Upload Section */}
+        <Form.Item label="Profile Image" valuePropName="fileList">
+          <Upload
+            listType="picture-card"
+            fileList={imageList}
+            beforeUpload={handleImageUpload} // Handle image upload
+            onChange={({ fileList }) => setImageList(fileList)} // Update file list
+          >
+            {imageList.length < 1 ? <UploadOutlined /> : null}
           </Upload>
         </Form.Item>
 
@@ -123,4 +140,5 @@ export const RegisterScreen = () => {
     </div>
   );
 };
+
 export default RegisterScreen;

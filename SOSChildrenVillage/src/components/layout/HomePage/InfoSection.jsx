@@ -72,15 +72,22 @@ const MyComponent = () => {
       <Link to={isEvent ? `/eventdetail/${data.id}` : `/childdetail/${data.id}`}>
         <Card
           hoverable
-          cover={<img alt={data.name || data.childName} src={data.imageUrl} className="custom-card-image" />}
+          cover={
+            <img
+              alt={data.name || data.childName}
+              src={data.imageUrl || '/placeholder.jpg'} // Thêm ảnh mặc định nếu không có URL
+              className="custom-card-image"
+            />
+          }
           bordered={false}
           className="custom-card"
         >
-          <h2 style={{ margin: '5px' }} className="custom-title">
-            {data.name || data.childName}
-          </h2>
-          {data.healthStatus && <p>Health Status: {data.healthStatus}</p>}
+          <h2 className="custom-title">{data.name || data.childName}</h2>
+          <p className="card-description">
+            {data.healthStatus ? `Health Status: ${data.healthStatus}` : ''}
+          </p>
         </Card>
+
       </Link>
     </Col>
   );

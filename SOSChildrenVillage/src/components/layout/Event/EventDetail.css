@@ -51,24 +51,25 @@
 }
 
 .event-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Tạo các cột linh hoạt */
+  gap: 15px; /* Khoảng cách giữa các ảnh */
 }
 
 .event-image {
-  width: 100%;
-  max-width: 350px;
-  height: auto;
+  width: 100%; /* Chiều rộng tối đa của khung */
+  aspect-ratio: 4 / 3; /* Duy trì tỷ lệ khung hình 4:3 */
+  object-fit: cover; /* Cắt ảnh vừa khung */
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .event-image:hover {
-  transform: scale(1.05); /* Adds hover effect for images */
+  transform: scale(1.05); /* Hiệu ứng phóng to nhẹ khi hover */
 }
+
 
 /* Right Column (Event Info and Donation) */
 .right-column {
