@@ -1,4 +1,3 @@
-import React from "react";
 import LoginScreen from "../../../pages/Authenication/LoginScreen";
 import { Layout, Row, Col } from "antd"; // Ant Design components
 

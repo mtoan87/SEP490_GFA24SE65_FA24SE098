@@ -1,4 +1,3 @@
-import React from "react";
 import RegisterScreen from "../../../pages/Authenication/RegisterScreen";
 import { Layout, Row, Col } from "antd"; // Ant Design components
 
