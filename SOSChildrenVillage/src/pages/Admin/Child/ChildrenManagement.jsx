@@ -37,6 +37,8 @@ const ChildrenManagement = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(() => {
     fetchChildren();
@@ -45,7 +47,7 @@ const ChildrenManagement = () => {
   const fetchChildren = async () => {
     try {
       setLoading(true);
-      const data = await getChildWithImages(); // Sử dụng API mới
+      const data = await getChildWithImages();
       setChildren(Array.isArray(data) ? data : []);
       console.log("Fetched children data with images:", data);
     } catch (error) {
@@ -264,7 +266,7 @@ const ChildrenManagement = () => {
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
     {
-      title: "Image",
+      /* title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
       render: (imageUrls) => (
@@ -283,8 +285,29 @@ const ChildrenManagement = () => {
               onClick={() => window.open(url, "_blank")}
             />
           ))}
-        </div>
-      ),
+        </div> */
+
+        title: "Image",
+        dataIndex: "imageUrls",
+        key: "imageUrls",
+        align: 'center',
+        render: (imageUrls) => (
+          <Button 
+            type="link"
+            onClick={() => {
+              setSelectedImages(imageUrls || []);
+              setIsImageModalVisible(true);
+            }}
+            style={{
+              padding: 0,
+              margin: 0,
+              display: 'block',
+              width: '100%'
+            }}
+          >
+            View
+          </Button>
+        ),
     },
     {
       title: "Status",
@@ -334,21 +357,26 @@ const ChildrenManagement = () => {
           <Input
             placeholder="Search for children"
             prefix={<SearchOutlined />}
-            style={{ width: 350, marginRight: 8 }}
+            style={{ width: 500, marginRight: 8 }}
           />
-
-          <Button
-            onClick={() => showModal()}
-            type="primary"
-            icon={<PlusOutlined />}
-            style={{ marginRight: 8 }}
+          <div
+            style={{
+              display: "flex",
+            }}
           >
-            Add New Children
-          </Button>
+            <Button
+              onClick={() => showModal()}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New Children
+            </Button>
 
-          <Button type="default" style={{ marginRight: 8 }}>
-            Filter options
-          </Button>
+            <Button type="default" style={{ marginRight: 8 }}>
+              Filter options
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -404,6 +432,19 @@ const ChildrenManagement = () => {
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
         width={650}
+        footer={[
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
+        ]}
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -506,6 +547,55 @@ const ChildrenManagement = () => {
             <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
+      </Modal>
+
+    {/* Images */}
+      <Modal
+        title="Images"
+        open={isImageModalVisible}
+        onCancel={() => setIsImageModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+            padding: "16px",
+          }}
+        >
+          {selectedImages.map((url, index) => (
+            <div
+              key={index}
+              style={{
+                border: "1px solid #d9d9d9",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+              <div
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                  borderTop: "1px solid #d9d9d9",
+                }}
+              >
+                {`Image ${index + 1}`}
+              </div>
+            </div>
+          ))}
+        </div>
       </Modal>
     </div>
   );
