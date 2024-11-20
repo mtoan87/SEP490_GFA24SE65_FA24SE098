@@ -65,11 +65,11 @@ const PaymentReturn = () => {
   }
 
   console.log('Generated API URL:', apiUrl);
-  
+
 
   useEffect(() => {
     let timeoutId; // To store the timeout reference
-  
+
     const fetchPaymentResult = async () => {
       // Set a timeout to handle processing timeouts
       timeoutId = setTimeout(() => {
@@ -81,17 +81,17 @@ const PaymentReturn = () => {
           });
         }
       }, 120000); // Set a 2-minute timeout
-  
+
       try {
         // Attempt to get the payment result from the API
         const response = await axios.get(apiUrl);
-  
+
         // Once the response is received, clear the timeout
         clearTimeout(timeoutId);
-  
+
         setPaymentResult(response.data);
         setLoading(false);
-  
+
         // Show the appropriate notification based on success or failure
         if (response.data.success) {
           notification.success({
@@ -116,21 +116,21 @@ const PaymentReturn = () => {
         // Remove error notification for processing error
         clearTimeout(timeoutId);
         setLoading(false);
-  
+
         // Do not show "Payment Processing Error" notification
         // We leave the catch block empty to avoid showing any error message
       }
     };
-  
+
     // Call the function to fetch the payment result
     fetchPaymentResult();
-  
+
     // Cleanup timeout when the component is unmounted
     return () => {
       clearTimeout(timeoutId); // Clear timeout on component unmount
     };
   }, [apiUrl, loading]);
-  
+
   const goToHome = () => {
     navigate('/home'); // Redirect to the home page
   };
@@ -141,7 +141,7 @@ const PaymentReturn = () => {
         <Card bordered={false} style={{ width: '100%', maxWidth: '600px', margin: 'auto' }}>
           <Row justify="center">
             <Col span={24} style={{ textAlign: 'center' }}>
-              <h2 style={{ color: '#1890ff' }}>Payment Return</h2>
+              <h2 style={{ color: '#1890ff' }}>Payment</h2>
               <Divider />
               {paymentResult && (
                 <div>
