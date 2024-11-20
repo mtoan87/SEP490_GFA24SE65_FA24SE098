@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../../components/layout/HomePage/Header";
-import Nav from "../../components/layout/HomePage/Nav";
-import UserDetail from "../../components/layout/User/UserDetail";
-import Footer from "../../components/layout/HomePage/Footer";
+import Header from "../../../pages/Home/Header";
+import Nav from "../../../pages/Home/Nav";
+import UserDetail from "../../../pages/User/UserDetail";
+import Footer from "../../../pages/Home/Footer";
 
 const App = () => {
     return (
