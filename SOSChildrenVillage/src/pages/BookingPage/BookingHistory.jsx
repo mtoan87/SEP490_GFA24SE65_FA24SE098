@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spin, message, Result } from 'antd';
+import { Table, Spin, message, Result, Button, Space, Popconfirm } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,11 +31,7 @@ const BookingHistory = () => {
 
         if (response.data && Array.isArray(response.data.data)) {
           const bookingsData = response.data.data;
-          if (bookingsData.length > 0) {
-            setBookings(bookingsData);
-          } else {
-            setBookings([]); // Clear bookings if no data
-          }
+          setBookings(bookingsData.length > 0 ? bookingsData : []);
         } else {
           setError('Invalid data structure');
         }
@@ -49,6 +45,32 @@ const BookingHistory = () => {
 
     fetchBookingHistory();
   }, [navigate]);
+
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('token');
+  
+    try {
+      console.log(`Attempting to delete booking with ID: ${id}`); // Log trước khi gửi request
+  
+      const response = await axios.put(
+        `https://localhost:7073/api/Booking/SoftDelete?Id=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      console.log('Delete response:', response); // Log kết quả trả về từ API
+  
+      message.success('Booking deleted successfully.');
+      setBookings((prev) => prev.filter((booking) => booking.id !== id)); // Cập nhật state
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      message.error('Failed to delete booking. Please try again.');
+    }
+  };
+  
 
   const columns = [
     {
@@ -81,6 +103,31 @@ const BookingHistory = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space size="middle">
+          <Popconfirm
+            title="Are you sure to cancel this booking?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{
+              style: { fontSize: '12px', padding: '4px 8px', width: '120px' }, // Style cho nút Yes
+            }}
+            cancelButtonProps={{
+              style: { fontSize: '12px', padding: '4px 8px', width: '120px' }, // Style cho nút No
+            }}
+          >
+            <Button type="primary" danger>
+              Cancel
+            </Button>
+          </Popconfirm>
+
+        </Space>
+      ),
     },
   ];
 

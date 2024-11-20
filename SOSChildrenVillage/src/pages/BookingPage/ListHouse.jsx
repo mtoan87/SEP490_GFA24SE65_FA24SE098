@@ -17,6 +17,7 @@ const ListHouse = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedHouse, setSelectedHouse] = useState(null);
   const [userId, setUserId] = useState(''); // Store userId
+  const [selectedDate, setSelectedDate] = useState(null); // Store selected date for booking
 
   useEffect(() => {
     // Check if userId is available in localStorage, if not, redirect to login
@@ -119,9 +120,6 @@ const ListHouse = () => {
     }
   };
 
-
-
-
   const columns = [
     {
       title: 'House Name',
@@ -185,6 +183,10 @@ const ListHouse = () => {
     },
   ];
 
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <Title level={2}>Houses in Village</Title>
@@ -210,25 +212,33 @@ const ListHouse = () => {
         footer={null}
       >
         <Form onFinish={handleBooking} layout="vertical">
-          {/* Remove or comment out the House field */}
-          {/* <Form.Item label="House" name="houseName">
-      <Input value={selectedHouse?.houseName} disabled />
-    </Form.Item> */}
-
           <Form.Item name="visitday" label="Visit Day" rules={[{ required: true }]}>
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              onChange={handleDateChange}
+              disabledDate={(current) => current && current < moment().startOf('day')} // Cho phép chọn ngày mai và các ngày sau
+            />
           </Form.Item>
+
           <Form.Item name="bookingSlotId" label="Slot Time" rules={[{ required: true }]}>
             <Select>
-              <Option value={1}>Slot 1 (9h - 10h)</Option>
-              <Option value={2}>Slot 2 (10h - 11h)</Option>
-              <Option value={3}>Slot 3 (11h - 12h)</Option>
-              <Option value={4}>Slot 4 (12h - 13h)</Option>
-              <Option value={5}>Slot 5 (13h - 14h)</Option>
-              <Option value={6}>Slot 6 (14h - 15h)</Option>
-              <Option value={7}>Slot 7 (15h - 16h)</Option>
+              {[1, 2, 3, 4, 5, 6, 7].map((slot) => {
+                const currentTime = moment();
+                const slotStartTime = moment(getSlotStartTime(slot), "HH:mm");
+                const isDisabled = selectedDate && selectedDate.isSame(moment(), 'day') && currentTime.isAfter(slotStartTime);
+                return (
+                  <Option
+                    key={slot}
+                    value={slot}
+                    disabled={isDisabled}
+                  >
+                    {`Slot ${slot} (${getSlotStartTime(slot)} - ${moment(getSlotStartTime(slot), 'HH:mm').add(1, 'hour').format('HH:mm')})`}
+                  </Option>
+                );
+              })}
             </Select>
           </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Book
@@ -236,9 +246,22 @@ const ListHouse = () => {
           </Form.Item>
         </Form>
       </Modal>
-
     </div>
   );
 };
 
 export default ListHouse;
+
+// Helper function to get slot start time
+function getSlotStartTime(slot) {
+  switch (slot) {
+    case 1: return "09:00";
+    case 2: return "10:00";
+    case 3: return "11:00";
+    case 4: return "12:00";
+    case 5: return "13:00";
+    case 6: return "14:00";
+    case 7: return "15:00";
+    default: return "09:00";
+  }
+}
