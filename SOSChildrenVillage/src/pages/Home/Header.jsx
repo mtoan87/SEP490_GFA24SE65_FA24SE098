@@ -13,7 +13,6 @@ const Header = () => {
   const [loading, setLoading] = useState(true); // API loading state
   const navigate = useNavigate();
 
-  // Check login state and fetch user info
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
@@ -26,7 +25,6 @@ const Header = () => {
     }
   }, []);
 
-  // Fetch user info from API
   const fetchUserInfo = async (userId) => {
     try {
       const response = await fetch(`https://localhost:7073/api/UserAccount/GetUserById/${userId}`);
@@ -35,11 +33,10 @@ const Header = () => {
       }
       const data = await response.json();
 
-      // Extract userName, image URL, and roleId from response
-      setUserName(data.userName || 'Guest'); // Set userName or default to 'Guest'
-      const imageUrl = data.images?.$values?.[0]?.urlPath; // Extract image URL if available
-      setUserImage(imageUrl || ''); // Default to empty if no image
-      setUserRoleId(data.roleId || null); // Set roleId or null if undefined
+      setUserName(data.userName || 'Guest');
+      const imageUrl = data.images?.$values?.[0]?.urlPath;
+      setUserImage(imageUrl || '');
+      setUserRoleId(data.roleId || null);
     } catch (error) {
       console.error('Error fetching user info:', error);
     } finally {
@@ -47,22 +44,20 @@ const Header = () => {
     }
   };
 
-  // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Clear token
-    localStorage.removeItem('userId'); // Clear user ID
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setIsLoggedIn(false);
-    navigate('/login'); // Redirect to login page
+    navigate('/login');
   };
 
-  // Information Box Content
   const userInfoContent = loading ? (
-    <Spin /> // Show loading spinner while fetching data
+    <Spin />
   ) : (
     <div
       style={{
-        textAlign: 'center', // Center align content
-        padding: '20px', // Add padding
+        textAlign: 'center',
+        padding: '20px',
         minWidth: '250px',
       }}
     >
@@ -72,7 +67,7 @@ const Header = () => {
         icon={!userImage ? <UserOutlined /> : undefined}
         style={{
           marginBottom: '15px',
-          border: '2px solid #1890ff', // Add border around avatar
+          border: '2px solid #1890ff',
         }}
       />
       <Text
@@ -81,7 +76,7 @@ const Header = () => {
           display: 'block',
           fontSize: '16px',
           marginBottom: '15px',
-          color: '#000', // Set text color to black
+          color: '#000',
         }}
       >
         {userName}
@@ -93,30 +88,7 @@ const Header = () => {
           </Button>
         </Link>
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <Link to="/donateHistory">
-          <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
-            Donate History
-          </Button>
-        </Link>
-      </div>
-      <div style={{ marginBottom: '10px' }}>
-        <Link to="/villageHistory">
-          <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
-            Village History
-          </Button>
-        </Link>
-      </div>
-      {/* Nút "Booking History" */}
-      <div style={{ marginBottom: '10px' }}>
-        <Link to="/bookingHistory">
-          <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
-            Booking History
-          </Button>
-        </Link>
-      </div>
-      {/* Hiển thị nút Dashboard nếu roleId là 1 */}
-      {Number(localStorage.getItem("roleId")) === 1 && (
+      {userRoleId === 1 ? (
         <div style={{ marginBottom: '15px' }}>
           <Link to="/admin">
             <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
@@ -124,13 +96,37 @@ const Header = () => {
             </Button>
           </Link>
         </div>
+      ) : (
+        <>
+          <div style={{ marginBottom: '10px' }}>
+            <Link to="/donateHistory">
+              <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+                Donate History
+              </Button>
+            </Link>
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <Link to="/villageHistory">
+              <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+                Village History
+              </Button>
+            </Link>
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <Link to="/bookingHistory">
+              <Button type="link" style={{ fontSize: '14px', color: '#000' }}>
+                Booking History
+              </Button>
+            </Link>
+          </div>
+        </>
       )}
       <Button
         type="primary"
         danger
         onClick={handleLogout}
         style={{
-          borderRadius: '8px', // Round button
+          borderRadius: '8px',
           padding: '5px 20px',
         }}
       >
@@ -148,7 +144,6 @@ const Header = () => {
           <a href="#"><TwitterOutlined style={{ fontSize: '20px', color: '#1DA1F2' }} /></a>
         </Col>
         <Col>
-          {/* Conditionally render login/register or user icon based on login state */}
           {isLoggedIn ? (
             <Popover
               content={userInfoContent}
@@ -165,7 +160,7 @@ const Header = () => {
                   color: '#1890ff',
                 }}
               >
-                {userName} {/* Optionally show user's name */}
+                {userName}
               </Button>
             </Popover>
           ) : (
