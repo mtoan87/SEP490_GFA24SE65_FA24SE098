@@ -38,12 +38,12 @@ const HouseManagement = () => {
     }
   }, [navigate, redirecting]); // Thêm redirecting vào dependencies để tránh render lại không cần thiết
 
-  const fetchHouses = async () => {
+  const fetchHouses = async (showDeleted = false) => {
     try {
       setLoading(true);
       const url = showDeleted
-        ? 'https://localhost:7073/api/Houses/FormatedHouseIsDelete'
-        : 'https://localhost:7073/api/Houses/FormatedHouse';
+        ? 'https://localhost:7073/api/Houses/FormatedHouseIsDelete' // Nhà đã xóa
+        : 'https://localhost:7073/api/Houses/FormatedHouse'; // Nhà chưa xóa
       const response = await axios.get(url);
       setHouses(response.data);
     } catch (error) {
@@ -53,6 +53,8 @@ const HouseManagement = () => {
       setLoading(false);
     }
   };
+
+
 
   const showModal = (house = null) => {
     setEditingHouse(house);
@@ -183,11 +185,12 @@ const HouseManagement = () => {
     try {
       await axios.put(`https://localhost:7073/api/Houses/SoftRestoreHouse?id=${houseId}`);
       message.success('House Restored Successfully');
-      fetchHouses();
+      fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
       message.error('Unable to restore house');
     }
   };
+
 
   const columns = [
     {
@@ -315,7 +318,11 @@ const HouseManagement = () => {
           </Button>
           <Button
             onClick={() => {
-              setShowDeleted((prev) => !prev);
+              setShowDeleted((prev) => {
+                const newShowDeleted = !prev;
+                fetchHouses(newShowDeleted); // Gọi lại fetchHouses với giá trị mới của showDeleted
+                return newShowDeleted;
+              });
             }}
             type="default"
           >
@@ -341,38 +348,38 @@ const HouseManagement = () => {
 
       {/* Modal for Create/Edit House */}
       <Modal
-  title={editingHouse ? 'Edit House' : 'Create New House'}
-  visible={isModalVisible}
-  onOk={handleOk}
-  onCancel={() => setIsModalVisible(false)}
-  confirmLoading={loading}
-  footer={[
-    <Button
-      key="cancel"
-      onClick={() => setIsModalVisible(false)}
-      style={{
-        fontSize: '12px',
-        padding: '4px 8px',
-        width: '100px', // Adjust the width to make the button more compact
-      }}
-    >
-      Cancel
-    </Button>,
-    <Button
-      key="submit"
-      type="primary"
-      onClick={handleOk}
-      loading={loading}
-      style={{
-        fontSize: '12px',
-        padding: '4px 8px',
-        width: '100px', // Adjust the width to make the button more compact
-      }}
-    >
-      Ok
-    </Button>,
-  ]}
->
+        title={editingHouse ? 'Edit House' : 'Create New House'}
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={() => setIsModalVisible(false)}
+        confirmLoading={loading}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={() => setIsModalVisible(false)}
+            style={{
+              fontSize: '12px',
+              padding: '4px 8px',
+              width: '100px', // Adjust the width to make the button more compact
+            }}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+            loading={loading}
+            style={{
+              fontSize: '12px',
+              padding: '4px 8px',
+              width: '100px', // Adjust the width to make the button more compact
+            }}
+          >
+            Ok
+          </Button>,
+        ]}
+      >
         <Form form={form} layout="vertical" name="houseForm">
           <Form.Item name="houseName" label="House Name" rules={[{ required: true, message: 'Please enter house name' }]}>
             <Input />
