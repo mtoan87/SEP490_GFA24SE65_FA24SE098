@@ -33,8 +33,6 @@ const DonateHistory = () => {
         const donationData = response.data?.$values || [];
         if (donationData.length > 0) {
           setDonations(donationData);
-        } else {
-          message.info('No donations found.');
         }
       } catch (err) {
         console.error('Error fetching donations:', err);

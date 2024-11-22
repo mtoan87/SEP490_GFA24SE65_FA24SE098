@@ -21,6 +21,7 @@ import {
   TransactionOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
+import logo from '../../../../assets/images/logo3.png';
 
 const { Sider } = Layout;
 
@@ -176,7 +177,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
   ];
 
   return (
-    <Sider 
+<Sider 
       collapsible 
       collapsed={collapsed}
       trigger={null}
@@ -184,14 +185,32 @@ const Sidebar = ({ collapsed, onToggle }) => {
       collapsedWidth={80}
       className="site-sidebar"
     >
+      {/* Header với logo */}
       <div className="sidebar-header">
-        <span className="logo-text">Logo của Project</span>
-        <button
-          onClick={() => onToggle(!collapsed)}
-          className="collapse-button"
-        >
-          <span className="text-xl">☰</span>
-        </button>
+        <img
+          src={logo}
+          alt="Project Logo"
+          className="logo-image"
+          style={{
+            height: '40px', // Chiều cao logo
+            marginRight: collapsed ? 0 : '10px', // Thay đổi margin dựa trên trạng thái collapsed
+            transition: 'margin 0.3s', // Hiệu ứng chuyển đổi
+          }}
+        />
+        {!collapsed && (
+          <button
+            onClick={() => onToggle(!collapsed)}
+            className="collapse-button"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '20px',
+            }}
+          >
+            ☰
+          </button>
+        )}
       </div>
       
       <div className="sidebar-menu custom-scrollbar">

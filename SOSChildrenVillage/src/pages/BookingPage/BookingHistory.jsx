@@ -136,9 +136,8 @@ const BookingHistory = () => {
       <h2>Booking History</h2>
       {loading ? (
         <Spin size="large" />
-      ) : error ? (
-        <Result status="error" title="Error Loading Booking History" subTitle={error} />
-      ) : bookings.length === 0 ? (
+      )
+      : bookings.length === 0 ? (
         <Result
           status="info"
           title="No Bookings Found"

@@ -96,19 +96,19 @@ const PaymentReturn = () => {
         if (response.data.success) {
           notification.success({
             message: 'Payment Successful',
-            description: `Donation ID: ${response.data.donationId}, Amount: ${response.data.amount}`,
+            description: `Amount: ${response.data.amount}`,
           });
         } else {
           // Show error notification for already paid donations
           if (response.data.message === "This donation has already been paid.") {
             notification.info({
               message: 'Payment Already Made',
-              description: `Donation ID: ${response.data.donationId} has already been paid.`,
+              description: `Donation has already been paid.`,
             });
           } else {
             notification.error({
               message: 'Payment Failed',
-              description: `Donation ID: ${response.data.donationId}, Amount: ${response.data.amount}`,
+              description: `Donation , Amount: ${response.data.amount}`,
             });
           }
         }
@@ -145,7 +145,6 @@ const PaymentReturn = () => {
               <Divider />
               {paymentResult && (
                 <div>
-                  <p><strong>Donation ID:</strong> {paymentResult.donationId}</p>
                   <p><strong>Status:</strong> {paymentResult.status}</p>
                   <p><strong>Amount:</strong> {paymentResult.amount}</p>
                   {facilitiesWallet && <p><strong>Facilities Wallet:</strong> {facilitiesWallet}</p>}
