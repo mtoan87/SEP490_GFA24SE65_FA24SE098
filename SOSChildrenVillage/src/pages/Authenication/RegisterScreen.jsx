@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button, DatePicker, Select, Upload, Typography, Space, message } from "antd";
+import { Form, Input, Button, DatePicker, Select, Upload, Typography, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -26,25 +26,53 @@ export const RegisterScreen = () => {
     formData.append("Dob", values.Dob.format("YYYY-MM-DD"));
     formData.append("Gender", values.Gender);
     formData.append("Country", values.Country);
-  
+
     // Upload image
     if (imageList.length > 0 && imageList[0].originFileObj) {
       formData.append("Img", imageList[0].originFileObj);
     }
-  
+
     try {
       const response = await axios.post(
         "https://localhost:7073/api/UserAccount/CreateUser",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-  
+
       if (response.status === 200) {
-        // Display success message
         message.success("Registration successful!");
-        
-        // Redirect to login page after success
-        navigate("/login");
+
+        // Login immediately after successful registration
+        try {
+          const loginResponse = await axios.post(
+            "https://localhost:7073/api/Login",
+            {
+              email: values.UserEmail,
+              password: values.Password,
+            },
+            { headers: { "Content-Type": "application/json" } }
+          );
+
+          if (loginResponse.status === 200) {
+            const token = loginResponse.data?.data;
+            const roleId = loginResponse.data?.roleId;
+            const userId = loginResponse.data?.userId;
+
+            if (token && roleId) {
+              // Save user info to local storage
+              localStorage.setItem("token", token);
+              localStorage.setItem("roleId", roleId);
+              localStorage.setItem("userId", userId);
+
+              // Navigate based on roleId
+              roleId === "1" ? navigate("/admin") : navigate("/home");
+            }
+          } else {
+            message.error("Login failed after registration.");
+          }
+        } catch (error) {
+          message.error("Error during login: " + error.message);
+        }
       } else {
         message.error("Registration failed.");
       }
@@ -52,17 +80,18 @@ export const RegisterScreen = () => {
       message.error("Error registering: " + error.message);
     }
   };
-  
 
   return (
-    <div style={{
-      maxWidth: "400px",
-      margin: "auto",
-      padding: "2rem",
-      background: "#f9f9f9",
-      borderRadius: "12px",
-      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
-    }}>
+    <div
+      style={{
+        maxWidth: "400px",
+        margin: "auto",
+        padding: "2rem",
+        background: "#f9f9f9",
+        borderRadius: "12px",
+        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <Form
         form={form}
         onFinish={handleRegister}
@@ -70,7 +99,9 @@ export const RegisterScreen = () => {
         initialValues={{ Gender: "Other" }}
       >
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <Title level={3} style={{ marginBottom: 0 }}>Create an Account</Title>
+          <Title level={3} style={{ marginBottom: 0 }}>
+            Create an Account
+          </Title>
           <Text type="secondary">Please fill in the details below</Text>
         </div>
 
@@ -78,18 +109,35 @@ export const RegisterScreen = () => {
           <Input placeholder="Enter your name" />
         </Form.Item>
 
-        <Form.Item name="UserEmail" label="Email" rules={[{ required: true, type: "email" }]}>
+        <Form.Item
+          name="UserEmail"
+          label="Email"
+          rules={[{ required: true, type: "email" }]}
+        >
           <Input placeholder="Enter your email" />
         </Form.Item>
 
-        <Form.Item name="Password" label="Password" rules={[{ required: true, min: 8, message: "Password must be at least 8 characters long" }]}>
+        <Form.Item
+          name="Password"
+          label="Password"
+          rules={[
+            { required: true, min: 8, message: "Password must be at least 8 characters long" },
+          ]}
+        >
           <Input.Password placeholder="Enter your password" />
         </Form.Item>
 
-        <Form.Item name="Phone" label="Phone Number" rules={[
-          { required: true, message: "Phone number is required" },
-          { pattern: /^(0[3|5|7|8|9])+([0-9]{8})$/, message: "Please enter a valid Vietnamese phone number" }
-        ]}>
+        <Form.Item
+          name="Phone"
+          label="Phone Number"
+          rules={[
+            { required: true, message: "Phone number is required" },
+            {
+              pattern: /^(0[3|5|7|8|9])+([0-9]{8})$/,
+              message: "Please enter a valid Vietnamese phone number",
+            },
+          ]}
+        >
           <Input placeholder="Enter your phone number" />
         </Form.Item>
 
@@ -102,11 +150,13 @@ export const RegisterScreen = () => {
         </Form.Item>
 
         <Form.Item name="Gender" label="Gender">
-          <Select options={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "Female" },
-            { label: "Other", value: "Other" },
-          ]} />
+          <Select
+            options={[
+              { label: "Male", value: "Male" },
+              { label: "Female", value: "Female" },
+              { label: "Other", value: "Other" },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item name="Country" label="Country">
@@ -133,7 +183,10 @@ export const RegisterScreen = () => {
 
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           <Text>
-            Already have an account? <Button type="link" onClick={() => navigate("/login")}>Login here</Button>
+            Already have an account?{" "}
+            <Button type="link" onClick={() => navigate("/login")}>
+              Login here
+            </Button>
           </Text>
         </div>
       </Form>

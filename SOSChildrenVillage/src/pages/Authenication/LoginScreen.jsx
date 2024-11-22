@@ -47,7 +47,7 @@ export const LoginScreen = () => {
             message.error("Unauthorized! Check your email or password.");
             break;
           case 500:
-            message.error("Server error. Please try again later.");
+            message.error("Invalid email or password. Please try again.");
             break;
           default:
             message.error("An unexpected error occurred.");
@@ -150,6 +150,13 @@ export const LoginScreen = () => {
               Sign up now
             </Button>
           </Text>
+          <div style={{ marginTop: "12px" }}>
+            <Link to="/home">
+              <Button type="link" style={{ padding: 0 }}>
+                Back to Home
+              </Button>
+            </Link>
+          </div>
         </div>
       </Form>
     </div>
