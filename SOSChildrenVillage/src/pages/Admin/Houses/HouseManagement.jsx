@@ -27,17 +27,19 @@ const HouseManagement = () => {
   const navigate = useNavigate(); // Khởi tạo useNavigate
 
   useEffect(() => {
+    const token = localStorage.getItem('token'); // Kiểm tra xem có token không
     const userRole = localStorage.getItem('roleId');
-    if (userRole !== '1' && !redirecting) {
-      // Chỉ hiển thị thông báo và điều hướng nếu chưa điều hướng
+  
+    // Nếu không có token hoặc roleId không phải là 1, điều hướng người dùng đến trang login
+    if (!token || userRole !== '1' && !redirecting) {
       message.error('You do not have permission to access this page');
       setRedirecting(true); // Đặt trạng thái redirecting là true khi điều hướng
-      navigate('/login');
+      navigate('/login'); // Điều hướng đến trang đăng nhập
     } else {
       fetchHouses(); // Nếu có quyền, tiếp tục lấy danh sách nhà
     }
   }, [navigate, redirecting]); // Thêm redirecting vào dependencies để tránh render lại không cần thiết
-
+  
   const fetchHouses = async (showDeleted = false) => {
     try {
       setLoading(true);
