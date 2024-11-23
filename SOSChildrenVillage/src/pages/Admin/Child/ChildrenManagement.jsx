@@ -39,15 +39,16 @@ const ChildrenManagement = () => {
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
+  const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
     fetchChildren();
   }, []);
 
-  const fetchChildren = async () => {
+  const fetchChildren = async (showDeleted = false) => {
     try {
       setLoading(true);
-      const data = await getChildWithImages();
+      const data = await getChildWithImages(showDeleted);
       setChildren(Array.isArray(data) ? data : []);
       console.log("Fetched children data with images:", data);
     } catch (error) {
@@ -58,6 +59,7 @@ const ChildrenManagement = () => {
       setLoading(false);
     }
   };
+
   const showModal = (child = null) => {
     setEditingChild(child);
     if (child) {
@@ -231,6 +233,17 @@ const ChildrenManagement = () => {
     });
   };
 
+  const handleRestore = async (id) => {
+    try {
+      await axios.put(`https://localhost:7073/api/Children/RestoreChild/${id}`);
+      message.success("Child Restored Successfully");
+      fetchChildren(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
+    } catch (error) {
+      console.error("Error occurred when restoring child:", error);
+      message.error("Unable to restore child");
+    }
+  };
+
   // QUAN TRỌNG: dataIndex và key phải giống với tên của các biến trong API.
   const columns = [
     {
@@ -266,48 +279,27 @@ const ChildrenManagement = () => {
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
     {
-      /* title: "Image",
+      title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
-        <div>
-          {imageUrls?.map((url, index) => (
-            <img
-              key={index}
-              src={url}
-              alt="Child Image"
-              style={{
-                width: 50,
-                height: 50,
-                marginRight: 8,
-                cursor: "pointer",
-              }}
-              onClick={() => window.open(url, "_blank")}
-            />
-          ))}
-        </div> */
-
-        title: "Image",
-        dataIndex: "imageUrls",
-        key: "imageUrls",
-        align: 'center',
-        render: (imageUrls) => (
-          <Button 
-            type="link"
-            onClick={() => {
-              setSelectedImages(imageUrls || []);
-              setIsImageModalVisible(true);
-            }}
-            style={{
-              padding: 0,
-              margin: 0,
-              display: 'block',
-              width: '100%'
-            }}
-          >
-            View
-          </Button>
-        ),
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
     },
     {
       title: "Status",
@@ -331,6 +323,13 @@ const ChildrenManagement = () => {
             icon={<DeleteOutlined />}
             danger
           />
+
+          {/* Hiển thị nút Restore nếu House đã bị xóa */}
+          {showDeleted && (
+            <Button type="primary" onClick={() => handleRestore(record.id)}>
+              Restore
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -375,6 +374,19 @@ const ChildrenManagement = () => {
 
             <Button type="default" style={{ marginRight: 8 }}>
               Filter options
+            </Button>
+
+            <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchChildren(newShowDeleted);
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active Child" : "Show Deleted Child"}
             </Button>
           </div>
         </div>
@@ -549,7 +561,7 @@ const ChildrenManagement = () => {
         </Form>
       </Modal>
 
-    {/* Images */}
+      {/* Images */}
       <Modal
         title="Images"
         open={isImageModalVisible}

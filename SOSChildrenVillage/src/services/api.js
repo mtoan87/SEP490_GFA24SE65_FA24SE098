@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const baseURL = 'https://localhost:7073';
+const baseURL = "https://localhost:7073";
 
 const api = axios.create({
   baseURL: baseURL,
@@ -16,7 +16,7 @@ const api = axios.create({
 //   }
 // };
 
-export const getChildWithImages = async () => {
+/* export const getChildWithImages = async () => {
   try {
     const response = await api.get('/api/Children/GetAllChildWithImg');
     return response.data;
@@ -24,24 +24,53 @@ export const getChildWithImages = async () => {
     console.error('Error fetching children with image:', error);
     return [];
   }
-};
+}; */
 
-export const getHouses = async () => {
+export const getChildWithImages = async (showDeleted = false) => {
   try {
-    const response = await api.get('/api/Houses/GetAllHousesWithImg');
+    const endpoint = showDeleted
+      ? "/api/Children/GetAllChildIsDelete" // Trẻ đã xóa
+      : "/api/Children/GetAllChildWithImg"; // Trẻ chưa xóa
+    const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error('Error fetching Houses with image:', error);
+    console.error("Error fetching children data:", error);
+    return [];
+  }
+};
+
+export const getHouseWithImages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Houses/GetAllHousesIsDelete" // Nhà đã xóa
+      : "/api/Houses/GetAllHousesWithImg"; // Nhà chưa xóa
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Houses data:", error);
+    return [];
+  }
+};
+
+export const getVillages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Houses/GetAllVillagesIsDelete" // Nhà đã xóa
+      : "/api/Houses/GetAllVillagesWithImg"; // Nhà chưa xóa
+      const response = await api.get(endpoint);
+      return response.data;
+  } catch (error) {
+    console.error("Error fetching Villages with image:", error);
     throw error;
   }
 };
 
 export const getAccount = async () => {
   try {
-    const response = await api.get('/api/UserAccount');
+    const response = await api.get("/api/UserAccount");
     return response.data;
   } catch (error) {
-    console.error('Error fetching User Account:', error);
+    console.error("Error fetching User Account:", error);
     throw error;
   }
 };
