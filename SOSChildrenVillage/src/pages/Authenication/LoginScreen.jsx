@@ -145,7 +145,7 @@ export const LoginScreen = () => {
 
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           <Text>
-            Don't Have an Account?{" "}
+            Do not have an Account?{" "}
             <Button type="link" onClick={() => navigate("/register")}>
               Sign up now
             </Button>

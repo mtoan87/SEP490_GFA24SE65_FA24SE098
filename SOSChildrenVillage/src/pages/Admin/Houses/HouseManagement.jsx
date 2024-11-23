@@ -1,8 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Table, Space, Button, Modal, Form, Input, message, Upload, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, InboxOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Thêm useNavigate từ react-router-dom
+import { useState, useEffect } from "react";
+import {
+  Table,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Upload,
+  Checkbox,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
+import { getHouseWithImages } from "../../../services/api";
 
 const { Dragger } = Upload;
 
@@ -19,44 +36,39 @@ const HouseManagement = () => {
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
-  //const [newImages, setNewImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
-
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Kiểm tra xem có token không
-    const userRole = localStorage.getItem('roleId');
-  
+    const token = localStorage.getItem("token"); // Kiểm tra xem có token không
+    const userRole = localStorage.getItem("roleId");
+
     // Nếu không có token hoặc roleId không phải là 1, điều hướng người dùng đến trang login
-    if (!token || userRole !== '1' && !redirecting) {
-      message.error('You do not have permission to access this page');
+    if (!token || (userRole !== "1" && !redirecting)) {
+      message.error("You do not have permission to access this page");
       setRedirecting(true); // Đặt trạng thái redirecting là true khi điều hướng
-      navigate('/login'); // Điều hướng đến trang đăng nhập
+      navigate("/login"); // Điều hướng đến trang đăng nhập
     } else {
       fetchHouses(); // Nếu có quyền, tiếp tục lấy danh sách nhà
     }
   }, [navigate, redirecting]); // Thêm redirecting vào dependencies để tránh render lại không cần thiết
-  
+
   const fetchHouses = async (showDeleted = false) => {
     try {
       setLoading(true);
-      const url = showDeleted
-        ? 'https://localhost:7073/api/Houses/FormatedHouseIsDelete' // Nhà đã xóa
-        : 'https://localhost:7073/api/Houses/FormatedHouse'; // Nhà chưa xóa
-      const response = await axios.get(url);
-      setHouses(response.data);
+      const data = await getHouseWithImages(showDeleted);
+      setHouses(Array.isArray(data) ? data : []);
+      console.log("Fetched house data with images:", data);
     } catch (error) {
       console.log(error);
-      message.error('Cannot get houses data');
+      message.error("Cannot get houses data with images");
+      setHouses([]);
     } finally {
       setLoading(false);
     }
   };
-
-
 
   const showModal = (house = null) => {
     setEditingHouse(house);
@@ -69,7 +81,7 @@ const HouseManagement = () => {
         house.imageUrls?.map((url, index) => ({
           uid: index,
           url: url,
-          status: 'done',
+          status: "done",
           name: `Image ${index + 1}`,
         })) || []
       );
@@ -78,16 +90,15 @@ const HouseManagement = () => {
       setCurrentImages([]);
     }
     setImagesToDelete([]);
-    //setNewImages([]);
     setIsModalVisible(true);
   };
 
   const uploadProps = {
-    name: 'images',
+    name: "images",
     multiple: true,
     fileList: uploadFiles,
     beforeUpload: (file) => {
-      const isImage = file.type.startsWith('image/');
+      const isImage = file.type.startsWith("image/");
       if (!isImage) {
         message.error(`${file.name} is not an image file`);
         return Upload.LIST_IGNORE;
@@ -100,156 +111,189 @@ const HouseManagement = () => {
   };
 
   const handleOk = () => {
-    form.validateFields().then(async (values) => {
-      try {
-        // Gán giá trị mặc định cho Status nếu không có
-        if (!editingHouse && !values.status) {
-          values.status = 'Active';
-        }
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          // Gán giá trị mặc định cho Status nếu không có
+          if (!editingHouse && !values.status) {
+            values.status = "Active";
+          }
 
-        const formData = new FormData();
-        formData.append('HouseName', values.houseName);
-        formData.append('HouseNumber', values.houseNumber);
-        formData.append('Location', values.location);
-        formData.append('Description', values.description);
-        formData.append('HouseMember', values.houseMember);
-        formData.append('HouseOwner', values.houseOwner);
-        formData.append('Status', values.status); // Đảm bảo giá trị này được gửi
-        formData.append('UserAccountId', values.userAccountId);
-        formData.append('VillageId', values.villageId);
+          const formData = new FormData();
+          formData.append("HouseName", values.houseName);
+          formData.append("HouseNumber", values.houseNumber);
+          formData.append("Location", values.location);
+          formData.append("Description", values.description);
+          formData.append("HouseMember", values.houseMember);
+          formData.append("HouseOwner", values.houseOwner);
+          formData.append("Status", values.status); // Đảm bảo giá trị này được gửi
+          formData.append("UserAccountId", values.userAccountId);
+          formData.append("VillageId", values.villageId);
 
-        // Append các hình ảnh
-        if (uploadFiles && uploadFiles.length > 0) {
-          uploadFiles.forEach((file) => {
-            if (file.originFileObj) {
-              formData.append('Img', file.originFileObj);
-            }
+          // Append các hình ảnh
+          if (uploadFiles && uploadFiles.length > 0) {
+            uploadFiles.forEach((file) => {
+              if (file.originFileObj) {
+                formData.append("Img", file.originFileObj);
+              }
+            });
+          }
+          if (imagesToDelete.length > 0) {
+            imagesToDelete.forEach((imageId) => {
+              formData.append("ImgToDelete", imageId);
+            });
+          }
+
+          if (editingHouse) {
+            // Update house logic
+            const updateUrl = `https://localhost:7073/api/Houses/UpdateHouse?id=${editingHouse.houseId}`;
+            await axios.put(updateUrl, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            });
+            message.success("Update House Successfully");
+          } else {
+            // Create new house logic
+            await axios.post(
+              "https://localhost:7073/api/Houses/CreateHouse",
+              formData,
+              {
+                headers: { "Content-Type": "multipart/form-data" },
+              }
+            );
+            message.success("Add House Successfully");
+          }
+
+          setIsModalVisible(false);
+          setUploadFiles([]);
+          setCurrentImages([]);
+          setImagesToDelete([]);
+          form.resetFields();
+          fetchHouses();
+        } catch (error) {
+          console.error("Error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            endpoint: editingHouse ? "UpdateHouse" : "CreateHouse",
           });
-        }
-        if (imagesToDelete.length > 0) {
-          imagesToDelete.forEach((imageId) => {
-            formData.append("ImgToDelete", imageId);
-          });
-        }
 
-        if (editingHouse) {
-          // Update house logic
-          const updateUrl = `https://localhost:7073/api/Houses/UpdateHouse?id=${editingHouse.houseId}`;
-          await axios.put(updateUrl, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
-          message.success('Update House Successfully');
-        } else {
-          // Create new house logic
-          await axios.post('https://localhost:7073/api/Houses/CreateHouse', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
-          message.success('Add House Successfully');
+          message.error(
+            error.response?.data?.message ||
+              `Unable to ${
+                editingHouse ? "update" : "create"
+              } house. Please try again.`
+          );
         }
-
-        setIsModalVisible(false);
-        setUploadFiles([]);
-        setCurrentImages([]);
-        setImagesToDelete([]);
-        form.resetFields();
-        fetchHouses();
-      } catch (error) {
-        console.error('Error details:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          endpoint: editingHouse ? 'UpdateHouse' : 'CreateHouse',
-        });
-
-        message.error(
-          error.response?.data?.message ||
-          `Unable to ${editingHouse ? 'update' : 'create'} house. Please try again.`
-        );
-      }
-    }).catch((formError) => {
-      console.error('Form validation errors:', formError);
-      message.error('Please check all required fields');
-    });
+      })
+      .catch((formError) => {
+        console.error("Form validation errors:", formError);
+        message.error("Please check all required fields");
+      });
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.put(`https://localhost:7073/api/Houses/SoftDeleteHouse?id=${id}`);
-      message.success('Delete House Successfully');
-      fetchHouses();
-    } catch (error) {
-      console.error('Error occurred when deleting house:', error);
-      message.error('Unable to delete house');
-    }
+    Modal.confirm({
+      title: "Are you sure you want to delete this house?",
+      content: "This action cannot be undone.",
+      okText: "Yes, delete it",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const deleteUrl = `https://localhost:7073/api/Houses/DeleteHouse?id=${id}`;
+          console.log("Deleting house with ID:", id);
+  
+          const response = await axios.delete(deleteUrl);
+          console.log("Delete response:", response.data);
+  
+          message.success("House deleted successfully");
+          fetchHouses();
+        } catch (error) {
+          console.error("Delete error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
+  
+          message.error(
+            error.response?.data?.message ||
+              "Unable to delete house. Please try again."
+          );
+        }
+      },
+      onCancel: () => {
+        console.log("Deletion canceled");
+      },
+    });
   };
 
-  const handleRestore = async (houseId) => {
+  const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Houses/SoftRestoreHouse?id=${houseId}`);
-      message.success('House Restored Successfully');
+      await axios.put(`https://localhost:7073/api/Houses/RestoreHouse/${id}`);
+      message.success("House Restored Successfully");
       fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
-      console.error('Error occurred when restore house:', error);
-      message.error('Unable to restore house');
+      console.error("Error occurred when restoring house:", error);
+      message.error("Unable to restore house");
     }
   };
-
 
   const columns = [
     {
-      title: 'House Id',
-      dataIndex: 'houseId',
-      key: 'houseId',
+      title: "House Id",
+      dataIndex: "houseId",
+      key: "houseId",
     },
     {
-      title: 'House Name',
-      dataIndex: 'houseName',
-      key: 'houseName',
+      title: "House Name",
+      dataIndex: "houseName",
+      key: "houseName",
     },
     {
-      title: 'House Number',
-      dataIndex: 'houseNumber',
-      key: 'houseNumber',
+      title: "House Number",
+      dataIndex: "houseNumber",
+      key: "houseNumber",
     },
     {
-      title: 'Location',
-      dataIndex: 'location',
-      key: 'location',
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
     },
     {
-      title: 'House Members',
-      dataIndex: 'houseMember',
-      key: 'houseMember',
+      title: "House Members",
+      dataIndex: "houseMember",
+      key: "houseMember",
     },
     {
-      title: 'House Owner',
-      dataIndex: 'houseOwner',
-      key: 'houseOwner',
+      title: "House Owner",
+      dataIndex: "houseOwner",
+      key: "houseOwner",
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
-      title: 'User account Id',
-      dataIndex: 'userAccountId',
-      key: 'userAccountId',
+      title: "User account Id",
+      dataIndex: "userAccountId",
+      key: "userAccountId",
     },
     {
-      title: 'Village Id',
-      dataIndex: 'villageId',
-      key: 'villageId',
+      title: "Village Id",
+      dataIndex: "villageId",
+      key: "villageId",
     },
     {
-      title: 'Image',
-      dataIndex: 'imageUrls',
-      key: 'imageUrls',
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -260,8 +304,8 @@ const HouseManagement = () => {
           style={{
             padding: 0,
             margin: 0,
-            display: 'block',
-            width: '100%'
+            display: "block",
+            width: "100%",
           }}
         >
           View
@@ -269,33 +313,22 @@ const HouseManagement = () => {
       ),
     },
     {
-      title: 'Actions',
-      key: 'action',
+      title: "Actions",
+      key: "action",
       render: (_, record) => (
         <Space size="middle">
-          {/* Chỉ hiển thị nút Edit và Delete nếu House chưa bị xóa */}
-          {!showDeleted && (
-            <>
-              <Button onClick={() => showModal(record)} icon={<EditOutlined />} />
-              <Popconfirm
-                title="Are you sure to delete this booking?"
-                key={record.houseId}
-                onConfirm={() => handleDelete(record.houseId)}
-                okText="Yes"
-                cancelText="No"
-                okButtonProps={{
-                  style: { fontSize: '12px', padding: '4px 8px', width: '120px' }, // Style cho nút Yes
-                }}
-                cancelButtonProps={{
-                  style: { fontSize: '12px', padding: '4px 8px', width: '120px' }, // Style cho nút No
-                }}
-              >
-                <Button icon={<DeleteOutlined />} danger>
+          <Button
+            key={`edit-${record.id}`}
+            onClick={() => showModal(record)}
+            icon={<EditOutlined />}
+          />
+          <Button
+            key={`delete-${record.houseId}`}
+            onClick={() => handleDelete(record.houseId)}
+            icon={<DeleteOutlined />}
+            danger
+          />
 
-                </Button>
-              </Popconfirm>
-            </>
-          )}
           {/* Hiển thị nút Restore nếu House đã bị xóa */}
           {showDeleted && (
             <Button
@@ -310,100 +343,153 @@ const HouseManagement = () => {
     },
   ];
 
-
   return (
     <div>
-      <div 
-      style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: 16 
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 16,
         }}
-        >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Input placeholder="Search for houses" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
-          <Button onClick={() => showModal()} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
-            Add New House
-          </Button>
-          <Button
-            onClick={() => {
-              setShowDeleted((prev) => {
-                const newShowDeleted = !prev;
-                fetchHouses(newShowDeleted); // Gọi lại fetchHouses với giá trị mới của showDeleted
-                return newShowDeleted;
-              });
+      >
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Input
+            placeholder="Search for houses"
+            prefix={<SearchOutlined />}
+            style={{ width: 500, marginRight: 8 }}
+          />
+          <div
+            style={{
+              display: "flex",
             }}
-            type="default"
           >
-            {showDeleted ? 'Show Active Houses' : 'Show Deleted Houses'}
-          </Button>
+            <Button
+              onClick={() => showModal()}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New House
+            </Button>
+
+            <Button type="default" style={{ marginRight: 8 }}>
+              Filter options
+            </Button>
+
+            <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchHouses(newShowDeleted); // Gọi lại fetchHouses với giá trị mới của showDeleted
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active Houses" : "Show Deleted Houses"}
+            </Button>
+          </div>
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={houses}
-        loading={loading}
-        rowKey="houseId"
-        pagination={{
-          current: currentPage,
-          pageSize,
-          onChange: (page, size) => {
-            setCurrentPage(page);
-            setPageSize(size);
-          },
+      <div
+        style={{
+          width: "100%",
+          overflow: "auto",
         }}
-      />
+      >
+        <Table
+          columns={columns}
+          dataSource={houses}
+          loading={loading}
+          rowKey={(record) => record.houseId}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
+            },
+          }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: houses.length,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            showTotal: (total) => `Total ${total} items`,
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPageSize(pageSize);
+            },
+            position: ["Left"],
+            itemRender: (_, type, originalElement) => {
+              if (type === "prev") {
+                return <Button>Previous</Button>;
+              }
+              if (type === "next") {
+                return <Button>Next</Button>;
+              }
+              return originalElement;
+            },
+          }}
+        />
+      </div>
 
       {/* Modal for Create/Edit House */}
       <Modal
-        title={editingHouse ? 'Edit House' : 'Create New House'}
-        visible={isModalVisible}
+        title={editingHouse ? "Edit House" : "Add New House"}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
-        confirmLoading={loading}
+        width={650}
         footer={[
-          <Button
-            key="cancel"
-            onClick={() => setIsModalVisible(false)}
-            style={{
-              fontSize: '12px',
-              padding: '4px 8px',
-              width: '100px', // Adjust the width to make the button more compact
-            }}
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
           >
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={handleOk}
-            loading={loading}
-            style={{
-              fontSize: '12px',
-              padding: '4px 8px',
-              width: '100px', // Adjust the width to make the button more compact
-            }}
-          >
-            Ok
-          </Button>,
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
         ]}
       >
         <Form form={form} layout="vertical" name="houseForm">
-          <Form.Item name="houseName" label="House Name" rules={[{ required: true, message: 'Please enter house name' }]}>
+          <Form.Item
+            name="houseName"
+            label="House Name"
+            rules={[{ required: true, message: "Please enter house name" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="houseNumber" label="House Number" rules={[{ required: true, message: 'Please enter house number' }]}>
+          <Form.Item
+            name="houseNumber"
+            label="House Number"
+            rules={[{ required: true, message: "Please enter house number" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="location" label="Location" rules={[{ required: true, message: 'Please enter location' }]}>
+          <Form.Item
+            name="location"
+            label="Location"
+            rules={[{ required: true, message: "Please enter location" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="description" label="Description" rules={[{ required: true, message: 'Please enter description' }]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: "Please enter description" }]}
+          >
             <Input.TextArea />
           </Form.Item>
 
@@ -422,6 +508,7 @@ const HouseManagement = () => {
           <Form.Item name="villageId" label="Village Id">
             <Input />
           </Form.Item>
+
           {editingHouse && currentImages.length > 0 && (
             <Form.Item label="Current Images">
               <div
@@ -465,30 +552,74 @@ const HouseManagement = () => {
               </div>
             </Form.Item>
           )}
-          <Form.Item name="imageUrls" label="Images">
+
+          <Form.Item label="Upload New Images">
             <Dragger {...uploadProps}>
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
-              <p className="ant-upload-text">Click or drag files to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+              <p className="ant-upload-text">Click or drag files to upload</p>
+              <p className="ant-upload-hint">
+                Support for single or bulk upload. Strictly prohibited from
+                uploading company data or other banned files.
+              </p>
             </Dragger>
+          </Form.Item>
+
+          <Form.Item name="status" label="Status">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="isDeleted" valuePropName="checked">
+            <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
       </Modal>
 
       {/* Modal for View Images */}
       <Modal
-        title="View Images"
-        visible={isImageModalVisible}
-        footer={null}
+        title="Images"
+        open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}
+        footer={null}
         width={800}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+            padding: "16px",
+          }}
+        >
           {selectedImages.map((url, index) => (
-            <div key={index} style={{ width: '150px', textAlign: 'center' }}>
-              <img src={url} alt={`image-${index}`} style={{ width: '100%' }} />
+            <div
+              key={index}
+              style={{
+                border: "1px solid #d9d9d9",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+              <div
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                  borderTop: "1px solid #d9d9d9",
+                }}
+              >
+                {`Image ${index + 1}`}
+              </div>
             </div>
           ))}
         </div>
