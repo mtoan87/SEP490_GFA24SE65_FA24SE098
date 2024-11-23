@@ -19,7 +19,7 @@ const HouseManagement = () => {
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
-  const [newImages, setNewImages] = useState([]);
+  //const [newImages, setNewImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
 
@@ -78,7 +78,7 @@ const HouseManagement = () => {
       setCurrentImages([]);
     }
     setImagesToDelete([]);
-    setNewImages([]);
+    //setNewImages([]);
     setIsModalVisible(true);
   };
 
@@ -189,6 +189,7 @@ const HouseManagement = () => {
       message.success('House Restored Successfully');
       fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
+      console.error('Error occurred when restore house:', error);
       message.error('Unable to restore house');
     }
   };
@@ -312,7 +313,14 @@ const HouseManagement = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div 
+      style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: 16 
+        }}
+        >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Input placeholder="Search for houses" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
           <Button onClick={() => showModal()} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>

@@ -21,17 +21,17 @@ export const getChildWithImages = async () => {
     const response = await api.get('/api/Children/GetAllChildWithImg');
     return response.data;
   } catch (error) {
-    console.error('Error fetching children with images:', error);
+    console.error('Error fetching children with image:', error);
     return [];
   }
 };
 
 export const getHouses = async () => {
   try {
-    const response = await api.get('/api/Houses');
+    const response = await api.get('/api/Houses/GetAllHousesWithImg');
     return response.data;
   } catch (error) {
-    console.error('Error fetching Houses:', error);
+    console.error('Error fetching Houses with image:', error);
     throw error;
   }
 };

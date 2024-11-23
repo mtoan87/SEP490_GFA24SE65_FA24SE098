@@ -187,7 +187,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     >
       {/* Header với logo */}
       <div className="sidebar-header">
-        <img
+      <img
           src={logo}
           alt="Project Logo"
           className="logo-image"
@@ -197,20 +197,12 @@ const Sidebar = ({ collapsed, onToggle }) => {
             transition: 'margin 0.3s', // Hiệu ứng chuyển đổi
           }}
         />
-        {!collapsed && (
-          <button
-            onClick={() => onToggle(!collapsed)}
-            className="collapse-button"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '20px',
-            }}
-          >
-            ☰
-          </button>
-        )}
+        <button
+          onClick={() => onToggle(!collapsed)}
+          className="collapse-button"
+        >
+          <span className="text-xl">☰</span>
+        </button>        
       </div>
       
       <div className="sidebar-menu custom-scrollbar">
