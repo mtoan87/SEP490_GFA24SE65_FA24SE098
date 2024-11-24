@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, Col, Button } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import './MyComponent.css';
+import './InfoSection.css';
 
 const MyComponent = () => {
   const [events, setEvents] = useState([]);
@@ -95,7 +95,7 @@ const MyComponent = () => {
   return (
     <div>
       <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
-        List of Support Events
+        Các sự kiện đang diễn ra
       </p>
 
       <div className="scroll-container">
@@ -122,7 +122,7 @@ const MyComponent = () => {
       </div>
 
       <p style={{ fontSize: '40px', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
-        List of Children Needing Support
+        Trẻ em cần hỗ trợ
       </p>
 
       <div className="scroll-container">

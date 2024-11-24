@@ -1,6 +1,6 @@
-import React from 'react';
 import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import './HeroSection.css';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const HeroSection = () => {
     <section
       className="hero-section"
       style={{
-        backgroundImage: "url('https://ktktlaocai.edu.vn/wp-content/uploads/2019/10/tre-em-vung-cao-kho-khan-1.jpg')", // Replace with your image URL
+        backgroundImage: "url('https://ktktlaocai.edu.vn/wp-content/uploads/2019/10/tre-em-vung-cao-kho-khan-1.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         padding: '100px 0',
@@ -43,14 +43,14 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <h1 style={{ fontSize: '36px', fontWeight: 'bold' }}>Every child needs a loving mother</h1>
+        <h1 style={{ fontSize: '36px', fontWeight: 'bold' }}>Mọi đứa trẻ cần có một gia đình yêu thương</h1>
         <Button
           type="primary"
           size="large"
           style={{ marginTop: '20px' , width: '120px' }}
           onClick={handleDonateClick}
         >
-          Donate Now
+          Đỡ đầu ngay
         </Button>
       </div>
     </section>
