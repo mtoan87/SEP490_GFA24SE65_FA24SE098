@@ -1,0 +1,133 @@
+
+.header-container {
+    @apply bg-white shadow-sm fixed w-full top-0 z-50;
+  }
+  
+  .header-wrapper {
+    @apply max-w-7xl mx-auto px-6 py-4;
+  }
+  
+  .header-content {
+    @apply w-full items-center;
+  }
+  
+  /* Logo Section */
+  .logo-section {
+    @apply flex items-center;
+  }
+  
+  .logo-link {
+    @apply flex items-center space-x-2 no-underline;
+  }
+  
+  .logo-image {
+    @apply h-8 w-auto;
+  }
+  
+  .company-name {
+    @apply text-xl font-bold text-gray-800;
+  }
+  
+  /* Navigation Section */
+  .nav-section {
+    @apply flex-1 flex justify-center;
+  }
+  
+  .main-nav {
+    @apply flex items-center space-x-8;
+  }
+  
+  .nav-link {
+    @apply text-gray-600 hover:text-blue-600 transition-colors duration-200 text-base font-medium no-underline;
+  }
+  
+  /* Auth Section */
+  .auth-section {
+    @apply flex items-center;
+  }
+  
+  .auth-buttons {
+    @apply flex items-center;
+  }
+  
+  .login-btn {
+    @apply rounded-lg px-6 py-2 hover:scale-105 transition-transform duration-200;
+  }
+  
+  .register-btn {
+    @apply rounded-lg px-6 py-2 hover:scale-105 transition-transform duration-200 border-2 border-blue-500 text-blue-500;
+  }
+  
+  .user-button {
+    @apply text-lg flex items-center space-x-2 hover:text-blue-600 transition-colors duration-200;
+  }
+  
+  /* User Popover */
+  .user-popover {
+    @apply w-64 p-6 flex flex-col items-center;
+  }
+  
+  .user-avatar {
+    @apply border-2 border-blue-500 mb-4 hover:border-blue-600 transition-colors duration-200;
+  }
+  
+  .user-name {
+    @apply text-lg font-semibold mb-4 text-gray-800;
+  }
+  
+  .user-links {
+    @apply w-full mb-3;
+  }
+  
+  .user-menu {
+    @apply w-full space-y-2 mb-4;
+  }
+  
+  .admin-links {
+    @apply w-full mb-4;
+  }
+  
+  .logout-btn {
+    @apply rounded-lg px-6 py-2 w-full hover:scale-105 transition-transform duration-200;
+  }
+  
+  /* Popover Override */
+  .user-popover-overlay {
+    @apply rounded-lg shadow-lg;
+  }
+  
+  .ant-popover-inner-content {
+    @apply p-0;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .header-wrapper {
+      @apply px-4 py-3;
+    }
+  
+    .nav-section {
+      @apply hidden;
+    }
+  
+    .company-name {
+      @apply text-lg;
+    }
+  
+    .auth-buttons {
+      @apply space-x-2;
+    }
+  
+    .login-btn, .register-btn {
+      @apply px-4 py-1 text-sm;
+    }
+  
+    .user-button {
+      @apply text-base;
+    }
+  }
+  
+  /* Active Link Style */
+  .nav-link.active {
+    @apply text-blue-600;
+  }
