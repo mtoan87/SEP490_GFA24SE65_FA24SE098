@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, message, Space } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, DownloadOutlined  } from '@ant-design/icons';
 import axios from 'axios';
+import { saveAs } from 'file-saver'; 
 
 const IncomeManagement = () => {
   const [incomes, setIncomes] = useState([]);
@@ -91,6 +92,23 @@ const IncomeManagement = () => {
       message.error('Failed to submit');
     }
   };
+  const handleDownloadReport = async () => {
+    try {
+      const response = await axios.get(
+        'https://soschildrenvillage.azurewebsites.net/api/Incomes/ExportExcel',
+        {
+          responseType: 'blob', // Đảm bảo dữ liệu trả về là file
+        }
+      );
+      // Tạo file từ blob và lưu xuống
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `Income_Report_${new Date().toISOString()}.xlsx`); // Đặt tên file với timestamp
+      message.success('Report downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading report:', error);
+      message.error('Failed to download report');
+    }
+  };
   
 
   const columns = [
@@ -149,6 +167,9 @@ const IncomeManagement = () => {
           <Input placeholder="Search for houses" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
           <Button onClick={handleAddIncome} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
             Add New Income
+          </Button>
+          <Button onClick={handleDownloadReport} type="default" icon={<DownloadOutlined />}>
+            Download Report
           </Button>
         </div>
       </div>

@@ -195,19 +195,13 @@ const DonationManagement = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      <div style={{ marginBottom: "24px" }}>
-        <Input
-          placeholder="Search for donations"
-          prefix={<SearchOutlined />}
-          style={{ width: 500, marginRight: 8 }}
-        />
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => showModal()}
-        >
-          Add New Donation
-        </Button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Input placeholder="Search for donations" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
+          <Button onClick={() => showModal()} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
+            Add New Donations
+          </Button>
+        </div>
       </div>
 
       <Table
@@ -220,15 +214,22 @@ const DonationManagement = () => {
 
       <Modal
         title={editingDonation ? "Update Donation" : "Add New Donation"}
-        visible={isModalVisible}
+        open={isModalVisible}
+        onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
+        width={650}
         footer={[
-          <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            OK
-          </Button>,
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
         ]}
       >
         <Form form={form} layout="vertical">

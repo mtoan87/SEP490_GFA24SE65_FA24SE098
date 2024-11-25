@@ -167,10 +167,12 @@
 /* Loading State */
 .loading {
   text-align: center;
-  font-size: 1.5rem;
-  color: #555;
-  margin-top: 50px;
+  font-size: 2rem; /* Tăng kích thước chữ */
+  font-weight: bold; /* Làm chữ đậm */
+  color: #333; /* Đổi sang màu xám đậm hơn */
+  margin-top: 80px; /* Tăng khoảng cách trên nếu cần */
 }
+
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
