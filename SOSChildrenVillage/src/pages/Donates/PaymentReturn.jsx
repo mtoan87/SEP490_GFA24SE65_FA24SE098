@@ -24,19 +24,19 @@ const PaymentReturn = () => {
   const walletIdMatch = orderInfo.match(/walletId\s*(\d+)/);
   const eventIdMatch = orderInfo.match(/eventId\s*(\d+)/);
   const systemWalletIdMatch = orderInfo.match(/systemWalletId\s*(\d+)/);
-  const facilitiesWalletMatch = orderInfo.match(/FacilitiesWallet\s*(\d+)/);
-  const necessitiesWalletMatch = orderInfo.match(/NecessitiesWallet\s*(\d+)/);
-  const foodStuffWalletMatch = orderInfo.match(/FoodStuffWallet\s*(\d+)/);
-  const healthWalletMatch = orderInfo.match(/HealthWallet\s*(\d+)/);
+  const facilitiesWalletIdMatch = orderInfo.match(/facilitiesWalletId\s*(\d+)/);
+  const necessitiesWalletIdMatch = orderInfo.match(/necessitiesWalletId\s*(\d+)/);
+  const foodStuffWalletIdMatch = orderInfo.match(/foodStuffWalletId\s*(\d+)/);
+  const healthWalletIdMatch = orderInfo.match(/healthWalletId\s*(\d+)/);
 
   const childId = childIdMatch ? childIdMatch[1] : null;
   const walletId = walletIdMatch ? walletIdMatch[1] : null;
   const eventId = eventIdMatch ? parseInt(eventIdMatch[1], 10) : null;
   const systemWalletId = systemWalletIdMatch ? systemWalletIdMatch[1] : null;
-  const facilitiesWallet = facilitiesWalletMatch ? facilitiesWalletMatch[1] : null;
-  const necessitiesWallet = necessitiesWalletMatch ? necessitiesWalletMatch[1] : null;
-  const foodStuffWallet = foodStuffWalletMatch ? foodStuffWalletMatch[1] : null;
-  const healthWallet = healthWalletMatch ? healthWalletMatch[1] : null;
+  const facilitiesWalletId = facilitiesWalletIdMatch ? facilitiesWalletIdMatch[1] : null;
+  const necessitiesWalletId = necessitiesWalletIdMatch ? necessitiesWalletIdMatch[1] : null;
+  const foodStuffWalletId = foodStuffWalletIdMatch ? foodStuffWalletIdMatch[1] : null;
+  const healthWalletId = healthWalletIdMatch ? healthWalletIdMatch[1] : null;
 
   // If systemWalletId is still null, let's log an error for better debugging
   if (!systemWalletId) {
@@ -44,24 +44,16 @@ const PaymentReturn = () => {
   }
 
   // Build the API URL dynamically, conditionally including walletId and new wallet params
-  let apiUrl = `https://localhost:7073/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&childId=${childId || ""}&eventId=${eventId || ""}&systemWalletId=${systemWalletId || ""}`;
+  let apiUrl = `https://localhost:7073/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&childId=${childId || ""}&eventId=${eventId || ""}
+  &systemWalletId=${systemWalletId || ""}
+  &facilitiesWalletId=${facilitiesWalletId || ""}
+  &necessitiesWalletId=${necessitiesWalletId || ""}
+  &foodStuffWalletId=${foodStuffWalletId || ""}
+  &healthWalletId=${healthWalletId || ""}
+  `;
 
   if (walletId) {
     apiUrl += `&walletId=${walletId}`; // Add walletId if available
-  }
-
-  // Add new wallet params if available
-  if (facilitiesWallet) {
-    apiUrl += `&FacilitiesWallet=${facilitiesWallet}`;
-  }
-  if (necessitiesWallet) {
-    apiUrl += `&NecessitiesWallet=${necessitiesWallet}`;
-  }
-  if (foodStuffWallet) {
-    apiUrl += `&FoodStuffWallet=${foodStuffWallet}`;
-  }
-  if (healthWallet) {
-    apiUrl += `&HealthWallet=${healthWallet}`;
   }
 
   console.log('Generated API URL:', apiUrl);
@@ -147,10 +139,6 @@ const PaymentReturn = () => {
                 <div>
                   <p><strong>Status:</strong> {paymentResult.status}</p>
                   <p><strong>Amount:</strong> {paymentResult.amount}</p>
-                  {facilitiesWallet && <p><strong>Facilities Wallet:</strong> {facilitiesWallet}</p>}
-                  {necessitiesWallet && <p><strong>Necessities Wallet:</strong> {necessitiesWallet}</p>}
-                  {foodStuffWallet && <p><strong>Food Stuff Wallet:</strong> {foodStuffWallet}</p>}
-                  {healthWallet && <p><strong>Health Wallet:</strong> {healthWallet}</p>}
                   {paymentResult.success ? (
                     <Button type="primary" onClick={goToHome}>Go to Home</Button>
                   ) : (

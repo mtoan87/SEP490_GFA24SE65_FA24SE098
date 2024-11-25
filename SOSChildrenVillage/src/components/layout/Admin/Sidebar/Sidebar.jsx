@@ -154,6 +154,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
               icon: <WalletOutlined />,
               label: <Link to="/admin/system-wallet">System wallet</Link>,
             },
+            {
+              key: 'necessities-wallet',
+              icon: <WalletOutlined />,
+              label: <Link to="/admin/necessities-wallet">Necessities wallet</Link>,
+            },
           ]
         },
       ],
