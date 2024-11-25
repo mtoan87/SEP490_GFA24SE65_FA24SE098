@@ -29,7 +29,7 @@ const Nav = () => {
         <nav className="nav-container">
             <Row justify="space-between" align="middle" className="nav-row">
                 <Col className="logo-container">
-                    <img src="/src/assets/images/logo3-zJq9mO6I.png" alt="Logo" className="nav-logo" />
+                    <img src="../logo3-zJq9mO6I.png" alt="Logo" className="nav-logo" />
                 </Col>
                 
                 <Col className="menu-container">
