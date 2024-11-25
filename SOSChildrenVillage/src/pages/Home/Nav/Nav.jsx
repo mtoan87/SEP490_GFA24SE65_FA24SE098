@@ -3,6 +3,7 @@ import { Menu, Button, Row, Col, message } from 'antd';
 import { HomeOutlined, InfoCircleOutlined, QuestionCircleOutlined, HeartOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import './Nav.css';
+import logo from '../../../assets/images/logo3.png';
 
 const Nav = () => {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Nav = () => {
         <nav className="nav-container">
             <Row justify="space-between" align="middle" className="nav-row">
                 <Col className="logo-container">
-                    <img src="../logo3-zJq9mO6I.png" alt="Logo" className="nav-logo" />
+                    <img src={logo} alt="Logo_homepage" className="nav-logo" />
                 </Col>
                 
                 <Col className="menu-container">
