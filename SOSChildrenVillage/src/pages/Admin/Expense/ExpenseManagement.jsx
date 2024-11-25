@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Input, Select, message, Space } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 const { Option } = Select;
 
@@ -9,8 +10,7 @@ const ExpenseManagement = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [currentEditId, setCurrentEditId] = useState(null); // ID của bản ghi đang chỉnh sửa
+  const [searchTerm, setSearchTerm] = useState('');
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -37,9 +37,7 @@ const ExpenseManagement = () => {
 
   const handleCreateExpense = async () => {
     try {
-      const values = await form.validateFields(); // Lấy dữ liệu từ form
-
-      // Gán giá trị cho các wallet
+      const values = await form.validateFields();
       const wallets = {
         systemWalletId: null,
         facilitiesWalletId: null,
@@ -47,76 +45,52 @@ const ExpenseManagement = () => {
         healthWalletId: null,
         necessitiesWalletId: null,
       };
-
-      // Chỉ gán `1` cho wallet được chọn
       wallets[`${values.wallet}Id`] = 1;
 
       const requestPayload = {
         expenseAmount: values.expenseAmount,
         description: values.description,
         houseId: values.houseId,
-        ...wallets, // Thêm các field wallet vào payload
+        ...wallets,
       };
 
       await axios.post('https://soschildrenvillage.azurewebsites.net/api/Expenses/CreateExpense', requestPayload);
       message.success('Expense created successfully');
-      console.log(requestPayload);
       setIsModalVisible(false);
-      fetchExpenses(); // Refresh danh sách expenses
+      fetchExpenses();
     } catch (error) {
       console.error('Error creating expense:', error);
       message.error('Failed to create expense');
     }
   };
 
-
-  const handleConfirmExpense = async (id) => {
+  const handleDownloadReport = async () => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`);
-      message.success(`Expense ID ${id} has been approved successfully`);
-      fetchExpenses(); // Refresh danh sách expenses
+      const response = await axios.get(
+        'https://soschildrenvillage.azurewebsites.net/api/Expenses/ExportExcel',
+        {
+          responseType: 'blob',
+        }
+      );
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `Expense_Report_${new Date().toISOString()}.xlsx`);
+      message.success('Report downloaded successfully!');
     } catch (error) {
-      console.error('Error confirming expense:', error);
-      message.error('Failed to confirm expense');
+      console.error('Error downloading report:', error);
+      message.error('Failed to download report');
     }
-  };
-  const handleEditExpense = (record) => {
-    form.setFieldsValue({
-      expenseAmount: record.expenseAmount,
-      description: record.description,
-      houseId: record.houseId,
-    });
-    setCurrentEditId(record.id); // Lưu ID của bản ghi đang chỉnh sửa
-    setIsEditModalVisible(true); // Hiển thị modal chỉnh sửa
   };
 
-  const handleUpdateExpense = async () => {
-    try {
-      const values = await form.validateFields(); // Lấy dữ liệu từ form
-      const requestPayload = {
-        expenseAmount: values.expenseAmount,
-        description: values.description,
-        houseId: values.houseId,
-      };
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/UpdateExpense?id=${currentEditId}`, requestPayload);
-      message.success('Expense updated successfully');
-      setIsEditModalVisible(false); // Đóng modal
-      fetchExpenses(); // Tải lại danh sách expenses
-    } catch (error) {
-      console.error('Error updating expense:', error);
-      message.error('Failed to update expense');
-    }
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
   };
-  const handleDeleteExpense = async (id) => {
-    try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/SoftDelete?id=${id}`);
-      message.success(`Expense ID ${id} has been deleted successfully`);
-      fetchExpenses(); // Tải lại danh sách expenses sau khi xóa
-    } catch (error) {
-      console.error('Error deleting expense:', error);
-      message.error('Failed to delete expense');
-    }
-  };  
+
+  const filteredExpenses = expenses.filter(
+    (expense) =>
+      expense.description?.toLowerCase().includes(searchTerm) ||
+      expense.houseId?.toString().includes(searchTerm) ||
+      expense.id?.toString().includes(searchTerm)
+  );
 
   const columns = [
     {
@@ -170,42 +144,28 @@ const ExpenseManagement = () => {
       key: 'createdDate',
       render: (date) => new Date(date).toLocaleDateString(),
     },
-    {
-      title: 'Actions',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button icon={<EditOutlined />} onClick={() => handleEditExpense(record)} />
-          <Button icon={<DeleteOutlined />} danger onClick={() => handleDeleteExpense(record.id)} />
-          <Button
-            type="primary"
-            onClick={() => handleConfirmExpense(record.id)}
-            disabled={record.status === 'Approved'}
-          >
-            Confirm
-          </Button>
-        </Space>
-      ),
-    }
-    
   ];
 
   return (
     <div>
-      <h1>Expense Management</h1>
-      <Button type="primary" icon={<PlusOutlined />} onClick={handleAddExpense}>
-        Add New Expense
-      </Button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Input placeholder="Search for houses" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
+          <Button onClick={handleAddExpense} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
+            Add New Expense
+          </Button>
+          <Button onClick={handleDownloadReport} type="default" icon={<DownloadOutlined />}>
+            Download Report
+          </Button>
+        </div>
+      </div>
+
       <Table
         columns={columns}
-        dataSource={expenses}
+        dataSource={filteredExpenses}
         loading={loading}
         rowKey={(record) => record.id}
-        pagination={{
-          showSizeChanger: true,
-          defaultPageSize: 10,
-          pageSizeOptions: ['10', '20', '50', '100'],
-        }}
+        pagination={{ showSizeChanger: true, defaultPageSize: 10, pageSizeOptions: ['10', '20', '50', '100'] }}
       />
 
       <Modal
@@ -253,39 +213,6 @@ const ExpenseManagement = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <Modal
-        title="Edit Expense"
-        visible={isEditModalVisible}
-        onCancel={() => setIsEditModalVisible(false)}
-        onOk={handleUpdateExpense}
-        okText="Save"
-        cancelText="Cancel"
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="expenseAmount"
-            label="Expense Amount"
-            rules={[{ required: true, message: 'Please enter the expense amount' }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[{ required: true, message: 'Please enter a description' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="houseId"
-            label="House ID"
-            rules={[{ required: true, message: 'Please enter the house ID' }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
-      </Modal>
-
     </div>
   );
 };
