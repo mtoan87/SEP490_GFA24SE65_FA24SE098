@@ -8,40 +8,41 @@ import {
   YoutubeOutlined,
   InstagramOutlined
 } from '@ant-design/icons';
+import './Footer.css';
 
 const Footer = forwardRef((props, ref) => {
   return (
-    <footer ref={ref} className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-12 px-6">
-      <div className="max-w-7xl mx-auto">
+    <footer ref={ref} className="footer">
+      <div className="footer-container">
         <Row gutter={[32, 32]}>
           <Col xs={24} sm={12} md={6}>
-            <h2 className="text-xl font-bold mb-4">CONTACT INFORMATION</h2>
-            <Divider className="my-4 border-white/30" />
-            <div className="space-y-4">
+            <h2 className="footer-heading">CONTACT INFORMATION</h2>
+            <Divider className="footer-divider" />
+            <div className="footer-content">
               <div>
-                <h3 className="font-bold mb-2">National Office</h3>
-                <div className="space-y-2">
-                  <p className="flex items-center gap-2">
+                <h3 className="footer-subheading">National Office</h3>
+                <div className="footer-info">
+                  <p className="footer-text">
                     <EnvironmentOutlined /> 1 Pham Van Dong, Mai Dich, Cau Giay, Hanoi
                   </p>
-                  <p className="flex items-center gap-2">
+                  <p className="footer-text">
                     <PhoneOutlined /> +84.24.37644019
                   </p>
-                  <p className="flex items-center gap-2">
+                  <p className="footer-text">
                     <MailOutlined /> office@sosvietnam.org
                   </p>
                 </div>
               </div>
               <div>
-                <h3 className="font-bold mb-2">Media & Sponsor Office</h3>
-                <div className="space-y-2">
-                  <p className="flex items-center gap-2">
+                <h3 className="footer-subheading">Media & Sponsor Office</h3>
+                <div className="footer-info">
+                  <p className="footer-text">
                     <EnvironmentOutlined /> 45 Pham Ngoc Thach, District 3, HCM
                   </p>
-                  <p className="flex items-center gap-2">
+                  <p className="footer-text">
                     <PhoneOutlined /> +84.28.38227227
                   </p>
-                  <p className="flex items-center gap-2" >
+                  <p className="footer-text">
                     <MailOutlined /> phatttrienquy@sosvietnam.org
                   </p>
                 </div>
@@ -50,26 +51,26 @@ const Footer = forwardRef((props, ref) => {
           </Col>
 
           <Col xs={24} sm={12} md={6}>
-            <h2 className="text-xl font-bold mb-4">LINKS</h2>
-            <Divider className="my-4 border-white/30" />
-            <ul className="space-y-3">
+            <h2 className="footer-heading">LINKS</h2>
+            <Divider className="footer-divider" />
+            <ul className="footer-links">
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   Download Materials
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   Careers
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   SOS Children Villages International
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   Privacy Policy
                 </a>
               </li>
@@ -77,26 +78,26 @@ const Footer = forwardRef((props, ref) => {
           </Col>
 
           <Col xs={24} sm={12} md={6}>
-            <h2 className="text-xl font-bold mb-4">MEDIA</h2>
-            <Divider className="my-4 border-white/30" />
-            <ul className="space-y-3">
+            <h2 className="footer-heading">MEDIA</h2>
+            <Divider className="footer-divider" />
+            <ul className="footer-links">
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   <FacebookOutlined /> Facebook
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   <YoutubeOutlined /> Youtube
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   <InstagramOutlined /> Instagram
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-200 transition-colors duration-300 flex items-center gap-2">
+                <a href="#" className="footer-link">
                   Press Releases
                 </a>
               </li>
@@ -104,21 +105,21 @@ const Footer = forwardRef((props, ref) => {
           </Col>
 
           <Col xs={24} sm={12} md={6}>
-            <h2 className="text-xl font-bold mb-4">TRANSPARENCY</h2>
-            <Divider className="my-4 border-white/30" />
-            <a href="#" className="hover:text-blue-200 transition-colors duration-300">
+            <h2 className="footer-heading">TRANSPARENCY</h2>
+            <Divider className="footer-divider" />
+            <a href="#" className="footer-link">
               Annual Financial and Activity Reports
             </a>
           </Col>
         </Row>
 
-        <div className="mt-12 text-center">
-          <p className="text-2xl font-bold italic mb-8">A loving home for every child</p>
-          <Divider className="border-white/30" />
-          <div className="flex justify-center items-center flex-wrap gap-6 pt-4">
-            <a href="#" className="hover:text-blue-200 transition-colors duration-300">Careers</a>
-            <a href="#" className="hover:text-blue-200 transition-colors duration-300">News</a>
-            <span className="flex items-center gap-2" >
+        <div className="footer-bottom">
+          <p className="footer-motto">A loving home for every child</p>
+          <Divider className="footer-divider" />
+          <div className="footer-bottom-links">
+            <a href="#" className="footer-link">Careers</a>
+            <a href="#" className="footer-link">News</a>
+            <span className="footer-text">
               <PhoneOutlined /> Hotline: 0989 73 77 33
             </span>
           </div>

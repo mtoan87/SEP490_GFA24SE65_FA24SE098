@@ -1,0 +1,98 @@
+.footer {
+    background-color: #00B6F1;
+    color: white;
+    padding: 2rem 1.5rem; /* Updated padding */
+  }
+  
+  .footer-container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+  
+  .footer-heading {
+    font-size: 1rem; /* Updated font size */
+    font-weight: 700;
+    margin-bottom: 0.5rem; /* Updated margin */
+    color: white;
+  }
+  
+  .footer-divider {
+    margin: 0.5rem 0; /* Updated margin */
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Updated gap */
+  }
+  
+  .footer-subheading {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+  
+  .footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; /* Updated gap */
+  }
+  
+  .footer-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.8rem; /* Added font size */
+    line-height: 1.2; /* Added line height */
+  }
+  
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Updated gap */
+  }
+  
+  .footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    font-size: 0.875rem; /* Added font size */
+    line-height: 1.4; /* Added line height */
+  }
+  
+  .footer-link:hover {
+    opacity: 0.8;
+    color: white;
+  }
+  
+  .footer-bottom {
+    margin-top: 2rem; /* Updated margin */
+    text-align: center;
+  }
+  
+  .footer-motto {
+    font-size: 1.25rem; /* Updated font size */
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 1rem; /* Updated margin */
+    color: white;
+  }
+  
+  .footer-bottom-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem; /* Updated gap */
+    padding-top: 0.5rem; /* Updated padding */
+  }
+  
+  /* Ensure all Ant Design icons inherit the white color */
+  .footer .anticon {
+    color: white;
+  }
