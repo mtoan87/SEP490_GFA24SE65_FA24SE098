@@ -147,7 +147,7 @@ const HouseManagement = () => {
 
           if (editingHouse) {
             // Update house logic
-            const updateUrl = `https://localhost:7073/api/Houses/ ?id=${editingHouse.houseId}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/ ?id=${editingHouse.houseId}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
@@ -155,7 +155,7 @@ const HouseManagement = () => {
           } else {
             // Create new house logic
             await axios.post(
-              "https://localhost:7073/api/Houses/CreateHouse",
+              "https://soschildrenvillage.azurewebsites.net/api/Houses/CreateHouse",
               formData,
               {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -201,7 +201,7 @@ const HouseManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/Houses/DeleteHouse?id=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/DeleteHouse?id=${id}`;
           console.log("Deleting house with ID:", id);
   
           const response = await axios.delete(deleteUrl);
@@ -230,7 +230,7 @@ const HouseManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Houses/RestoreHouse/${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Houses/RestoreHouse/${id}`);
       message.success("House Restored Successfully");
       fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {

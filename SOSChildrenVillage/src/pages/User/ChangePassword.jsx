@@ -20,7 +20,7 @@ const ChangePassword = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        `https://localhost:7073/api/UserAccount/ChangePassword/${userId}`,
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/ChangePassword/${userId}`,
         {
           password: values.password,
           newPassword: values.newPassword,

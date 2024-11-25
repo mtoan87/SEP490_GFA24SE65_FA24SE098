@@ -34,7 +34,7 @@ const DonationManagement = () => {
   const fetchDonations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://localhost:7073/api/Donation/FormatDonation");
+      const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Donation/FormatDonation");
       setDonations(response.data);
       console.log(response.data); // Correcting the reference to response.data
     } catch (error) {
@@ -86,8 +86,8 @@ const DonationManagement = () => {
           }
   
           const url = editingDonation
-            ? `https://localhost:7073/api/Donation/UpdateDonation?id=${editingDonation.id}`
-            : "https://localhost:7073/api/Donation/CreateDonate";
+            ? `https://soschildrenvillage.azurewebsites.net/api/Donation/UpdateDonation?id=${editingDonation.id}`
+            : "https://soschildrenvillage.azurewebsites.net/api/Donation/CreateDonate";
   
           // Send the request as JSON
           await axios.post(url, requestData, {
@@ -117,7 +117,7 @@ const DonationManagement = () => {
       content: "This action cannot be undone.",
       onOk: async () => {
         try {
-          await axios.delete(`https://localhost:7073/api/Donation/DeleteDonation?id=${id}`);
+          await axios.delete(`https://soschildrenvillage.azurewebsites.net/api/Donation/DeleteDonation?id=${id}`);
           message.success("Donation deleted successfully");
           fetchDonations();
         } catch (error) {

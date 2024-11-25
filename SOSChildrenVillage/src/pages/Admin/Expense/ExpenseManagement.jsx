@@ -20,7 +20,7 @@ const ExpenseManagement = () => {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7073/api/Expenses/FormatedExpenses');
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Expenses/FormatedExpenses');
       setExpenses(response.data);
     } catch (error) {
       console.error('Error fetching expenses:', error);
@@ -58,7 +58,7 @@ const ExpenseManagement = () => {
         ...wallets, // Thêm các field wallet vào payload
       };
 
-      await axios.post('https://localhost:7073/api/Expenses/CreateExpense', requestPayload);
+      await axios.post('https://soschildrenvillage.azurewebsites.net/api/Expenses/CreateExpense', requestPayload);
       message.success('Expense created successfully');
       console.log(requestPayload);
       setIsModalVisible(false);
@@ -72,7 +72,7 @@ const ExpenseManagement = () => {
 
   const handleConfirmExpense = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Expenses/ConfirmExpense?id=${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`);
       message.success(`Expense ID ${id} has been approved successfully`);
       fetchExpenses(); // Refresh danh sách expenses
     } catch (error) {
@@ -98,7 +98,7 @@ const ExpenseManagement = () => {
         description: values.description,
         houseId: values.houseId,
       };
-      await axios.put(`https://localhost:7073/api/Expenses/UpdateExpense?id=${currentEditId}`, requestPayload);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/UpdateExpense?id=${currentEditId}`, requestPayload);
       message.success('Expense updated successfully');
       setIsEditModalVisible(false); // Đóng modal
       fetchExpenses(); // Tải lại danh sách expenses
@@ -109,7 +109,7 @@ const ExpenseManagement = () => {
   };
   const handleDeleteExpense = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Expenses/SoftDelete?id=${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/SoftDelete?id=${id}`);
       message.success(`Expense ID ${id} has been deleted successfully`);
       fetchExpenses(); // Tải lại danh sách expenses sau khi xóa
     } catch (error) {

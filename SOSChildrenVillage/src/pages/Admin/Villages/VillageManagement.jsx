@@ -125,14 +125,14 @@ const VillageManagement = () => {
           }
 
           if (editingVillage) {
-            const updateUrl = `https://localhost:7073/api/Village/UpdateVillage?villageId=${editingVillage.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Village/UpdateVillage?villageId=${editingVillage.id}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
             message.success("Update village Successfully");
           } else {
             await axios.post(
-              "https://localhost:7073/api/Village/CreateVillage",
+              "https://soschildrenvillage.azurewebsites.net/api/Village/CreateVillage",
               formData,
               {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -178,7 +178,7 @@ const VillageManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/Village/DeleteVillage?villageId=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Village/DeleteVillage?villageId=${id}`;
           console.log("Deleting village with ID:", id);
   
           const response = await axios.delete(deleteUrl);
@@ -207,7 +207,7 @@ const VillageManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Village/RestoreVillage/${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Village/RestoreVillage/${id}`);
       message.success("Village Restored Successfully");
       fetchVillages(showDeleted);
     } catch (error) {
