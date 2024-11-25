@@ -14,7 +14,7 @@ export const LoginScreen = () => {
   const fetchLogin = async (email, password) => {
     try {
       const response = await axios.post(
-        "https://localhost:7073/api/Login",
+        "https://soschildrenvillage.azurewebsites.net/api/Login",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );

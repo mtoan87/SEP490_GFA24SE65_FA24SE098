@@ -18,7 +18,7 @@ const FoodStuffWallet = () => {
   const fetchFoodStuffWalletData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7073/api/FoodStuffWallet/FormatFoodWallet');
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/FoodStuffWallet/FormatFoodWallet');
       setFoodStuffWalletData(response.data);
     } catch (error) {
       console.error(error);
@@ -31,7 +31,7 @@ const FoodStuffWallet = () => {
   // Fetch Expense data based on FoodStuffWallet ID
   const fetchExpenseData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Expenses/GetExpenseByFoodWalletId?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseByFoodWalletId?Id=${id}`);
       
       // Lọc và lấy chỉ những field cần thiết
       const filteredExpenseData = response.data.map(expense => ({
@@ -53,7 +53,7 @@ const FoodStuffWallet = () => {
   // Fetch Income data based on FoodStuffWallet ID
   const fetchIncomeData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Incomes/GetIncomeByFoodWallet?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeByFoodWallet?Id=${id}`);
       
       // Lọc và lấy chỉ những field cần thiết
       const filteredIncomeData = response.data.map(income => ({

@@ -142,7 +142,7 @@ const ChildrenManagement = () => {
           }
 
           if (editingChild) {
-            const updateUrl = `https://localhost:7073/api/Children/UpdateChild?id=${editingChild.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/UpdateChild?id=${editingChild.id}`;
             console.log("Updating child with ID:", editingChild.id);
             console.log("Update URL:", updateUrl);
 
@@ -156,7 +156,7 @@ const ChildrenManagement = () => {
             message.success("Update Children Successfully");
           } else {
             const createResponse = await axios.post(
-              "https://localhost:7073/api/Children/CreateChild",
+              "https://soschildrenvillage.azurewebsites.net/api/Children/CreateChild",
               formData,
               {
                 headers: {
@@ -206,7 +206,7 @@ const ChildrenManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/Children/DeleteChild?id=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild?id=${id}`;
           console.log("Deleting child with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -235,7 +235,7 @@ const ChildrenManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Children/RestoreChild/${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`);
       message.success("Child Restored Successfully");
       fetchChildren(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {

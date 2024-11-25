@@ -156,7 +156,7 @@ const EventManagement = () => {
           }
 
           if (editingEvent) {
-            const updateUrl = `https://localhost:7073/api/Event/UpdateEvent?id=${editingEvent.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Event/UpdateEvent?id=${editingEvent.id}`;
             console.log("Updating event with ID:", editingEvent.id);
             console.log("Update URL:", updateUrl);
 
@@ -170,7 +170,7 @@ const EventManagement = () => {
             message.success("Update Event Successfully");
           } else {
             const createResponse = await axios.post(
-              "https://localhost:7073/api/Event/CreateEvent",
+              "https://soschildrenvillage.azurewebsites.net/api/Event/CreateEvent",
               formData,
               {
                 headers: {
@@ -220,7 +220,7 @@ const EventManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/Event/DeleteEvent?id=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Event/DeleteEvent?id=${id}`;
           console.log("Deleting event with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -249,7 +249,7 @@ const EventManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/Event/RestoreEvent/${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Event/RestoreEvent/${id}`);
       message.success("Event Restored Successfully");
       fetchEvents(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {

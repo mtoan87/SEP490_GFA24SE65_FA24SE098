@@ -18,7 +18,7 @@ const SystemWallet = () => {
   const fetchSystemWalletData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7073/api/SystemWallet/FormatSystemWallet');
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/SystemWallet/FormatSystemWallet');
       setSystemWalletData(response.data);
     } catch (error) {
       console.error(error);
@@ -31,7 +31,7 @@ const SystemWallet = () => {
   // Fetch Expense data based on SystemWallet ID
   const fetchExpenseData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Expenses/GetExpenseBySystemWalletId?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseBySystemWalletId?Id=${id}`);
       
       // Lọc và lấy chỉ những field cần thiết
       const filteredExpenseData = response.data.map(expense => ({
@@ -53,7 +53,7 @@ const SystemWallet = () => {
   // Fetch Income data based on SystemWallet ID
   const fetchIncomeData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Incomes/GetIncomeBySystemWallet?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeBySystemWallet?Id=${id}`);
       
       // Lọc và lấy chỉ những field cần thiết
       const filteredIncomeData = response.data.map(income => ({

@@ -16,7 +16,7 @@ const EventDetail = () => {
 
     const fetchEventDetails = async () => {
       try {
-        const response = await axios.get(`https://localhost:7073/api/Event/GetEventById/${eventId}`);
+        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Event/GetEventById/${eventId}`);
         setEvent(response.data);
       } catch (error) {
         console.error('Error fetching event details:', error);
@@ -48,7 +48,7 @@ const EventDetail = () => {
     }
 
     try {
-      const response = await axios.put(`https://localhost:7073/api/EventDonate/EventDonate?id=${eventId}`, {
+      const response = await axios.put(`https://soschildrenvillage.azurewebsites.net/api/EventDonate/EventDonate?id=${eventId}`, {
         amount: amount,
         userAccountId: userId
       });

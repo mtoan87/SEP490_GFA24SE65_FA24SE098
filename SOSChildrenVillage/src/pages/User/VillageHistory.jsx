@@ -20,7 +20,7 @@ const VillageHistory = () => {
     const fetchVillageHistory = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7073/api/Donation/GetDonatedVillageByUserId?userId=${userId}`
+          `https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonatedVillageByUserId?userId=${userId}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch village history');
