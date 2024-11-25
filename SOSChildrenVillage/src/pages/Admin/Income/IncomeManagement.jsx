@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, message, Space } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -20,7 +20,7 @@ const IncomeManagement = () => {
       const response = await axios.get('https://localhost:7073/api/Incomes/FormatedIncome');
       setIncomes(response.data);
     } catch (error) {
-      message.error('Failed to fetch income data');
+      message.error('Failed to fetch income data', error);
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ const IncomeManagement = () => {
       message.success('Income deleted successfully');
       fetchIncomes();
     } catch (error) {
-      message.error('Failed to delete income');
+      message.error('Failed to delete income', error);
     }
   };
 

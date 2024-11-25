@@ -52,15 +52,48 @@ export const getHouseWithImages = async (showDeleted = false) => {
   }
 };
 
-export const getVillages = async (showDeleted = false) => {
+export const getVillagesWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Houses/GetAllVillagesIsDelete" // Nhà đã xóa
-      : "/api/Houses/GetAllVillagesWithImg"; // Nhà chưa xóa
-      const response = await api.get(endpoint);
-      return response.data;
+      ? "/api/Village/GetAllVillageIsDelete"
+      : "/api/Village/GetAllVillageWithImg";
+    const response = await api.get(endpoint);
+    return response.data;
   } catch (error) {
     console.error("Error fetching Villages with image:", error);
+    throw error;
+  }
+};
+
+export const getEventsWithImages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Event/GetAllEventsIsDelete"
+      : "/api/Event";
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Villages with image:", error);
+    throw error;
+  }
+};
+
+export const getAcademicReport = async () => {
+  try {
+    const response = await api.get("/api/AcademicReport");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching children:", error);
+    throw error;
+  }
+};
+
+export const getHealthReport = async () => {
+  try {
+    const response = await api.get("/api/HealthReport");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching children:", error);
     throw error;
   }
 };
