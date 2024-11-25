@@ -279,6 +279,11 @@ const ChildrenManagement = () => {
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
@@ -301,12 +306,6 @@ const ChildrenManagement = () => {
         </Button>
       ),
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-
     {
       title: "Actions",
       key: "action",
@@ -552,7 +551,10 @@ const ChildrenManagement = () => {
           </Form.Item>
 
           <Form.Item name="status" label="Status">
-            <Input />
+          <Select>
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item name="isDeleted" valuePropName="checked">

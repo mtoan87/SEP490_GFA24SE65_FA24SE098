@@ -147,7 +147,7 @@ const HouseManagement = () => {
 
           if (editingHouse) {
             // Update house logic
-            const updateUrl = `https://localhost:7073/api/Houses/UpdateHouse?id=${editingHouse.houseId}`;
+            const updateUrl = `https://localhost:7073/api/Houses/ ?id=${editingHouse.houseId}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
@@ -275,11 +275,7 @@ const HouseManagement = () => {
       dataIndex: "houseOwner",
       key: "houseOwner",
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
+    
     {
       title: "User account Id",
       dataIndex: "userAccountId",
@@ -289,6 +285,11 @@ const HouseManagement = () => {
       title: "Village Id",
       dataIndex: "villageId",
       key: "villageId",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Image",
