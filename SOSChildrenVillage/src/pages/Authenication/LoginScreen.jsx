@@ -129,7 +129,7 @@ export const LoginScreen = () => {
           </Button>
         </Form.Item>
 
-        <Divider>OR</Divider>
+        {/* <Divider>OR</Divider>
 
         <Space direction="vertical" style={{ width: "100%", textAlign: "center" }}>
           <Button icon={<FacebookOutlined />} style={{ width: "100%", marginBottom: "8px" }}>
@@ -141,7 +141,7 @@ export const LoginScreen = () => {
           <Button icon={<TwitterOutlined />} style={{ width: "100%" }}>
             Login with Twitter
           </Button>
-        </Space>
+        </Space> */}
 
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           <Text>
