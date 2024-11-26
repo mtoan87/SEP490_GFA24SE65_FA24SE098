@@ -5,9 +5,8 @@
   left: 0;
   right: 0;
   background-color: white;
-  border-bottom: 1px solid #e5e5e5;
+  /* border-bottom: 1px solid #e5e5e5; */
   z-index: 99;
-  padding: 0 24px;
 }
 
 /* Row layout */
@@ -16,6 +15,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: white;
+  padding-right: 25px;
+  padding-bottom: 5px;
 }
 
 /* Logo Section */

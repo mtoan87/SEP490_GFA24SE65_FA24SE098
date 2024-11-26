@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -19,6 +19,7 @@ import {
   SearchOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
 import axios from "axios";
 import moment from "moment";
@@ -40,10 +41,26 @@ const ChildrenManagement = () => {
   const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+
+  const navigate = useNavigate(); // Khởi tạo useNavigate
+  const messageShown = useRef(false); // Use a ref to track message display
 
   useEffect(() => {
-    fetchChildren();
-  }, []);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+  
+    if (!token || !["1", "3", "4"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true; // Set ref to true after showing message
+      }
+    } else {
+      fetchChildren();
+    }
+  }, [navigate, redirecting]);
 
   const fetchChildren = async (showDeleted = false) => {
     try {

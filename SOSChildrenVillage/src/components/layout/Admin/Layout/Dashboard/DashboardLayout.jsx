@@ -1,9 +1,9 @@
-import { Layout, Card, Tabs } from "antd";
+import { Layout, Card, Tabs, message } from "antd";
 import { Outlet } from "react-router-dom";
-
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../AdminLayout";
 import { userStats } from "../Dashboard/constants/data";
-
 import TopStatsCards from "../Dashboard/components/Statistics/StatCards/StatCard";
 import KPIStats from "../Dashboard/components/Statistics/KPISection/KPICard";
 import ChildTrends from "../Dashboard/components/Charts/ChildTrends";
@@ -17,6 +17,27 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 
 const DashboardLayout = () => {
+  const [redirecting, setRedirecting] = useState(false); 
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+  
+    // Chỉ cho phép roleId là "1", "3", hoặc "4"
+    if (!token || !["1", "3", "4"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      "/admin";
+    }
+  }, [navigate, redirecting]);
+  
   return (
     <AdminLayout>
       <Content className="p-6 bg-gray-100 min-h-screen">
