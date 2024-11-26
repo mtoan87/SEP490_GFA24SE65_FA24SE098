@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Spin, message, Result, Button, Space, Popconfirm } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
