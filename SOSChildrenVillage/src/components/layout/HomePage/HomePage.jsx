@@ -16,8 +16,8 @@ const HomePage = () => {
                 <Header />
                 <Nav />
             </div>
-            
-            <Content className="flex-1">      
+
+            <Content className="flex-1">
                 <section className="min-h-[calc(100vh-80px)] flex items-center">
                     <HeroSection />
                 </section>
@@ -34,10 +34,11 @@ const HomePage = () => {
             <Footer />
 
             <BackTop>
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+                <div className="back-to-top">
                     <UpOutlined />
                 </div>
             </BackTop>
+
         </Layout>
     );
 };
