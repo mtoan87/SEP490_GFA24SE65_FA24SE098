@@ -1,131 +1,84 @@
+/* Nav Container */
 .nav-container {
-  @apply fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200;
-  height: 70px;
+  /* position: fixed; */
+  top: 70px;  /* Đảm bảo Nav không bị chồng lên Header */
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-bottom: 1px solid #e5e5e5;
+  z-index: 99;
+  padding: 0 24px;
 }
 
-.nav-content {
-  @apply max-w-7xl mx-auto px-6 flex items-center justify-between h-full;
+/* Row layout */
+.nav-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Logo styling */
+/* Logo Section */
 .logo-container {
-  @apply flex items-center;
-  margin-right: -12px;
+  display: flex;
+  align-items: center;
 }
 
 .nav-logo {
-  height: 40px;
-  width: auto;
+  height: 100px;
+  cursor: pointer;
+  padding-left: 20px;
 }
 
-/* Menu styling */
+/* Menu Styling */
 .menu-container {
-  @apply flex-1 flex justify-center;
-  margin-left: 40px;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .nav-menu {
-  @apply border-none bg-transparent;
-  min-height: 70px;
-}
-
-/* Loại bỏ các border và background mặc định */
-.ant-menu-horizontal {
-  border-bottom: none !important;
-  background: transparent !important;
-  line-height: 70px !important;
+  border: none;
+  background-color: transparent;
 }
 
 .nav-menu .ant-menu-item {
-  @apply text-gray-700 font-medium text-base flex items-center;
   padding: 0 24px;
-  margin: 0 4px;
-  line-height: 70px;
-  background: transparent !important;
-  border: none !important;
+  font-weight: bold;
+  color: #4a4a4a;
 }
 
-/* Loại bỏ background khi hover và focus */
 .nav-menu .ant-menu-item:hover,
 .nav-menu .ant-menu-item:focus {
-  background: transparent !important;
-}
-
-.nav-menu .ant-menu-item:hover {
-  @apply text-[#00A7E6] !important;
+  color: #00A7E6;
 }
 
 .nav-menu .ant-menu-item-selected {
-  @apply text-[#00A7E6] !important;
-  background: transparent !important;
+  color: #00A7E6;
 }
 
-/* Điều chỉnh đường gạch dưới */
-.nav-menu .ant-menu-item::after {
-  @apply bg-[#00A7E6] !important;
-  bottom: 0 !important;
-}
-
-/* Căn chỉnh icon và text trong menu item */
-.nav-menu .ant-menu-item .anticon {
-  @apply flex items-center;
-  margin-right: 8px;
-  line-height: inherit;
-}
-
-/* Right section styling */
-.right-section {
-  @apply flex items-center gap-6;
-}
-
-.search-icon {
-  @apply text-xl text-gray-600 cursor-pointer hover:text-[#00A7E6] transition-colors duration-300;
-}
-
+/* Donate Button */
 .donate-button {
-  @apply px-6 py-2 rounded-md font-bold text-white flex items-center;
-  background-color: #8CC63F !important;
+  background-color: #8cc63f;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 6px 16px;
   border: none;
-  height: 40px;
-  transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
 .donate-button:hover {
-  @apply opacity-90;
-  background-color: #7bb32e !important;
+  background-color: #7bb32e;
 }
 
-/* Đảm bảo các icon được căn giữa */
-.ant-menu-item-icon {
-  @apply flex items-center;
-  height: 100%;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .nav-content {
-    @apply px-4;
-  }
-
-  .nav-menu .ant-menu-item {
-    padding: 0 16px;
-  }
-}
-
+/* Responsive Styles */
 @media (max-width: 768px) {
   .nav-menu .ant-menu-item {
-    padding: 0 12px;
+      padding: 0 12px;
   }
 
   .donate-button {
-    padding: 0 16px;
+      padding: 4px 12px;
   }
 }
-
-/* Nav.css or your preferred CSS file */
-/* 
-.logo-shift {
-    transform: translateX(10px);
-} 
-*/
-  

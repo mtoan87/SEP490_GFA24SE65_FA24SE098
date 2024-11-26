@@ -39,6 +39,40 @@
     background-color: #f8f9fa;
 }
 
+.back-to-top {
+    position: relative; /* Định vị cho ::before */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* Kích thước của phần chính */
+    height: 40px;
+    border-radius: 50%; /* Tạo hình tròn cho phần chính */
+    background-color: #007bff; /* Màu nền xanh chính */
+    color: white; /* Màu mũi tên */
+    z-index: 2; /* Đảm bảo mũi tên nằm trên vòng sáng */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.back-to-top::before {
+    content: ""; /* Kích hoạt pseudo-element */
+    position: absolute; /* Để phủ toàn phần tử chính */
+    width: 70px; /* Kích thước hình tròn lớn hơn */
+    height: 70px;
+    border-radius: 50%; /* Tạo hình tròn */
+    background-color: rgba(0, 123, 255, 0.2); /* Màu xanh nhạt làm nền */
+    z-index: 1; /* Đảm bảo nền nằm dưới mũi tên */
+    transition: transform 0.3s ease-in-out;
+}
+
+.back-to-top:hover {
+    transform: scale(1.1); /* Hiệu ứng phóng to khi hover */
+}
+
+.back-to-top:hover::before {
+    transform: scale(1.3); /* Vòng sáng phóng to hơn khi hover */
+    background-color: rgba(0, 123, 255, 0.3); /* Làm sáng hơn khi hover */
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .homepage-main section {

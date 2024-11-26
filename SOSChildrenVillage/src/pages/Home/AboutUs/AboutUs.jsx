@@ -8,9 +8,9 @@ const AboutUs = () => {
       <div className="container">
 
         {/* About Us Header */}
-         <div className="about-us-header">
+        <div className="about-us-header">
           <h2 className="about-us-title">
-            Giới thiệu
+            About Us
             <div className="title-underline"></div>
           </h2>
         </div>
@@ -28,11 +28,11 @@ const AboutUs = () => {
           {/* Right Column - Content */}
           <div className="content-section">
             <h1 className="main-heading">
-              Làng trẻ em SOS là nơi chăm sóc, nuôi dưỡng, hỗ trợ trẻ em mồ côi, trẻ em bị bỏ rơi và trẻ em có hoàn cảnh khó khăn.
+              SOS Children’s Village is a place that cares for, nurtures, and supports orphaned children, abandoned children, and children in difficult circumstances.
             </h1>
 
             <p className="description">
-              Làng trẻ em SOS là tổ ấm yêu thương dành cho trẻ em mồ côi, bị bỏ rơi, hoặc có hoàn cảnh khó khăn, nơi các em được chăm sóc, nuôi dưỡng và hỗ trợ để phát triển toàn diện, vượt qua nghịch cảnh và xây dựng tương lai tươi sáng.
+              SOS Children’s Village is a loving home for orphaned, abandoned, or disadvantaged children, where they are cared for, nurtured, and supported to fully develop, overcome adversity, and build a bright future.
             </p>
 
             {/* Features Grid */}

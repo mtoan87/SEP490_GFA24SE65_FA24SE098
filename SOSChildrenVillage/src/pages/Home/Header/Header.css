@@ -1,133 +1,109 @@
+/* Header Container */
+header {
+  background-color: #fff;
+  padding: 10px 0;
+  /* border-bottom: 1px solid #e5e5e5; */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-.header-container {
-    @apply bg-white shadow-sm fixed w-full top-0 z-50;
-  }
-  
-  .header-wrapper {
-    @apply max-w-7xl mx-auto px-6 py-4;
-  }
-  
-  .header-content {
-    @apply w-full items-center;
-  }
-  
-  /* Logo Section */
-  .logo-section {
-    @apply flex items-center;
-  }
-  
-  .logo-link {
-    @apply flex items-center space-x-2 no-underline;
-  }
-  
-  .logo-image {
-    @apply h-8 w-auto;
-  }
-  
-  .company-name {
-    @apply text-xl font-bold text-gray-800;
-  }
-  
-  /* Navigation Section */
-  .nav-section {
-    @apply flex-1 flex justify-center;
-  }
-  
-  .main-nav {
-    @apply flex items-center space-x-8;
-  }
-  
-  .nav-link {
-    @apply text-gray-600 hover:text-blue-600 transition-colors duration-200 text-base font-medium no-underline;
-  }
-  
-  /* Auth Section */
-  .auth-section {
-    @apply flex items-center;
-  }
-  
-  .auth-buttons {
-    @apply flex items-center;
-  }
-  
-  .login-btn {
-    @apply rounded-lg px-6 py-2 hover:scale-105 transition-transform duration-200;
-  }
-  
-  .register-btn {
-    @apply rounded-lg px-6 py-2 hover:scale-105 transition-transform duration-200 border-2 border-blue-500 text-blue-500;
-  }
-  
-  .user-button {
-    @apply text-lg flex items-center space-x-2 hover:text-blue-600 transition-colors duration-200;
-  }
-  
-  /* User Popover */
+/* User Info Popover */
+.user-popover {
+  text-align: center;
+  padding: 20px;
+  min-width: 250px;
+  width: 100px;
+}
+
+.user-avatar {
+  margin-bottom: 15px;
+  border: 2px solid #1890ff;
+}
+
+.user-name {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #000;
+  font-weight: bold;
+}
+
+.user-links, .admin-links {
+  margin-bottom: 10px;
+}
+
+.user-links a, .admin-links a {
+  font-size: 14px;
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.user-links a:hover, .admin-links a:hover {
+  text-decoration: underline;
+}
+
+.logout-btn {
+  border-radius: 8px;
+  padding: 6px 20px;
+  background-color: #ff4d4f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  margin-top: 10px;
+}
+
+.logout-btn:hover {
+  background-color: #d93636;
+}
+
+/* Header Button Styling */
+header .ant-btn {
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Login/Sign Up Buttons */
+header .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+header .ant-btn-primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+header .ant-btn-default {
+  color: #1890ff;
+  border-color: #1890ff;
+}
+
+header .ant-btn-default:hover {
+  background-color: #e6f7ff;
+}
+
+/* User Avatar Button */
+.ant-btn-text {
+  font-size: 16px;
+  color: #1890ff;
+  padding: 0;
+}
+.container3 {
+  padding: 0px 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .user-popover {
-    @apply w-64 p-6 flex flex-col items-center;
+    min-width: 200px;
   }
-  
-  .user-avatar {
-    @apply border-2 border-blue-500 mb-4 hover:border-blue-600 transition-colors duration-200;
+
+  header .ant-col:first-child a {
+    font-size: 18px;
+    margin-right: 10px;
   }
-  
-  .user-name {
-    @apply text-lg font-semibold mb-4 text-gray-800;
+
+  header .ant-btn {
+    font-size: 12px;
   }
-  
-  .user-links {
-    @apply w-full mb-3;
-  }
-  
-  .user-menu {
-    @apply w-full space-y-2 mb-4;
-  }
-  
-  .admin-links {
-    @apply w-full mb-4;
-  }
-  
-  .logout-btn {
-    @apply rounded-lg px-6 py-2 w-full hover:scale-105 transition-transform duration-200;
-  }
-  
-  /* Popover Override */
-  .user-popover-overlay {
-    @apply rounded-lg shadow-lg;
-  }
-  
-  .ant-popover-inner-content {
-    @apply p-0;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .header-wrapper {
-      @apply px-4 py-3;
-    }
-  
-    .nav-section {
-      @apply hidden;
-    }
-  
-    .company-name {
-      @apply text-lg;
-    }
-  
-    .auth-buttons {
-      @apply space-x-2;
-    }
-  
-    .login-btn, .register-btn {
-      @apply px-4 py-1 text-sm;
-    }
-  
-    .user-button {
-      @apply text-base;
-    }
-  }
-  
-  /* Active Link Style */
-  .nav-link.active {
-    @apply text-blue-600;
-  }
+}
