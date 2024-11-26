@@ -602,6 +602,8 @@ const EventManagement = () => {
           <Select>
               <Option value="Active">Scheduled</Option>
               <Option value="Inactive">Unscheduled</Option>
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
             </Select>
           </Form.Item>
 
