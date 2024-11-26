@@ -118,7 +118,8 @@ const EditUserDetail = () => {
       padding: "2rem",
       background: "#f9f9f9",
       borderRadius: "12px",
-      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.3)",
+      marginBottom: "20px",
     }}>
       <Form
         name="editProfile"
