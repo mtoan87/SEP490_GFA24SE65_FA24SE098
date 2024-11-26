@@ -183,7 +183,7 @@ const AcademicReport = () => {
               icon={<PlusOutlined />}
               style={{ marginRight: 8 }}
             >
-              Add New Children
+              Add New Report
             </Button>
 
             <Button type="default" style={{ marginRight: 8 }}>

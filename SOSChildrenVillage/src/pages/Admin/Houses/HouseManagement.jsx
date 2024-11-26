@@ -147,7 +147,7 @@ const HouseManagement = () => {
 
           if (editingHouse) {
             // Update house logic
-            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/ ?id=${editingHouse.houseId}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/UpdateHouse?id=${editingHouse.houseId}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
