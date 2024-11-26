@@ -113,7 +113,8 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 8px 20px;
+    padding: 40px 20px;
+    background-color: #F3F2E7;
   }
   
   .w-full {

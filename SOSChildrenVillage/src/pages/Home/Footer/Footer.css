@@ -1,6 +1,6 @@
 .footer {
-    background-color: #00B6F1;
-    color: white;
+    background-color: #289efb;
+    color: rgb(255, 255, 255);
     padding: 2rem 1.5rem; /* Updated padding */
   }
   
@@ -13,7 +13,7 @@
     font-size: 1rem; /* Updated font size */
     font-weight: 700;
     margin-bottom: 0.5rem; /* Updated margin */
-    color: white;
+    color: rgb(255, 255, 255);
   }
   
   .footer-divider {
@@ -30,7 +30,7 @@
   .footer-subheading {
     font-weight: 700;
     margin-bottom: 0.5rem;
-    color: white;
+    color: rgb(255, 255, 255);
   }
   
   .footer-info {
@@ -94,5 +94,5 @@
   
   /* Ensure all Ant Design icons inherit the white color */
   .footer .anticon {
-    color: white;
+    color: rgb(255, 255, 255);
   }

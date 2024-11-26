@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -18,6 +18,7 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { getVillagesWithImages } from "../../../services/api";
 
 const { Dragger } = Upload;
@@ -36,11 +37,27 @@ const VillageManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false); 
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchVillages();
-  }, []);
-
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+  
+    // Chỉ cho phép roleId là "1", "3", hoặc "4"
+    if (!token || !["1", "3", "4"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchVillages();
+    }
+  }, [navigate, redirecting]);
+  
   const fetchVillages = async (showDeleted = false) => {
     try {
       setLoading(true);

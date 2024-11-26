@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -40,20 +40,24 @@ const HouseManagement = () => {
   const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
+  const messageShown = useRef(false); // Use a ref to track message display
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Kiểm tra xem có token không
+    const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
-
-    // Nếu không có token hoặc roleId không phải là 1, điều hướng người dùng đến trang login
-    if (!token || (userRole !== "1" && !redirecting)) {
-      message.error("You do not have permission to access this page");
-      setRedirecting(true); // Đặt trạng thái redirecting là true khi điều hướng
-      navigate("/login"); // Điều hướng đến trang đăng nhập
+  
+    if (!token || !["1", "3", "4"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true; // Set ref to true after showing message
+      }
     } else {
-      fetchHouses(); // Nếu có quyền, tiếp tục lấy danh sách nhà
+      fetchHouses();
     }
-  }, [navigate, redirecting]); // Thêm redirecting vào dependencies để tránh render lại không cần thiết
+  }, [navigate, redirecting]);
+  
 
   const fetchHouses = async (showDeleted = false) => {
     try {
