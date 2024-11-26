@@ -13,12 +13,12 @@ import {
   WalletOutlined,
   PlusCircleOutlined,
   MinusCircleOutlined,
-  PayCircleOutlined,
+  //PayCircleOutlined,
   FileImageOutlined,
   SettingOutlined,
   BankOutlined,
   ScheduleOutlined,
-  TransactionOutlined,
+  //TransactionOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
 import logo from '../../../../assets/images/logo3.png';
@@ -41,11 +41,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
           icon: <UserOutlined />,
           label: <Link to="/admin/user-management">Users</Link>,
         },
-        {
+        /* {
           key: 'roles',
           icon: <UserOutlined />,
           label: <Link to="/admin/roles-management">Roles</Link>,
-        },
+        }, */
         {
           key: 'villages',
           icon: <BankOutlined />,
@@ -93,11 +93,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
           icon: <ScheduleOutlined />,
           label: <Link to="/admin/booking-management">Bookings</Link>,
         },
-        {
+        /* {
           key: 'bookingslot',
           icon: <ScheduleOutlined />,
           label: <Link to="/admin/booking-slot-management">Schedule booking</Link>,
-        },
+        }, */
       ],
     },
     {
@@ -119,16 +119,16 @@ const Sidebar = ({ collapsed, onToggle }) => {
           icon: <DollarOutlined />,
           label: <Link to="/admin/donation-management">Donations</Link>,
         },
-        {
+        /* {
           key: 'payments',
           icon: <PayCircleOutlined />,
           label: <Link to="/admin/payment-management">Payments</Link>,
-        },
-        {
+        }, */
+        /* {
           key: 'transactions',
           icon: <TransactionOutlined />,
           label: <Link to="/admin/transaction-management">Transactions</Link>,
-        },
+        }, */
         {
           type: 'group',
           key: 'wallets-group',

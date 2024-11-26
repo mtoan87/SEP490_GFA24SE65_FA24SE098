@@ -6,26 +6,6 @@ const api = axios.create({
   baseURL: baseURL,
 });
 
-// export const getChild = async () => {
-//   try {
-//     const response = await api.get('/api/Children');
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error fetching children:', error);
-//     throw error;
-//   }
-// };
-
-/* export const getChildWithImages = async () => {
-  try {
-    const response = await api.get('/api/Children/GetAllChildWithImg');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching children with image:', error);
-    return [];
-  }
-}; */
-
 export const getChildWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
@@ -98,10 +78,14 @@ export const getHealthReport = async () => {
   }
 };
 
-export const getAccount = async () => {
+export const getAccount = async (showDeleted = false) => {
   try {
-    const response = await api.get("/api/UserAccount");
-    return response.data;
+    //const response = await api.get("/api/UserAccount");
+    const endpoint = showDeleted
+      ? "/api/UserAccount/GetAllUserIsDelete"
+      : "/api/UserAccount";
+    const response = await api.get(endpoint);
+    return response.data?.$values || []; //nếu trả data là $values thì nhận luôn
   } catch (error) {
     console.error("Error fetching User Account:", error);
     throw error;
