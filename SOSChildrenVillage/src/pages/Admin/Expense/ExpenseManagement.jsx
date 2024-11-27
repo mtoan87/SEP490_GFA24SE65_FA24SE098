@@ -12,8 +12,12 @@ const ExpenseManagement = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [form] = Form.useForm();
+  const [roleId, setRoleId] = useState(null);
+
 
   useEffect(() => {
+    const storedRoleId = localStorage.getItem('roleId');
+    setRoleId(parseInt(storedRoleId, 10));
     fetchExpenses();
   }, []);
 
@@ -92,6 +96,17 @@ const ExpenseManagement = () => {
       expense.id?.toString().includes(searchTerm)
   );
 
+  const handleConfirmExpense = async (id) => {
+    try {
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`);
+      message.success('Expense confirmed successfully');
+      fetchExpenses(); // Cập nhật lại danh sách chi phí
+    } catch (error) {
+      console.error('Error confirming expense:', error);
+      message.error('Failed to confirm expense');
+    }
+  };
+  
   const columns = [
     {
       title: 'Expense ID',
@@ -144,8 +159,25 @@ const ExpenseManagement = () => {
       key: 'createdDate',
       render: (date) => new Date(date).toLocaleDateString(),
     },
+    ...(roleId === 1
+      ? [
+          {
+            title: 'Active',
+            key: 'active',
+            render: (text, record) => (
+              <Button
+                type="primary"
+                onClick={() => handleConfirmExpense(record.id)}
+                disabled={record.status === 'Confirmed'}
+              >
+                Confirm
+              </Button>
+            ),
+          },
+        ]
+      : []),
   ];
-
+  
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
