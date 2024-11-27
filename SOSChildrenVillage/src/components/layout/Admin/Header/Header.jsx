@@ -1,19 +1,47 @@
 import { Layout, Button, Space, Badge, Avatar, Dropdown, Modal } from 'antd';
-import { 
-  BellOutlined, 
-  SettingOutlined, 
+import {
+  BellOutlined,
+  SettingOutlined,
   UserOutlined,
   LogoutOutlined,
-  ProfileOutlined
+  ProfileOutlined,
 } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Header.css';
 
 const { Header } = Layout;
 
-const HeaderComponent = ({ collapsed, userInfo }) => {
+const HeaderComponent = ({ collapsed }) => {
+  const [userInfo, setUserInfo] = useState(null);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+
+  // Lấy thông tin userId từ localStorage
+  const userId = localStorage.getItem('userId');
+
+  // Gọi API để lấy thông tin user
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch(
+          `https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`, // Thêm token vào header
+            },
+          }
+        );
+        const data = await response.json();
+        setUserInfo(data);
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    };
+
+    if (userId) {
+      fetchUserInfo();
+    }
+  }, [userId]);
 
   const showProfileModal = () => {
     setIsProfileModalVisible(true);
@@ -21,6 +49,22 @@ const HeaderComponent = ({ collapsed, userInfo }) => {
 
   const handleCancel = () => {
     setIsProfileModalVisible(false);
+  };
+
+  const handleMenuClick = (e) => {
+    if (e.key === 'logout') {
+      // Xóa token và điều hướng về trang login
+      localStorage.removeItem('token');
+      localStorage.removeItem('roleId');
+      localStorage.removeItem('userId');
+      window.location.href = '/login';
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US');
   };
 
   const userMenuItems = {
@@ -64,59 +108,33 @@ const HeaderComponent = ({ collapsed, userInfo }) => {
     ],
   };
 
-  const handleMenuClick = (e) => {
-    if (e.key === 'logout') {
-      // Handle logout
-      localStorage.removeItem('token');
-      window.location.href = '/login'; // Redirect to login page
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US');
-  };
-
   return (
     <>
       <Header className={`site-header ${collapsed ? 'collapsed' : ''}`}>
         <div className="header-left">
           <span className="page-title">Admin Dashboard</span>
         </div>
-        
+
         <Space className="header-right" size="large">
-          <Dropdown 
-            menu={notificationItems} 
-            placement="bottomRight" 
-            trigger={['click']}
-          >
+          <Dropdown menu={notificationItems} placement="bottomRight" trigger={['click']}>
             <Badge count={3} size="small">
-              <Button 
-                type="text" 
-                icon={<BellOutlined />} 
-                className="header-icon-btn"
-              />
+              <Button type="text" icon={<BellOutlined />} className="header-icon-btn" />
             </Badge>
           </Dropdown>
 
-          <Button 
-            type="text" 
-            icon={<SettingOutlined />} 
-            className="header-icon-btn"
-          />
+          <Button type="text" icon={<SettingOutlined />} className="header-icon-btn" />
 
-          <Dropdown 
-            menu={{ 
-              ...userMenuItems, 
-              onClick: handleMenuClick 
-            }} 
-            placement="bottomRight" 
+          <Dropdown
+            menu={{
+              ...userMenuItems,
+              onClick: handleMenuClick,
+            }}
+            placement="bottomRight"
             trigger={['click']}
           >
             <Space className="user-dropdown" size="small">
               <Avatar icon={<UserOutlined />} />
-              <span className="username">{userInfo?.user_Name || 'Admin User'}</span>
+              <span className="username">{userInfo?.userName || 'Admin User'}</span>
             </Space>
           </Dropdown>
         </Space>
@@ -134,10 +152,10 @@ const HeaderComponent = ({ collapsed, userInfo }) => {
             <strong>User ID:</strong> {userInfo?.id}
           </div>
           <div className="profile-item">
-            <strong>Name:</strong> {userInfo?.user_Name}
+            <strong>Name:</strong> {userInfo?.userName}
           </div>
           <div className="profile-item">
-            <strong>Email:</strong> {userInfo?.user_Email}
+            <strong>Email:</strong> {userInfo?.userEmail}
           </div>
           <div className="profile-item">
             <strong>Phone:</strong> {userInfo?.phone}
@@ -162,16 +180,6 @@ const HeaderComponent = ({ collapsed, userInfo }) => {
 
 HeaderComponent.propTypes = {
   collapsed: PropTypes.bool.isRequired,
-  userInfo: PropTypes.shape({
-    id: PropTypes.string,
-    user_Name: PropTypes.string,
-    user_Email: PropTypes.string,
-    phone: PropTypes.string,
-    address: PropTypes.string,
-    dob: PropTypes.string,
-    gender: PropTypes.string,
-    country: PropTypes.string,
-  }),
 };
 
 export default HeaderComponent;
