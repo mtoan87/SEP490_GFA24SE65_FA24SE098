@@ -73,9 +73,10 @@ const EventDetail = () => {
       weekday: 'short', // "Thu"
       month: 'short', // "Nov"
       day: 'numeric', // "28"
-      hour: 'numeric', // "5"
-      minute: 'numeric', // "30"
-      hour12: true, // "AM/PM"
+      year: 'numeric', // "
+      // hour: 'numeric', // "5"
+      // minute: 'numeric', // "30"
+      // hour12: true, // "AM/PM"
     };
 
     const date = new Date(dateString);
