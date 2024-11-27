@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Row, Col, Button, Popover, Avatar, Typography, Spin } from "antd";
-import { FacebookOutlined, InstagramOutlined, TwitterOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.css";
 
@@ -65,7 +65,7 @@ const Header = () => {
       <Text strong className="user-name">
         {userName}
       </Text>
-      {userRoleId === 1 ? (
+      {[1, 3, 4].includes(userRoleId) ? (
         <div className="admin-links">
           <Link to="/userDetail">
             <Button type="link">View Profile</Button>
