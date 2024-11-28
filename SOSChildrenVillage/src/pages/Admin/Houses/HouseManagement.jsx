@@ -131,7 +131,7 @@ const HouseManagement = () => {
           formData.append("Description", values.description);
           formData.append("HouseMember", values.houseMember);
           formData.append("HouseOwner", values.houseOwner);
-          formData.append("Status", values.status); // Đảm bảo giá trị này được gửi
+          formData.append("Status", values.status);
           formData.append("UserAccountId", values.userAccountId);
           formData.append("VillageId", values.villageId);
 
@@ -334,7 +334,6 @@ const HouseManagement = () => {
             danger
           />
 
-          {/* Hiển thị nút Restore nếu House đã bị xóa */}
           {showDeleted && (
             <Button
               type="primary"

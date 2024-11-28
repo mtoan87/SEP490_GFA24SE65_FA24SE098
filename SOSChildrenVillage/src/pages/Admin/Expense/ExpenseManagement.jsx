@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, message, Space } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { Table, Button, Modal, Form, Input, Select, message} from 'antd';
+import { PlusOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 

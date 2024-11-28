@@ -118,6 +118,19 @@ const UserManagement = () => {
 
         console.log("Form Values:", values);
 
+        if (uploadFiles && uploadFiles.length > 0) {
+          uploadFiles.forEach((file) => {
+            if (file.originFileObj) {
+              formData.append("Img", file.originFileObj);
+            }
+          });
+        }
+        if (imagesToDelete.length > 0) {
+          imagesToDelete.forEach((imageId) => {
+            formData.append("ImgToDelete", imageId);
+          });
+        }
+
         if (editingAccount) {
           await axios.put(
             `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UpdateUser?id=${editingAccount.id}`,
@@ -134,6 +147,8 @@ const UserManagement = () => {
           message.success("Added User Successfully");
         }
         setIsModalVisible(false);
+        setUploadFiles([]);
+        form.resetFields();
         fetchUserAccounts();
       } catch (error) {
         console.error("Error saving user:", error);
@@ -144,7 +159,7 @@ const UserManagement = () => {
 
   const handleDelete = async (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this child?",
+      title: "Are you sure you want to delete this user?",
       content: "This action cannot be undone.",
       okText: "Yes, delete it",
       okType: "danger",
