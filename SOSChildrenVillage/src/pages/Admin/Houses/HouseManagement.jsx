@@ -16,6 +16,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
   InboxOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
@@ -38,6 +39,8 @@ const HouseManagement = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [viewingHouse, setViewingHouse] = useState(null);
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -45,7 +48,7 @@ const HouseManagement = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
-  
+
     if (!token || !["1", "3", "4"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
@@ -57,7 +60,6 @@ const HouseManagement = () => {
       fetchHouses();
     }
   }, [navigate, redirecting]);
-  
 
   const fetchHouses = async (showDeleted = false) => {
     try {
@@ -207,10 +209,10 @@ const HouseManagement = () => {
         try {
           const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/DeleteHouse?id=${id}`;
           console.log("Deleting house with ID:", id);
-  
+
           const response = await axios.delete(deleteUrl);
           console.log("Delete response:", response.data);
-  
+
           message.success("House deleted successfully");
           fetchHouses();
         } catch (error) {
@@ -219,7 +221,7 @@ const HouseManagement = () => {
             response: error.response?.data,
             status: error.response?.status,
           });
-  
+
           message.error(
             error.response?.data?.message ||
               "Unable to delete house. Please try again."
@@ -234,13 +236,25 @@ const HouseManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Houses/RestoreHouse/${id}`);
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Houses/RestoreHouse/${id}`
+      );
       message.success("House Restored Successfully");
       fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
       console.error("Error occurred when restoring house:", error);
       message.error("Unable to restore house");
     }
+  };
+
+  const handleViewDetail = (house) => {
+    setViewingHouse(house);
+    setIsViewModalVisible(true);
+  };
+
+  const closeViewModal = () => {
+    setIsViewModalVisible(false);
+    setViewingHouse(null);
   };
 
   const columns = [
@@ -279,7 +293,7 @@ const HouseManagement = () => {
       dataIndex: "houseOwner",
       key: "houseOwner",
     },
-    
+
     {
       title: "User account Id",
       dataIndex: "userAccountId",
@@ -327,6 +341,13 @@ const HouseManagement = () => {
             onClick={() => showModal(record)}
             icon={<EditOutlined />}
           />
+
+          <Button
+            key={`view-${record.houseId}`}
+            onClick={() => handleViewDetail(record)}
+            icon={<EyeOutlined />}
+          />
+
           <Button
             key={`delete-${record.houseId}`}
             onClick={() => handleDelete(record.houseId)}
@@ -578,6 +599,59 @@ const HouseManagement = () => {
             <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="House Details"
+        visible={isViewModalVisible}
+        onCancel={closeViewModal}
+        footer={[
+          <Button key="close" onClick={closeViewModal}>
+            Close
+          </Button>,
+        ]}
+      >
+        {viewingHouse && (
+          <div>
+            <p>
+              <strong>House Name:</strong> {viewingHouse.houseName}
+            </p>
+            <p>
+              <strong>House Number:</strong> {viewingHouse.houseNumber}
+            </p>
+            <p>
+              <strong>Location:</strong> {viewingHouse.location}
+            </p>
+            <p>
+              <strong>Description:</strong> {viewingHouse.description}
+            </p>
+            <p>
+              <strong>Owner:</strong> {viewingHouse.houseOwner}
+            </p>
+            {/* Hiển thị hình ảnh nếu có */}
+            {viewingHouse.imageUrls?.length > 0 && (
+              <div>
+                <strong>Images:</strong>
+                <div
+                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                >
+                  {viewingHouse.imageUrls.map((url, index) => (
+                    <img
+                      key={index}
+                      src={url}
+                      alt={`House Image ${index + 1}`}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
 
       {/* Modal for View Images */}

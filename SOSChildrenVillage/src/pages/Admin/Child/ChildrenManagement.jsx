@@ -11,6 +11,8 @@ import {
   message,
   Checkbox,
   Upload,
+  Descriptions,
+  Image,
 } from "antd";
 import {
   PlusOutlined,
@@ -18,6 +20,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
   InboxOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
@@ -42,6 +45,8 @@ const ChildrenManagement = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [viewingChild, setViewingChild] = useState(null);
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -49,7 +54,7 @@ const ChildrenManagement = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
-  
+
     if (!token || !["1", "3", "4"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
@@ -252,13 +257,25 @@ const ChildrenManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`);
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`
+      );
       message.success("Child Restored Successfully");
       fetchChildren(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
       console.error("Error occurred when restoring child:", error);
       message.error("Unable to restore child");
     }
+  };
+
+  const handleViewDetail = (child) => {
+    setViewingChild(child);
+    setIsDetailModalVisible(true);
+  };
+
+  const closeDetailModal = () => {
+    setViewingChild(null);
+    setIsDetailModalVisible(false);
   };
 
   // QUAN TRỌNG: dataIndex và key phải giống với tên của các biến trong API.
@@ -333,6 +350,13 @@ const ChildrenManagement = () => {
             onClick={() => showModal(record)}
             icon={<EditOutlined />}
           />
+
+          <Button
+            key={`view-${record.id}`}
+            onClick={() => handleViewDetail(record)}
+            icon={<EyeOutlined />}
+          />
+
           <Button
             key={`delete-${record.id}`}
             onClick={() => handleDelete(record.id)}
@@ -568,7 +592,7 @@ const ChildrenManagement = () => {
           </Form.Item>
 
           <Form.Item name="status" label="Status">
-          <Select>
+            <Select>
               <Option value="Active">Active</Option>
               <Option value="Inactive">Inactive</Option>
             </Select>
@@ -578,6 +602,51 @@ const ChildrenManagement = () => {
             <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Child Details"
+        visible={isDetailModalVisible}
+        onCancel={closeDetailModal}
+        footer={[
+          <Button key="close" onClick={closeDetailModal}>
+            Close
+          </Button>,
+        ]}
+      >
+        {viewingChild && (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Name">
+              {viewingChild.childName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Gender">
+              {viewingChild.gender === "Male" ? "Male" : "Female"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Date of Birth">
+              {viewingChild.dob
+                ? moment(viewingChild.dob).format("DD/MM/YYYY")
+                : "N/A"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Health Status">
+              {viewingChild.healthStatus || "N/A"}
+            </Descriptions.Item>
+            <Descriptions.Item label="House">
+              {viewingChild.houseName || "N/A"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Status">
+              {viewingChild.status || "N/A"}
+            </Descriptions.Item>
+            {viewingChild.imageUrls && viewingChild.imageUrls.length > 0 && (
+              <Descriptions.Item label="Images">
+                <Space>
+                  {viewingChild.imageUrls.map((url, index) => (
+                    <Image key={index} width={100} src={url} />
+                  ))}
+                </Space>
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        )}
       </Modal>
 
       {/* Images */}

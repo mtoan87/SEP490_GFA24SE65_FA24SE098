@@ -9,6 +9,9 @@ import {
   message,
   Upload,
   Checkbox,
+  Descriptions,
+  Image,
+  Spin,
 } from "antd";
 import {
   PlusOutlined,
@@ -16,6 +19,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
   InboxOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -37,14 +41,16 @@ const VillageManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [redirecting, setRedirecting] = useState(false); 
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [detailVillage, setDetailVillage] = useState(null);
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
-  
+
     // Chỉ cho phép roleId là "1", "3", hoặc "4"
     if (!token || !["1", "3", "4"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
@@ -57,7 +63,7 @@ const VillageManagement = () => {
       fetchVillages();
     }
   }, [navigate, redirecting]);
-  
+
   const fetchVillages = async (showDeleted = false) => {
     try {
       setLoading(true);
@@ -67,6 +73,22 @@ const VillageManagement = () => {
       console.log(error);
       message.error("Failed to fetch village data.");
       setVillages([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchVillageDetail = async (villageId) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageById/${villageId}`
+      );
+      setDetailVillage(response.data);
+      setIsDetailModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching village details:", error);
+      message.error("Failed to fetch village details.");
     } finally {
       setLoading(false);
     }
@@ -124,7 +146,7 @@ const VillageManagement = () => {
           formData.append("VillageName", values.villageName);
           formData.append("Location", values.location);
           formData.append("Description", values.description || "");
-          formData.append("Status", values.status || "Inactive"); 
+          formData.append("Status", values.status || "Inactive");
           formData.append("UserAccountId", values.userAccountId);
 
           // Append các hình ảnh
@@ -197,10 +219,10 @@ const VillageManagement = () => {
         try {
           const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Village/DeleteVillage?villageId=${id}`;
           console.log("Deleting village with ID:", id);
-  
+
           const response = await axios.delete(deleteUrl);
           console.log("Delete response:", response.data);
-  
+
           message.success("Village deleted successfully");
           fetchVillages();
         } catch (error) {
@@ -209,7 +231,7 @@ const VillageManagement = () => {
             response: error.response?.data,
             status: error.response?.status,
           });
-  
+
           message.error(
             error.response?.data?.message ||
               "Unable to delete village. Please try again."
@@ -224,7 +246,9 @@ const VillageManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Village/RestoreVillage/${id}`);
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Village/RestoreVillage/${id}`
+      );
       message.success("Village Restored Successfully");
       fetchVillages(showDeleted);
     } catch (error) {
@@ -296,6 +320,15 @@ const VillageManagement = () => {
             onClick={() => showModal(record)}
             icon={<EditOutlined />}
           />
+
+          <Button
+            key={`view-${record.id}`}
+            onClick={() => fetchVillageDetail(record.id)}
+            icon={<EyeOutlined />}
+          >
+            
+          </Button>
+
           <Button
             key={`delete-${record.id}`}
             onClick={() => handleDelete(record.id)}
@@ -303,10 +336,7 @@ const VillageManagement = () => {
             danger
           />
           {showDeleted && (
-            <Button
-              type="primary"
-              onClick={() => handleRestore(record.id)}
-            >
+            <Button type="primary" onClick={() => handleRestore(record.id)}>
               Restore
             </Button>
           )}
@@ -527,6 +557,50 @@ const VillageManagement = () => {
         </Form>
       </Modal>
 
+      <Modal
+        title="Village Details"
+        visible={isDetailModalVisible}
+        footer={[
+          <Button key="close" onClick={() => setIsDetailModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+        onCancel={() => setIsDetailModalVisible(false)}
+      >
+        {detailVillage ? (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Name">
+              {detailVillage.villageName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Location">
+              {detailVillage.location}
+            </Descriptions.Item>
+            <Descriptions.Item label="Description">
+              {detailVillage.description || "N/A"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Status">
+              {detailVillage.status}
+            </Descriptions.Item>
+            <Descriptions.Item label="Created By">
+              {detailVillage.createdBy || "N/A"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Images">
+              {detailVillage.imageUrls?.length > 0
+                ? detailVillage.imageUrls.map((url, index) => (
+                    <Image
+                      key={index}
+                      src={url}
+                      alt={`Image ${index + 1}`}
+                      style={{ margin: "5px", maxHeight: "100px" }}
+                    />
+                  ))
+                : "No images available"}
+            </Descriptions.Item>
+          </Descriptions>
+        ) : (
+          <Spin tip="Loading details..." />
+        )}
+      </Modal>
 
       {/* Modal for View Images */}
       <Modal
@@ -576,7 +650,7 @@ const VillageManagement = () => {
           ))}
         </div>
       </Modal>
-      </div>
+    </div>
   );
 };
 

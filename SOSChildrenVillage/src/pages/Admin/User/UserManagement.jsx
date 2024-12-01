@@ -196,7 +196,7 @@ const UserManagement = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser?id=${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser/${id}`
       );
       message.success("User Restored Successfully");
       fetchUserAccounts(showDeleted);
