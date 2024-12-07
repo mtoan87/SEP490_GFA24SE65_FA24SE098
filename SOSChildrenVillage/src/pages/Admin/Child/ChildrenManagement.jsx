@@ -11,8 +11,6 @@ import {
   message,
   Checkbox,
   Upload,
-  Descriptions,
-  Image,
 } from "antd";
 import {
   PlusOutlined,
@@ -24,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
+import ViewDetailsChildren from "./ViewDetailsChildren";
 import axios from "axios";
 import moment from "moment";
 
@@ -604,50 +603,12 @@ const ChildrenManagement = () => {
         </Form>
       </Modal>
 
-      <Modal
-        title="Child Details"
-        visible={isDetailModalVisible}
-        onCancel={closeDetailModal}
-        footer={[
-          <Button key="close" onClick={closeDetailModal}>
-            Close
-          </Button>,
-        ]}
-      >
-        {viewingChild && (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Name">
-              {viewingChild.childName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Gender">
-              {viewingChild.gender === "Male" ? "Male" : "Female"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Date of Birth">
-              {viewingChild.dob
-                ? moment(viewingChild.dob).format("DD/MM/YYYY")
-                : "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Health Status">
-              {viewingChild.healthStatus || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="House">
-              {viewingChild.houseName || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              {viewingChild.status || "N/A"}
-            </Descriptions.Item>
-            {viewingChild.imageUrls && viewingChild.imageUrls.length > 0 && (
-              <Descriptions.Item label="Images">
-                <Space>
-                  {viewingChild.imageUrls.map((url, index) => (
-                    <Image key={index} width={100} src={url} />
-                  ))}
-                </Space>
-              </Descriptions.Item>
-            )}
-          </Descriptions>
-        )}
-      </Modal>
+      {/* View details */}
+      <ViewDetailsChildren
+        isVisible={isDetailModalVisible}
+        child={viewingChild}
+        onClose={closeDetailModal}
+      />
 
       {/* Images */}
       <Modal

@@ -21,6 +21,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
 import { getHouseWithImages } from "../../../services/api";
+import ViewDetailsHouse from "./ViewDetailsHouse";
 
 const { Dragger } = Upload;
 
@@ -601,58 +602,12 @@ const HouseManagement = () => {
         </Form>
       </Modal>
 
-      <Modal
-        title="House Details"
-        visible={isViewModalVisible}
-        onCancel={closeViewModal}
-        footer={[
-          <Button key="close" onClick={closeViewModal}>
-            Close
-          </Button>,
-        ]}
-      >
-        {viewingHouse && (
-          <div>
-            <p>
-              <strong>House Name:</strong> {viewingHouse.houseName}
-            </p>
-            <p>
-              <strong>House Number:</strong> {viewingHouse.houseNumber}
-            </p>
-            <p>
-              <strong>Location:</strong> {viewingHouse.location}
-            </p>
-            <p>
-              <strong>Description:</strong> {viewingHouse.description}
-            </p>
-            <p>
-              <strong>Owner:</strong> {viewingHouse.houseOwner}
-            </p>
-            {/* Hiển thị hình ảnh nếu có */}
-            {viewingHouse.imageUrls?.length > 0 && (
-              <div>
-                <strong>Images:</strong>
-                <div
-                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
-                >
-                  {viewingHouse.imageUrls.map((url, index) => (
-                    <img
-                      key={index}
-                      src={url}
-                      alt={`House Image ${index + 1}`}
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+      {/* View details */}
+      <ViewDetailsHouse
+        isVisible={isViewModalVisible}
+        house={viewingHouse}
+        onClose={closeViewModal}
+      />
 
       {/* Modal for View Images */}
       <Modal

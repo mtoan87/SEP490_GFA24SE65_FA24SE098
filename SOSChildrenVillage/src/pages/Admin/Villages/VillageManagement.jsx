@@ -9,9 +9,6 @@ import {
   message,
   Upload,
   Checkbox,
-  Descriptions,
-  Image,
-  Spin,
 } from "antd";
 import {
   PlusOutlined,
@@ -24,6 +21,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getVillagesWithImages } from "../../../services/api";
+import ViewDetailsVillage from './ViewDetailsVillage';
 
 const { Dragger } = Upload;
 
@@ -557,50 +555,12 @@ const VillageManagement = () => {
         </Form>
       </Modal>
 
-      <Modal
-        title="Village Details"
-        visible={isDetailModalVisible}
-        footer={[
-          <Button key="close" onClick={() => setIsDetailModalVisible(false)}>
-            Close
-          </Button>,
-        ]}
-        onCancel={() => setIsDetailModalVisible(false)}
-      >
-        {detailVillage ? (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Name">
-              {detailVillage.villageName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Location">
-              {detailVillage.location}
-            </Descriptions.Item>
-            <Descriptions.Item label="Description">
-              {detailVillage.description || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              {detailVillage.status}
-            </Descriptions.Item>
-            <Descriptions.Item label="Created By">
-              {detailVillage.createdBy || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Images">
-              {detailVillage.imageUrls?.length > 0
-                ? detailVillage.imageUrls.map((url, index) => (
-                    <Image
-                      key={index}
-                      src={url}
-                      alt={`Image ${index + 1}`}
-                      style={{ margin: "5px", maxHeight: "100px" }}
-                    />
-                  ))
-                : "No images available"}
-            </Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <Spin tip="Loading details..." />
-        )}
-      </Modal>
+      {/* View Details */}
+      <ViewDetailsVillage
+        isVisible={isDetailModalVisible}
+        village={detailVillage}
+        onClose={() => setIsDetailModalVisible(false)}
+      />  
 
       {/* Modal for View Images */}
       <Modal
