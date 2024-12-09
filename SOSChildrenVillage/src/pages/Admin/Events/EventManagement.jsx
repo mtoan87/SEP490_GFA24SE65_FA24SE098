@@ -123,7 +123,7 @@ const EventManagement = () => {
             "necessitiesWalletId",
             values.necessitiesWalletId || ""
           );
-          formData.append("description", values.description || "");
+          // formData.append("description", values.description || "");
           formData.append("startTime", values.startTime.format("YYYY-MM-DD"));
           formData.append("endTime", values.endTime.format("YYYY-MM-DD"));
           formData.append("amount", values.amount || 0);
@@ -295,11 +295,11 @@ const EventManagement = () => {
       dataIndex: "necessitiesWalletId",
       key: "necessitiesWalletId",
     },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
+    // {
+    //   title: "Description",
+    //   dataIndex: "description",
+    //   key: "description",
+    // },
     {
       title: "Start Time",
       dataIndex: "startTime",
