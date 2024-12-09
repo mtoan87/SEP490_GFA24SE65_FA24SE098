@@ -46,11 +46,11 @@
 
 .nav-menu .ant-menu-item {
   padding: 0 24px;
-  font-weight: bold;
+  /* font-weight: bold; */
   color: #4a4a4a;
 }
 
-.nav-menu .ant-menu-item:hover,
+.nav-menu .ant-menu-item:hover, 
 .nav-menu .ant-menu-item:focus {
   color: #00A7E6;
 }

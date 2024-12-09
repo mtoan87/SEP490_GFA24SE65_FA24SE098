@@ -4,7 +4,7 @@ import './AboutUs.css';
 
 const AboutUs = () => {
   return (
-    <div className="about-us-container">
+    <div id="about-section" className="about-us-container">
       <div className="container">
 
         {/* About Us Header */}
@@ -27,7 +27,7 @@ const AboutUs = () => {
 
           {/* Right Column - Content */}
           <div className="content-section">
-            <h1 className="main-heading">
+            <h1 className="main-heading2">
               SOS Children’s Village is a place that cares for, nurtures, and supports orphaned children, abandoned children, and children in difficult circumstances.
             </h1>
 

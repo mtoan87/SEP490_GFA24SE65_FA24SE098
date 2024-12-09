@@ -32,6 +32,7 @@ import Register from '../components/layout/Authenication/Register';
 import UserDetail from '../components/layout/User/UserProfile';
 import EditUserProfile from '../components/layout/User/EditUserProfile';
 import ChangePasswordPage from '../components/layout/User/ChangePasswordPage';
+import HistoryPage from '../components/layout/History/HistoryPage';
 
 // Event and Child Page imports
 import ChildDetailPage from '../components/layout/Child/ChildDetailPage';
@@ -80,6 +81,7 @@ export {
     UserDetail,
     EditUserProfile,
     ChangePasswordPage,
+    HistoryPage,
 
     // Event and Child Pages
     ChildDetailPage,
