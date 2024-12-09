@@ -1,0 +1,42 @@
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap; /* Cho phép tự động xuống dòng nếu không đủ chỗ */
+    gap: 24px;
+    background-color: #f0f2f5;
+    padding: 50px;
+  }
+  
+  .image-container {
+    flex: 1;
+    max-width: 900px;
+    text-align: center;
+  }
+  
+  .image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-container {
+    flex: 2;
+    max-width: 800px;
+  }
+  
+  .text-container .title1 {
+    margin-top: 16px;
+    color: #000;
+    font-size: 40px;
+    text-align: left;
+  }
+  
+  .text-container .paragraph {
+    color: #595959;
+    font-size: 20px;
+    line-height: 1.8;
+    text-align: justify;
+  }
+  

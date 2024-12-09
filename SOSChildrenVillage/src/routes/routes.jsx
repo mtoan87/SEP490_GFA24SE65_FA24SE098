@@ -36,7 +36,8 @@ import {
     ChangePasswordPage,
     VillageHistoryPage,
     ListHousePage,
-    BookingHistoryPage
+    BookingHistoryPage,
+    HistoryPage
 } from './imports';
 
 const router = createBrowserRouter([
@@ -181,6 +182,10 @@ const router = createBrowserRouter([
   {
     path: '/bookinghistory',
     element: <BookingHistoryPage />,
+  },
+  {
+    path: '/history',
+    element: <HistoryPage />,
   },
   // Event and Child routes
   {

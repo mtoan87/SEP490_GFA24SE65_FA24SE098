@@ -75,7 +75,10 @@ const ChangePassword = () => {
           <Form.Item
             label="New Password"
             name="newPassword"
-            rules={[{ required: true, message: 'Please enter your new password!' }]}
+            rules={[
+              { required: true, message: 'Please enter your new password!' },
+              { min: 8, message: 'Password must be at least 8 characters!' },
+            ]}
           >
             <Input.Password placeholder="Enter new password" />
           </Form.Item>
