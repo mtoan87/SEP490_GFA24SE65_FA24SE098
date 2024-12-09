@@ -112,6 +112,7 @@ const EventManagement = () => {
 
           // Append data
           formData.append("name", values.name);
+          formData.append("eventCode", values.eventCode || "");
           formData.append(
             "facilitiesWalletId",
             values.facilitiesWalletId || ""
@@ -264,6 +265,11 @@ const EventManagement = () => {
       title: "Event Id",
       dataIndex: "id",
       key: "id",
+    },
+    {
+      title: "Event Code",
+      dataIndex: "eventCode",
+      key: "eventCode",
     },
     {
       title: "Event Name",
