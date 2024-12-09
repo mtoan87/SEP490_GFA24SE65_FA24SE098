@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Typography, Divider, Image } from 'antd';
-import './History.css'; // Đảm bảo đường dẫn đến tệp CSS chính xác
+import './History.css'; // Ensure the CSS file path is correct
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -16,18 +16,15 @@ const HistoryPage = () => {
           />
         </div>
         <div className="text-container">
-          <Title className="title">Lịch sử</Title>
+          <Title className="title">History</Title>
           <Paragraph className="paragraph">
-            Ngài Hermann Gmeiner - người sáng lập nên Làng trẻ em SOS đã từng nói:{" "}
+            Hermann Gmeiner, the founder of SOS Children's Villages, once said:{" "}
             <i>
-              "Tất cả mọi việc lớn trên đời chỉ có thể trở thành hiện thực khi có
-              ai đó làm nhiều hơn những việc mà họ phải làm."
+              "All great things in life can only become a reality when someone does more than what they have to do."
             </i>
           </Paragraph>
           <Paragraph className="paragraph">
-            Đến nay sau 70 năm, việc lớn đó đã trở thành hiện thực với Làng trẻ em
-            SOS tại 136 quốc gia và vùng lãnh thổ, đã và đang giúp đỡ hơn 4 triệu
-            trẻ em trên toàn thế giới.
+            After 70 years, this vision has become a reality, with SOS Children's Villages in 136 countries and territories, helping over 4 million children worldwide.
           </Paragraph>
         </div>
       </div>
@@ -38,16 +35,13 @@ const HistoryPage = () => {
       {/* Development Journey Section */}
       <div className="journey-container">
         <Title level={3} style={{ color: '#000', fontSize: '40px', textAlign: "center" }}>
-          Hành trình xây dựng và phát triển
+          Development Journey
         </Title>
         <Paragraph style={{ color: '#595959', fontSize: '30px', padding: '0px 400px' }}>
-          Xuất thân là một trẻ mồ côi mẹ và chỉ từ 600 Schillings Áo (40 Đô la
-          Mỹ), tiến sỹ Hermann Gmeiner đã kêu gọi bạn bè quyên góp và xây dựng
-          Làng trẻ em SOS đầu tiên để cứu giúp những trẻ em mồ côi sau chiến tranh
-          thế giới lần thứ 2 vào năm 1949.
+          Starting as an orphan with only 600 Austrian Schillings (about 40 USD), Dr. Hermann Gmeiner called on friends to donate and build the first SOS Children's Village to help orphaned children after World War II in 1949.
         </Paragraph>
         <Paragraph style={{ color: '#595959', fontSize: '30px', padding: '0px 400px' }}>
-          Sau đó cuộc đời của ông gắn liền với mong ước về một trung tâm gia đình chăm sóc trẻ em dựa trên 4 yếu tố: một người mẹ, một ngôi nhà, anh chị em và một ngôi làng...
+          His life was dedicated to creating a family-based child care model, which included four key elements: a mother, a home, siblings, and a village...
         </Paragraph>
       </div>
 
@@ -57,134 +51,135 @@ const HistoryPage = () => {
       {/* Timeline Section */}
       <div className="timeline-container">
         <Title level={3} style={{ fontSize: '40px', color: '#000', textAlign: 'center' }}>
-          Làng trẻ em SOS Việt Nam qua các năm
+          SOS Children's Villages in Vietnam Through the Years
         </Title>
         <div style={{ margin: '0 auto', maxWidth: '800px', textAlign: 'left' }}>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1968:</Text>{" "}
-            Làng trẻ em SOS tại Gò Vấp và Đà Lạt được thành lập.
+            SOS Children's Villages established in Go Vap and Da Lat.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1976:</Text>{" "}
-            Làng trẻ em SOS buộc phải đóng cửa tại Việt Nam.
+            SOS Children's Villages forced to close in Vietnam.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1987:</Text>{" "}
-            1 năm sau khi ông Hermann Gmeiner qua đời, Làng trẻ em SOS Quốc tế do ông Helmut Kutin - người con của Làng trẻ em SOS đầu tiên tại Áo - làm chủ tịch đã ký hiệp định với Bộ Lao động Thương binh và Xã hội để thành lập Làng trẻ em SOS Việt Nam, một trong những tổ chức nhân đạo đầu tiên quay trở lại Việt Nam.
+            One year after Hermann Gmeiner's death, Helmut Kutin, from the first SOS Village in Austria, signed an agreement with the Ministry of Labor, Invalids, and Social Affairs to re-establish SOS Children's Villages in Vietnam.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1989:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Đà Lạt, Lâm Đồng.
+            SOS Children's Village Da Lat, Lam Dong, inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1990:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Gò Vấp, Tp. Hồ Chí Minh và Làng trẻ em SOS
-            Hà Nội.
+            SOS Children's Village Go Vap, Ho Chi Minh City, and Hanoi inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1991:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Vinh, Nghệ An. Trường mẫu giáo SOS Đà Lạt được đưa vào sử dụng.
+            SOS Children's Village Vinh, Nghe An inaugurated, and the SOS Kindergarten Da Lat opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1993:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Đà Lạt. Khánh thành trường Hermann Gmeiner Gò Vấp và trường mẫu giáo SOS Gò Vấp. Trường mẫu giáo SOS Vinh được đưa vào sử dụng
+            Hermann Gmeiner Schools in Da Lat and Go Vap inaugurated, and the SOS Kindergarten in Vinh opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1994:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Đà Nẵng, khánh thành trường Hermann Gmeiner Hà Nội và trường Hermann Gmeiner Vinh, Nghệ An.
+            SOS Children's Village Da Nang inaugurated, along with Hermann Gmeiner Schools in Hanoi and Vinh.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1995:</Text>{" "}
-            Trường mẫu giáo SOS Đà Nẵng được đưa vào sử dụng
+            SOS Kindergarten Da Nang opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1997:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Hải Phòng và trường mẫu giáo SOS Hải Phòng; khánh thành Làng trẻ em SOS Cà Mau và trường mẫu giáo SOS Cà Mau.
+            SOS Children's Village Hai Phong and SOS Kindergarten Hai Phong inaugurated, and SOS Children's Village Ca Mau and Kindergarten Ca Mau opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1998:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Đà Nẵng.
+            Hermann Gmeiner School Da Nang inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>1999:</Text>{" "}
-            Khánh thành Trung tâm đào tạo quốc gia tại Hà Nội, khánh thành Làng trẻ em SOS Việt Trì ở Phú Thọ và trường mẫu giáo SOS Việt Trì. Khánh thành Làng trẻ em SOS Nha Trang, Khánh Hoà và Làng trẻ em SOS Bến Tre.
+            National Training Center in Hanoi opened, SOS Children's Village Viet Tri and Kindergarten Viet Tri inaugurated, and SOS Children's Villages in Nha Trang and Ben Tre established.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2000:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Hải Phòng và trường Hermann Gmeiner Việt Trì, Phú Thọ. Trường mẫu giáo SOS Nha Trang và trường mẫu giáo SOS Bến Tre được đưa vào sử dụng
+            Hermann Gmeiner Schools in Hai Phong and Viet Tri opened, and SOS Kindergartens in Nha Trang and Ben Tre inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2001:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Bến Tre và trường Hermann Gmeiner Cà Mau
+            Hermann Gmeiner Schools in Ben Tre and Ca Mau inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2002:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Nha Trang, Khánh Hòa
+            Hermann Gmeiner School in Nha Trang inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2006:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Thanh Hoá và Làng trẻ em SOS Đồng Hới, Quảng Bình.
+            SOS Children's Villages in Thanh Hoa and Dong Hoi, Quang Binh inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2007:</Text>{" "}
-            Trường mẫu giáo SOS Đồng Hới và trường mẫu giáo SOS Thanh Hóa được đưa vào sử dụng.
+            SOS Kindergartens in Dong Hoi and Thanh Hoa opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2009:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Điện Biên Phủ, tỉnh Điện Biên.
+            SOS Children's Village Dien Bien Phu inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2010:</Text>{" "}
-            Khánh thành trường Hermann Gmeiner Thanh Hóa
+            Hermann Gmeiner School Thanh Hoa inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2011:</Text>{" "}
-            Trường mẫu giáo SOS Điện Biên được đưa vào sử dụng
+            SOS Kindergarten Dien Bien opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2012:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Quy Nhơn và mẫu giáo SOS Quy Nhơn, Bình Định.
+            SOS Children's Village Quy Nhon and Kindergarten Quy Nhon inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2014:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Pleiku, Gia Lai và khánh thành trường Hermann Gmeiner Điện Biên Phủ, Điện Biên
+            SOS Children's Village Pleiku and Hermann Gmeiner School Dien Bien Phu inaugurated.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2015:</Text>{" "}
-            Khánh thành Làng trẻ em SOS Thái Bình. Tiếp nhận Làng trẻ em SOS Huế do Hội giúp đỡ trẻ em Việt Nam tại Pháp bàn giao . Trường mẫu giáo SOS Pleiku và mẫu giáo SOS Thái Bình được đưa vào sử dụng.
+            SOS Children's Village Thai Binh inaugurated and SOS Kindergarten Pleiku and Thai Binh opened.
           </Paragraph>
           <Paragraph style={{ fontSize: '20px', color: '#000' }}>
             <Text style={{ fontSize: '20px', fontWeight: 'bold', color: '#1890ff' }}>2017:</Text>{" "}
-            Sau 30 năm ngày ký Hiệp định giữa Bộ Lao động-Thương binh và Xã hội và Làng trẻ em SOS Quốc tế, Làng trẻ em SOS Việt Nam đã có bước phát triển nhanh chóng, trở thành quốc gia có số lượng Làng trẻ em SOS và số trẻ hưởng lợi đứng thứ 3 trong 135 quốc gia và vùng lãnh thổ sau Ấn Độ và Brazil.
+            After 30 years, SOS Children's Villages in Vietnam became the third largest in terms of number of villages and children helped, after India and Brazil.
           </Paragraph>
         </div>
       </div>
+
+      {/* Content Container: Images */}
       <div className="content-container">
         <div className="image-container">
           <Image
             src="https://sosvietnam.org/getmedia/53378eb3-e6c6-4cf1-b832-d5c0c9c934cc/Hermann-Gmeiner-2.jpg?amp;height=300&width=425"
-            alt="Hermann Gmeiner with children"
+            alt="Hermann Gmeiner"
           />
           <div>
             <Text style={{ fontSize: '1.5rem' }}>
-              Người sáng lập Làng trẻ em SOS Quốc tế
+              Founder of SOS Children's Villages International
             </Text>
             <div style={{ fontSize: '1.5rem' }}>
-              Ngài Hermann Gmeiner
+              Hermann Gmeiner
             </div>
           </div>
         </div>
         <div className="image-container">
           <Image
             src="https://sosvietnam.org/getmedia/15ec17b8-37dd-44f3-9916-01667ae58784/Hoang-The-Thien-01.jpg?amp;height=285&width=425"
-            alt="Hermann Gmeiner with children"
+            alt="Helmut Kutin"
           />
           <div>
             <Text style={{ fontSize: '1.5rem' }}>
-              Chủ tịch danh dự Làng trẻ em SOS Quốc tế Helmut Kutin
+              Honorary President of SOS Children's Villages International
             </Text>
             <div style={{ fontSize: '1.5rem' }}>
-              ký hiệp định hợp tác với bộ LÐTBXH ngày 22/12/1987
+              Helmut Kutin
             </div>
           </div>
         </div>
