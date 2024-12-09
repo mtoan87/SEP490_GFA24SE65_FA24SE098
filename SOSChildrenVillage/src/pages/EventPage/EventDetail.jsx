@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ModalImage from 'react-modal-image';
 import './EventDetail.css';
+import FormItemLabel from 'antd/es/form/FormItemLabel';
 
 const EventDetail = () => {
   const { id: eventId } = useParams();
@@ -132,9 +133,12 @@ const EventDetail = () => {
         {/* Right layout: Event details and Donate button */}
         <div className="right-column">
           <div className="event-info">
+            <p><strong>Event Code:</strong> {event.eventCode}</p>
             <p><strong>Start Time:</strong> {formatDate(event.startTime)}</p>
             <p><strong>End Time:</strong> {formatDate(event.endTime)}</p>
+            <p><strong>Current Amount:</strong> {formatCurrency(event.currentAmount)}</p>
             <p><strong>Amount Limit:</strong> {formatCurrency(event.amountLimit)}</p>
+            <p><strong>Status:</strong> {event.status}</p>
           </div>
 
           {/* Donation progress bar */}
@@ -149,19 +153,21 @@ const EventDetail = () => {
             <p>{Math.round(donationProgress)}% of goal reached</p>
           </div>
 
-          {/* Donation input and button */}
-          <div className="donation-section">
-            <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
-            <input
-              type="number"
-              id="donationAmount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
-              className="donation-input"
-            />
-            <button className="donate-button" onClick={handleDonate}>Donate</button>
-          </div>
+          {/* Only show the donation section if the event is not marked as "Done" */}
+          {event.status !== 'Inactive' && (
+            <div className="donation-section">
+              <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
+              <input
+                type="number"
+                id="donationAmount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="donation-input"
+              />
+              <button className="donate-button" onClick={handleDonate}>Donate</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
