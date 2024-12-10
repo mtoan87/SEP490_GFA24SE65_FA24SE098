@@ -67,6 +67,7 @@ const VillageManagement = () => {
       setLoading(true);
       const data = await getVillagesWithImages(showDeleted);
       setVillages(Array.isArray(data) ? data : []);
+      console.log("Fetched Village data with images:", data);
     } catch (error) {
       console.log(error);
       message.error("Failed to fetch village data.");
@@ -80,7 +81,7 @@ const VillageManagement = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageById/${villageId}`
+        `https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByIdWithImg/${villageId}`
       );
       setDetailVillage(response.data);
       setIsDetailModalVisible(true);
