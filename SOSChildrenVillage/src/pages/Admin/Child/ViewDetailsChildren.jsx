@@ -36,8 +36,8 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
         >
           {child.healthStatus || "N/A"}
         </Descriptions.Item>
-        <Descriptions.Item label="House" labelStyle={{ fontWeight: "bold" }}>
-          {child.houseName || "N/A"}
+        <Descriptions.Item label="House Id" labelStyle={{ fontWeight: "bold" }}>
+          {child.id || "N/A"}
         </Descriptions.Item>
         <Descriptions.Item label="Status" labelStyle={{ fontWeight: "bold" }}>
           {child.status || "N/A"}
@@ -70,7 +70,7 @@ ViewDetailsChildren.propTypes = {
     gender: PropTypes.string,
     dob: PropTypes.string,
     healthStatus: PropTypes.string,
-    houseName: PropTypes.string,
+    houseId: PropTypes.string,
     status: PropTypes.string,
     imageUrls: PropTypes.arrayOf(PropTypes.string),
   }),

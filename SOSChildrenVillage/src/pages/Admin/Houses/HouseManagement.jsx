@@ -154,20 +154,17 @@ const HouseManagement = () => {
 
           if (editingHouse) {
             // Update house logic
-            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/UpdateHouse?id=${editingHouse.houseId}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/UpdateHouse?id=${editingHouse.id}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
             message.success("Update House Successfully");
           } else {
             // Create new house logic
-            await axios.post(
-              "https://soschildrenvillage.azurewebsites.net/api/Houses/CreateHouse",
-              formData,
-              {
-                headers: { "Content-Type": "multipart/form-data" },
-              }
-            );
+            const createUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/CreateHouse`;
+            await axios.post(createUrl, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            });
             message.success("Add House Successfully");
           }
 
@@ -237,9 +234,7 @@ const HouseManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Houses/RestoreHouse/${id}`
-      );
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Houses/RestoreHouse/${id}`);
       message.success("House Restored Successfully");
       fetchHouses(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
@@ -261,8 +256,8 @@ const HouseManagement = () => {
   const columns = [
     {
       title: "House Id",
-      dataIndex: "houseId",
-      key: "houseId",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "House Name",
@@ -294,9 +289,8 @@ const HouseManagement = () => {
       dataIndex: "houseOwner",
       key: "houseOwner",
     },
-
     {
-      title: "User account Id",
+      title: "User Account Id",
       dataIndex: "userAccountId",
       key: "userAccountId",
     },
@@ -344,23 +338,20 @@ const HouseManagement = () => {
           />
 
           <Button
-            key={`view-${record.houseId}`}
+            key={`view-${record.id}`}
             onClick={() => handleViewDetail(record)}
             icon={<EyeOutlined />}
           />
 
           <Button
-            key={`delete-${record.houseId}`}
-            onClick={() => handleDelete(record.houseId)}
+            key={`delete-${record.id}`}
+            onClick={() => handleDelete(record.id)}
             icon={<DeleteOutlined />}
             danger
           />
 
           {showDeleted && (
-            <Button
-              type="primary"
-              onClick={() => handleRestore(record.houseId)}
-            >
+            <Button type="primary" onClick={() => handleRestore(record.id)}>
               Restore
             </Button>
           )}
@@ -429,7 +420,7 @@ const HouseManagement = () => {
           columns={columns}
           dataSource={houses}
           loading={loading}
-          rowKey={(record) => record.houseId}
+          rowKey={(record) => record.id}
           rowSelection={{
             type: "checkbox",
             onChange: (selectedRowKeys, selectedRows) => {

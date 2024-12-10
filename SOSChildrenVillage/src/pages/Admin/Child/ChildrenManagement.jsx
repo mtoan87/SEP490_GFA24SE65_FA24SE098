@@ -296,8 +296,8 @@ const ChildrenManagement = () => {
     },
     {
       title: "House Id",
-      dataIndex: "houseId",
-      key: "houseId",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "Gender",
