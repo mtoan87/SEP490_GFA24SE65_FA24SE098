@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: baseURL,
 });
 
+// Children
 export const getChildWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
@@ -19,6 +20,7 @@ export const getChildWithImages = async (showDeleted = false) => {
   }
 };
 
+// Houses
 export const getHouseWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
@@ -32,6 +34,7 @@ export const getHouseWithImages = async (showDeleted = false) => {
   }
 };
 
+// Villages
 export const getVillagesWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
@@ -45,6 +48,18 @@ export const getVillagesWithImages = async (showDeleted = false) => {
   }
 };
 
+export const getVillageDetail = async (villageId) => {
+  try {
+    const response = await api.get(`/api/Village/GetVillageDetailsWithHouses/${villageId}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching village details:", error);
+    throw error;
+  }
+};
+
+//Events
 export const getEventsWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
@@ -58,6 +73,7 @@ export const getEventsWithImages = async (showDeleted = false) => {
   }
 };
 
+//Academic Report
 export const getAcademicReport = async () => {
   try {
     const response = await api.get("/api/AcademicReport");
@@ -68,6 +84,7 @@ export const getAcademicReport = async () => {
   }
 };
 
+//Health Report
 export const getHealthReport = async () => {
   try {
     const response = await api.get("/api/HealthReport");
@@ -78,6 +95,7 @@ export const getHealthReport = async () => {
   }
 };
 
+//User Accounts
 export const getAccount = async (showDeleted = false) => {
   try {
     //const response = await api.get("/api/UserAccount");
