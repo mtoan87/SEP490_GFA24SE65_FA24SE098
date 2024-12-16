@@ -21,6 +21,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getVillagesWithImages } from "../../../services/api";
+import { getVillageDetail } from "../../../services/api";
 import ViewDetailsVillage from './ViewDetailsVillage';
 
 const { Dragger } = Upload;
@@ -77,13 +78,13 @@ const VillageManagement = () => {
     }
   };
 
+  // Get Id Village
   const fetchVillageDetail = async (villageId) => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByIdWithImg/${villageId}`
-      );
-      setDetailVillage(response.data);
+      const villageDetail = await getVillageDetail(villageId);
+      console.log("Village Detail before setting:", villageDetail);
+      setDetailVillage(villageDetail);
       setIsDetailModalVisible(true);
     } catch (error) {
       console.error("Error fetching village details:", error);

@@ -1,47 +1,169 @@
-import { Modal, Button, Descriptions, Image, Spin } from 'antd';
-import PropTypes from 'prop-types';
+import { Modal, Button, Typography, Table, Row, Col } from "antd";
+import { MapPin, Home, Users, CalendarDays, Phone, Mail } from "lucide-react";
+import PropTypes from "prop-types";
+import moment from "moment";
 
-const ViewDetailsVillage = ({ isVisible, village, onClose }) => {
+const { Title } = Typography;
+
+const ViewDetailsVillage = ({
+  isVisible,
+  village,
+  onClose,
+  //onViewHouseDetails,
+}) => {
+  console.log("Village data:", village);
+  console.log("Houses data:", village?.houses);
   if (!village) return null;
+
+  const columns = [
+    {
+      title: "House Name",
+      dataIndex: "houseName",
+      key: "houseName",
+      align: "center",
+      render: (text) => (
+        <span style={{ fontWeight: 500, color: "#1890ff" }}>{text}</span>
+      ),
+    },
+    {
+      title: "House Owner",
+      dataIndex: "houseOwner",
+      key: "houseOwner",
+      align: "center",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Children",
+      dataIndex: "totalChildren",
+      key: "totalChildren",
+      align: "center",
+      render: (count) => (
+        <span style={{ color: count > 0 ? "#52c41a" : "#999" }}>
+          {count || 0}
+        </span>
+      ),
+    },
+    // {
+    //   title: "Actions",
+    //   key: "actions",
+    //   align: "center",
+    //   render: (_, record) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => onViewHouseDetails(record)}
+    //       className="px-0"
+    //     >
+    //       View Details
+    //     </Button>
+    //   ),
+    // },
+  ];
+
+  const infoItemStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    fontSize: "16px",
+    marginBottom: "16px",
+  };
 
   return (
     <Modal
-      title="Village Details"
-      visible={isVisible}
-      footer={[
-        <Button key="close" onClick={onClose}>
+      title={
+        <div style={{ marginBottom: "16px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              marginBottom: "8px",
+            }}
+          >
+            <Title level={3} style={{ margin: 0, fontSize: "28px" }}>
+              {village.villageName}
+            </Title>
+          </div>
+          <div style={{ ...infoItemStyle, fontSize: "14px", color: "#666" }}>
+            <MapPin size={18} />
+            {village.location}
+          </div>
+        </div>
+      }
+      open={isVisible}
+      width={800}
+      footer={
+        <Button
+          type="primary"
+          onClick={onClose}
+          block
+          style={{ height: "40px", fontSize: "16px" }}
+        >
           Close
-        </Button>,
-      ]}
+        </Button>
+      }
       onCancel={onClose}
     >
-      {village ? (
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label="Name">{village.villageName}</Descriptions.Item>
-          <Descriptions.Item label="Location">{village.location}</Descriptions.Item>
-          <Descriptions.Item label="Description">
-            {village.description || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Status">{village.status}</Descriptions.Item>
-          <Descriptions.Item label="Created By">
-            {village.createdBy || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Images">
-            {village.imageUrls?.length > 0
-              ? village.imageUrls.map((url, index) => (
-                  <Image
-                    key={index}
-                    src={url}
-                    alt={`Image ${index + 1}`}
-                    style={{ margin: "5px", maxHeight: "100px" }}
-                  />
-                ))
-              : "No images available"}
-          </Descriptions.Item>
-        </Descriptions>
-      ) : (
-        <Spin tip="Loading details..." />
-      )}
+      <div style={{ marginBottom: "24px" }}>
+        <Row gutter={[24, 24]}>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <CalendarDays size={18} />
+              <span>
+                Established:{" "}
+                {village.establishedDate
+                  ? moment(village.establishedDate).format("DD/MM/YYYY")
+                  : "N/A"}
+              </span>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Mail size={18} />
+              <span>{village.email || "N/A"}</span>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Phone size={18} />
+              <span>{village.contactNumber || "N/A"}</span>
+            </div>
+          </Col>
+        </Row>
+        <Row gutter={[24, 24]}>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Home size={18} />
+              <span>Total Houses: {village.totalHouses || 0}</span>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Users size={18} />
+              <span>Total Children: {village.totalChildren || 0}</span>
+            </div>
+          </Col>
+        </Row>
+      </div>
+
+      <div>
+        <Title level={4} style={{ marginBottom: "16px", fontSize: "20px" }}>
+          Houses in {village.villageName}
+        </Title>
+        <Table
+          columns={columns}
+          dataSource={village?.houses?.$values?.map((house) => ({
+            key: house.id,
+            ...house,
+          })) || []}
+          rowKey="id"
+          pagination={false}
+          locale={{
+            emptyText: "No houses available in this village",
+          }}
+          style={{ fontSize: "16px" }}
+          scroll={{ y: 300 }}
+        />
+      </div>
     </Modal>
   );
 };
@@ -49,61 +171,27 @@ const ViewDetailsVillage = ({ isVisible, village, onClose }) => {
 ViewDetailsVillage.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   village: PropTypes.shape({
+    id: PropTypes.string,
     villageName: PropTypes.string,
     location: PropTypes.string,
-    description: PropTypes.string,
-    status: PropTypes.string,
-    createdBy: PropTypes.string,
-    imageUrls: PropTypes.arrayOf(PropTypes.string),
+    totalHouses: PropTypes.number,
+    totalChildren: PropTypes.number,
+    establishedDate: PropTypes.string,
+    email: PropTypes.string,
+    contactNumber: PropTypes.string,
+    houses: PropTypes.shape({
+      $values: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          houseName: PropTypes.string,
+          houseOwner: PropTypes.string,
+          totalChildren: PropTypes.number,
+        })
+      ),
+    }),
   }),
   onClose: PropTypes.func.isRequired,
+  onViewHouseDetails: PropTypes.func,
 };
 
 export default ViewDetailsVillage;
-
-
-
-{/* <Modal
-        title="Village Details"
-        visible={isDetailModalVisible}
-        footer={[
-          <Button key="close" onClick={() => setIsDetailModalVisible(false)}>
-            Close
-          </Button>,
-        ]}
-        onCancel={() => setIsDetailModalVisible(false)}
-      >
-        {detailVillage ? (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Name">
-              {detailVillage.villageName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Location">
-              {detailVillage.location}
-            </Descriptions.Item>
-            <Descriptions.Item label="Description">
-              {detailVillage.description || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              {detailVillage.status}
-            </Descriptions.Item>
-            <Descriptions.Item label="Created By">
-              {detailVillage.createdBy || "N/A"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Images">
-              {detailVillage.imageUrls?.length > 0
-                ? detailVillage.imageUrls.map((url, index) => (
-                    <Image
-                      key={index}
-                      src={url}
-                      alt={`Image ${index + 1}`}
-                      style={{ margin: "5px", maxHeight: "100px" }}
-                    />
-                  ))
-                : "No images available"}
-            </Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <Spin tip="Loading details..." />
-        )}
-      </Modal> */}
