@@ -9,6 +9,7 @@ import {
   message,
   Upload,
   Checkbox,
+  DatePicker,
 } from "antd";
 import {
   PlusOutlined,
@@ -18,10 +19,11 @@ import {
   InboxOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
 import { getHouseWithImages } from "../../../services/api";
 import ViewDetailsHouse from "./ViewDetailsHouse";
+import axios from "axios";
+import moment from "moment";
 
 const { Dragger } = Upload;
 
@@ -82,6 +84,12 @@ const HouseManagement = () => {
     if (house) {
       form.setFieldsValue({
         ...house,
+        foundationDate: house.foundationDate
+          ? moment(house.foundationDate)
+          : null,
+        lastInspectionDate: house.lastInspectionDate
+          ? moment(house.lastInspectionDate)
+          : null,
         imageUrls: house.imageUrls || [],
       });
       setCurrentImages(
@@ -128,15 +136,31 @@ const HouseManagement = () => {
           }
 
           const formData = new FormData();
-          formData.append("HouseName", values.houseName);
-          formData.append("HouseNumber", values.houseNumber);
+          formData.append("HouseName", values.houseName || "");
+          formData.append("HouseNumber", values.houseNumber || 0);
           formData.append("Location", values.location);
-          formData.append("Description", values.description);
-          formData.append("HouseMember", values.houseMember);
-          formData.append("HouseOwner", values.houseOwner);
-          formData.append("Status", values.status);
+          formData.append("Description", values.description || "");
+          formData.append("HouseMember", values.houseMember || 0);
+          formData.append("HouseOwner", values.houseOwner || "");
+          formData.append("Status", values.status || "Inactive");
           formData.append("UserAccountId", values.userAccountId);
           formData.append("VillageId", values.villageId);
+          formData.append(
+            "FoundationDate",
+            values.foundationDate.format("YYYY-MM-DD")
+          );
+          formData.append(
+            "LastInspectionDate",
+            values.lastInspectionDate
+              ? values.lastInspectionDate.format("YYYY-MM-DD")
+              : ""
+          );
+          formData.append("MaintenanceStatus", values.maintenanceStatus || "Good");
+          formData.append("RoleName", values.roleName);
+
+          for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]); 
+          }
 
           // Append các hình ảnh
           if (uploadFiles && uploadFiles.length > 0) {
@@ -285,6 +309,11 @@ const HouseManagement = () => {
       key: "houseMember",
     },
     {
+      title: "Current Members",
+      dataIndex: "currentMembers",
+      key: "currentMembers",
+    },
+    {
       title: "House Owner",
       dataIndex: "houseOwner",
       key: "houseOwner",
@@ -298,6 +327,30 @@ const HouseManagement = () => {
       title: "Village Id",
       dataIndex: "villageId",
       key: "villageId",
+    },
+    {
+      title: "Role Name",
+      dataIndex: "roleName",
+      key: "roleName",
+    },
+    {
+      title: "Foundation Date",
+      dataIndex: "foundationDate",
+      key: "foundationDate",
+      render: (date) =>
+        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    },
+    {
+      title: "Last Inspection Date",
+      dataIndex: "lastInspectionDate",
+      key: "lastInspectionDate",
+      render: (date) =>
+        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    },
+    {
+      title: "Maintenance Status",
+      dataIndex: "maintenanceStatus",
+      key: "maintenanceStatus",
     },
     {
       title: "Status",
@@ -523,6 +576,33 @@ const HouseManagement = () => {
           </Form.Item>
 
           <Form.Item name="villageId" label="Village Id">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="roleName" label="Role Name">
+            <Input />
+          </Form.Item>
+
+          <Form.Item 
+          name="foundationDate" 
+          label="Foundation Date"
+          rules={[
+            { required: true, message: "Please select foundation date" },
+          ]}
+          >
+            <DatePicker format="YYYY-MM-DD"/>
+          </Form.Item>
+
+          {/* Last Inspection Date */}
+          <Form.Item 
+          name="lastInspectionDate" 
+          label="Last Inspection Date"
+          >
+            <DatePicker format="YYYY-MM-DD"/>
+          </Form.Item>
+
+          {/* Maintenance Status */}
+          <Form.Item name="maintenanceStatus" label="Maintenance Status">
             <Input />
           </Form.Item>
 
