@@ -1,91 +1,173 @@
-import { Modal, Button, Typography, Divider } from "antd";
+import { Modal, Button, Typography, Table, Row, Col } from "antd";
+import { MapPin, CalendarDays, Home, Users, User, Hammer } from "lucide-react";
 import PropTypes from "prop-types";
+import moment from "moment";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const ViewDetailsHouse = ({ isVisible, house, onClose }) => {
+  console.log("House data:", house);
+  console.log("Children data:", house?.children);
+
   if (!house) return null;
+
+  // Columns for Children Table
+  const columns = [
+    {
+      title: "Child Id",
+      dataIndex: "id",
+      key: "id",
+      align: "center",
+      render: (text) => (
+        <span style={{ fontWeight: 500 }}>{text}</span>
+      ),
+    },
+    {
+      title: "Child Name",
+      dataIndex: "childName",
+      key: "childName",
+      align: "center",
+      render: (text) => (
+        <span style={{ fontWeight: 500, color: "#1890ff" }}>{text}</span>
+      ),
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      key: "gender",
+      align: "center",
+      render: (text) => text || "N/A",
+    },
+    {
+      title: "Date of Birth",
+      dataIndex: "dob",
+      key: "dob",
+      align: "center",
+      render: (date) => (date ? moment(date).format("DD/MM/YYYY") : "N/A"),
+    },
+    {
+      title: "Health Status",
+      dataIndex: "healthStatus",
+      key: "healthStatus",
+      align: "center",
+      render: (text) => (
+        <span style={{ color: text === "Healthy" ? "#52c41a" : "#ff4d4f" }}>
+          {text || "Unknown"}
+        </span>
+      ),
+    },
+  ];
+
+  const infoItemStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    fontSize: "16px",
+    marginBottom: "16px",
+  };
 
   return (
     <Modal
-      title={<Title level={3}>House Details</Title>}
-      open={isVisible}
-      onCancel={onClose}
-      footer={[
-        <Button key="close" onClick={onClose} type="primary">
-          Close
-        </Button>,
-      ]}
-      width={700}
-    >
-      <div className="space-y-4">
-        <div>
-          <Text strong>House ID:</Text>
-          <Text className="ml-2">{house.houseId}</Text>
-        </div>
-        <div>
-          <Text strong>House Name:</Text>
-          <Text className="ml-2">{house.houseName}</Text>
-        </div>
-        <div>
-          <Text strong>House Number:</Text>
-          <Text className="ml-2">{house.houseNumber}</Text>
-        </div>
-        <div>
-          <Text strong>Location:</Text>
-          <Text className="ml-2">{house.location}</Text>
-        </div>
-        <div>
-          <Text strong>Description:</Text>
-          <Text className="ml-2">{house.description}</Text>
-        </div>
-        <div>
-          <Text strong>House Members:</Text>
-          <Text className="ml-2">{house.houseMember}</Text>
-        </div>
-        <div>
-          <Text strong>House Owner:</Text>
-          <Text className="ml-2">{house.houseOwner}</Text>
-        </div>
-        <div>
-          <Text strong>User Account ID:</Text>
-          <Text className="ml-2">{house.userAccountId}</Text>
-        </div>
-        <div>
-          <Text strong>Village ID:</Text>
-          <Text className="ml-2">{house.villageId}</Text>
-        </div>
-        <div>
-          <Text strong>Status:</Text>
-          <Text className="ml-2">{house.status}</Text>
-        </div>
-
-        <Divider />
-
-        {house.imageUrls && house.imageUrls.length > 0 && (
-          <div>
-            <Title level={4}>Images</Title>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              {house.imageUrls.map((url, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={url}
-                    alt={`House Image ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg transition-all duration-300 group-hover:opacity-75"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      type="primary"
-                      onClick={() => window.open(url, "_blank")}
-                    >
-                      View Full
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+      title={
+        <div style={{ marginBottom: "16px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              marginBottom: "8px",
+            }}
+          >
+            <Title level={3} style={{ margin: 0, fontSize: "28px" }}>
+              {house.houseName}
+            </Title>
           </div>
-        )}
+          <div style={{ ...infoItemStyle, fontSize: "14px", color: "#666" }}>
+            <MapPin size={18} />
+            {house.location}
+          </div>
+        </div>
+      }
+      open={isVisible}
+      width={800}
+      footer={
+        <Button
+          type="primary"
+          onClick={onClose}
+          block
+          style={{ height: "40px", fontSize: "16px" }}
+        >
+          Close
+        </Button>
+      }
+      onCancel={onClose}
+    >
+      <div style={{ marginBottom: "24px" }}>
+        <Row gutter={[24, 24]}>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <CalendarDays size={18} />
+              <span>
+                Foundation Date:{" "}
+                {house.foundationDate
+                  ? moment(house.foundationDate).format("DD/MM/YYYY")
+                  : "N/A"}
+              </span>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Home size={18} />
+              <span>House Number: {house.houseNumber || "N/A"}</span>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <User size={18} />
+              <span>House Owner: {house.houseOwner || "N/A"}</span>
+            </div>
+          </Col>      
+        </Row>
+        <Row gutter={[24, 24]}>
+        <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Users size={18} />
+              <span>Current Members: {house.currentMembers || 0}</span>
+            </div>
+          </Col>  
+          <Col span={8}>
+            <div style={{ ...infoItemStyle, color: "#000" }}>
+              <Hammer size={18} />
+              <span>Maintenance Status: {house.maintenanceStatus || "N/A"}</span>
+            </div>
+          </Col>
+        </Row>
+      </div>
+
+      <div>
+        <Title level={4} style={{ marginBottom: "16px", fontSize: "20px" }}>
+          Children in {house.houseName}
+        </Title>
+        <Table
+          columns={columns}
+          dataSource={
+            house?.children?.$values?.map((child) => ({
+              key: child.id,
+              ...child,
+            })) || []
+          }
+          rowKey="id"
+          pagination={{
+            pageSize: 5,
+            total: house?.children?.$values?.length || 0,
+            showSizeChanger: false
+          }}
+          locale={{
+            emptyText: "No children available in this house",
+          }}
+          style={{ fontSize: "16px" }}
+          scroll={{ y: 300 }}
+        />
       </div>
     </Modal>
   );
@@ -94,73 +176,27 @@ const ViewDetailsHouse = ({ isVisible, house, onClose }) => {
 ViewDetailsHouse.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   house: PropTypes.shape({
-    houseId: PropTypes.number,
+    id: PropTypes.string,
     houseName: PropTypes.string,
-    houseNumber: PropTypes.string,
+    houseNumber: PropTypes.number,
     location: PropTypes.string,
-    description: PropTypes.string,
-    houseMember: PropTypes.string,
     houseOwner: PropTypes.string,
-    userAccountId: PropTypes.number,
-    villageId: PropTypes.number,
-    status: PropTypes.string,
-    imageUrls: PropTypes.arrayOf(PropTypes.string),
+    currentMembers: PropTypes.number,
+    foundationDate: PropTypes.string,
+    maintenanceStatus: PropTypes.string,
+    children: PropTypes.shape({
+      $values: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          childName: PropTypes.string,
+          gender: PropTypes.string,
+          dob: PropTypes.string,
+          healthStatus: PropTypes.string,
+        })
+      ),
+    }),
   }),
   onClose: PropTypes.func.isRequired,
 };
 
 export default ViewDetailsHouse;
-
-{
-  /* <Modal
-        title="House Details"
-        visible={isViewModalVisible}
-        onCancel={closeViewModal}
-        footer={[
-          <Button key="close" onClick={closeViewModal}>
-            Close
-          </Button>,
-        ]}
-      >
-        {viewingHouse && (
-          <div>
-            <p>
-              <strong>House Name:</strong> {viewingHouse.houseName}
-            </p>
-            <p>
-              <strong>House Number:</strong> {viewingHouse.houseNumber}
-            </p>
-            <p>
-              <strong>Location:</strong> {viewingHouse.location}
-            </p>
-            <p>
-              <strong>Description:</strong> {viewingHouse.description}
-            </p>
-            <p>
-              <strong>Owner:</strong> {viewingHouse.houseOwner}
-            </p>
-            {viewingHouse.imageUrls?.length > 0 && (
-              <div>
-                <strong>Images:</strong>
-                <div
-                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
-                >
-                  {viewingHouse.imageUrls.map((url, index) => (
-                    <img
-                      key={index}
-                      src={url}
-                      alt={`House Image ${index + 1}`}
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Modal> */
-}
