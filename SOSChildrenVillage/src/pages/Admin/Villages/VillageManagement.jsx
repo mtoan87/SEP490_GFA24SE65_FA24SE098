@@ -9,6 +9,7 @@ import {
   message,
   Upload,
   Checkbox,
+  DatePicker,
 } from "antd";
 import {
   PlusOutlined,
@@ -18,11 +19,12 @@ import {
   InboxOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getVillagesWithImages } from "../../../services/api";
 import { getVillageDetail } from "../../../services/api";
-import ViewDetailsVillage from './ViewDetailsVillage';
+import ViewDetailsVillage from "./ViewDetailsVillage";
+import axios from "axios";
+import moment from "moment";
 
 const { Dragger } = Upload;
 
@@ -99,6 +101,9 @@ const VillageManagement = () => {
     if (village) {
       form.setFieldsValue({
         ...village,
+        establishedDate: village.establishedDate
+          ? moment(village.establishedDate)
+          : null,
         imageUrls: village.imageUrls || [],
       });
       setCurrentImages(
@@ -144,10 +149,18 @@ const VillageManagement = () => {
 
           const formData = new FormData();
           formData.append("VillageName", values.villageName);
+          formData.append(
+            "EstablishedDate",
+            values.establishedDate.format("YYYY-MM-DD")
+          );
           formData.append("Location", values.location);
           formData.append("Description", values.description || "");
           formData.append("Status", values.status || "Inactive");
           formData.append("UserAccountId", values.userAccountId);
+          formData.append("TotalHouses", values.totalHouses || 0);
+          formData.append("TotalChildren", values.totalChildren || 0);
+          formData.append("ContactNumber", values.contactNumber || "");
+          formData.append("RoleName", values.roleName || "");
 
           // Append các hình ảnh
           if (uploadFiles && uploadFiles.length > 0) {
@@ -269,9 +282,21 @@ const VillageManagement = () => {
       key: "villageName",
     },
     {
+      title: "Established Date",
+      dataIndex: "establishedDate",
+      key: "establishedDate",
+      render: (date) =>
+        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    },
+    {
       title: "Location",
       dataIndex: "location",
       key: "location",
+    },
+    {
+      title: "Contact Number",
+      dataIndex: "contactNumber",
+      key: "contactNumber",
     },
     {
       title: "Description",
@@ -279,9 +304,24 @@ const VillageManagement = () => {
       key: "description",
     },
     {
+      title: "Total Houses",
+      dataIndex: "totalHouses",
+      key: "totalHouses",
+    },
+    {
+      title: "Total Children",
+      dataIndex: "totalChildren",
+      key: "totalChildren",
+    },
+    {
       title: "User account Id",
       dataIndex: "userAccountId",
       key: "userAccountId",
+    },
+    {
+      title: "Role Name",
+      dataIndex: "roleName",
+      key: "roleName",
     },
     {
       title: "Status",
@@ -325,9 +365,7 @@ const VillageManagement = () => {
             key={`view-${record.id}`}
             onClick={() => fetchVillageDetail(record.id)}
             icon={<EyeOutlined />}
-          >
-            
-          </Button>
+          ></Button>
 
           <Button
             key={`delete-${record.id}`}
@@ -471,6 +509,24 @@ const VillageManagement = () => {
           </Form.Item>
 
           <Form.Item
+            name="establishedDate"
+            label="Established Date"
+            rules={[
+              { required: true, message: "Please select established date" },
+            ]}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+
+          <Form.Item
+            name="contactNumber"
+            label="Contact Number"
+            rules={[{ required: true, message: "Please enter contact number" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
             name="location"
             label="Location"
             rules={[{ required: true, message: "Please enter location" }]}
@@ -487,6 +543,10 @@ const VillageManagement = () => {
           </Form.Item>
 
           <Form.Item name="userAccountId" label="User Account Id">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="roleName" label="Role Name">
             <Input />
           </Form.Item>
 
@@ -562,7 +622,7 @@ const VillageManagement = () => {
         isVisible={isDetailModalVisible}
         village={detailVillage}
         onClose={() => setIsDetailModalVisible(false)}
-      />  
+      />
 
       {/* Modal for View Images */}
       <Modal
