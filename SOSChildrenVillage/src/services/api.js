@@ -34,6 +34,17 @@ export const getHouseWithImages = async (showDeleted = false) => {
   }
 };
 
+export const getHouseDetail = async (houseId) => {
+  try {
+    const response = await api.get(`/api/Houses/GetHouseDetailsWithChildren/${houseId}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching houses details:", error);
+    throw error;
+  }
+};
+
 // Villages
 export const getVillagesWithImages = async (showDeleted = false) => {
   try {

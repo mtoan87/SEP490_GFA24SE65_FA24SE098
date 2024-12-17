@@ -156,7 +156,11 @@ const ViewDetailsVillage = ({
             ...house,
           })) || []}
           rowKey="id"
-          pagination={false}
+          pagination={{
+            pageSize: 5,
+            total: village?.houses?.$values?.length || 0,
+            showSizeChanger: false,
+          }}
           locale={{
             emptyText: "No houses available in this village",
           }}

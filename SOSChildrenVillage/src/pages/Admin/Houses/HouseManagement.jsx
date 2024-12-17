@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
 import { getHouseWithImages } from "../../../services/api";
+import { getHouseDetail } from "../../../services/api";
 import ViewDetailsHouse from "./ViewDetailsHouse";
 import axios from "axios";
 import moment from "moment";
@@ -42,8 +43,9 @@ const HouseManagement = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
-  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [viewingHouse, setViewingHouse] = useState(null);
+  const [detailHouse, setDetailHouse] = useState(null); // Lưu thông tin chi tiết House
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false); 
+
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -76,6 +78,21 @@ const HouseManagement = () => {
       setHouses([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchHouseDetail = async (houseId) => {
+    try {
+      setLoading(true);
+      const houseDetail = await getHouseDetail(houseId);
+      console.log("House Detail before setting:", houseDetail);
+      setDetailHouse(houseDetail); 
+      setIsDetailModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching house details:", error);
+      message.error("Failed to fetch house details.");
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -267,16 +284,6 @@ const HouseManagement = () => {
     }
   };
 
-  const handleViewDetail = (house) => {
-    setViewingHouse(house);
-    setIsViewModalVisible(true);
-  };
-
-  const closeViewModal = () => {
-    setIsViewModalVisible(false);
-    setViewingHouse(null);
-  };
-
   const columns = [
     {
       title: "House Id",
@@ -392,7 +399,7 @@ const HouseManagement = () => {
 
           <Button
             key={`view-${record.id}`}
-            onClick={() => handleViewDetail(record)}
+            onClick={() => fetchHouseDetail(record.id)}
             icon={<EyeOutlined />}
           />
 
@@ -675,9 +682,9 @@ const HouseManagement = () => {
 
       {/* View details */}
       <ViewDetailsHouse
-        isVisible={isViewModalVisible}
-        house={viewingHouse}
-        onClose={closeViewModal}
+        isVisible={isDetailModalVisible}
+        house={detailHouse}
+        onClose={() => setIsDetailModalVisible(false)}
       />
 
       {/* Modal for View Images */}
