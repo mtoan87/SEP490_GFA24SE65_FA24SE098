@@ -23,6 +23,14 @@ import {
     SystemWallet,
     TransactionManagement,
     VillageManagement,
+    ActivityManagement,
+    ChildNeedManagement,
+    ChildProgressManagement,
+    InventoryManagement,
+    SchoolManagement,
+    SubjectsManagement,
+    TransferHistoryManagement,
+    TransferRequestManagement,
     HomePages,
     Login,
     Register,
@@ -146,6 +154,38 @@ const router = createBrowserRouter([
           {
             path: 'transaction-management',
             element: <TransactionManagement />,
+          },
+          {
+            path: 'activity-management',
+            element: <ActivityManagement />,
+          },
+          {
+            path: 'child-need-management',
+            element: <ChildNeedManagement />,
+          },
+          {
+            path: 'child-progress-management',
+            element: <ChildProgressManagement />,
+          },
+          {
+            path: 'inventory-management',
+            element: <InventoryManagement />,
+          },
+          {
+            path: 'school-management',
+            element: <SchoolManagement />,
+          },
+          {
+            path: 'subjects-management',
+            element: <SubjectsManagement />,
+          },
+          {
+            path: 'transfer-history-management',
+            element: <TransferHistoryManagement />,
+          },
+          {
+            path: 'transfer-request-management',
+            element: <TransferRequestManagement />,
           },
         ],
       },

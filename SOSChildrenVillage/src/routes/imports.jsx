@@ -24,6 +24,14 @@ import RolesManagement from '../pages/Admin/Roles/RolesManagement';
 import SystemWallet from '../pages/Admin/SystemWallet/SystemWallet';
 import TransactionManagement from '../pages/Admin/Transactions/TransactionManagement';
 import VillageManagement from '../pages/Admin/Villages/VillageManagement';
+import ActivityManagement from '../pages/Admin/Activity/ActivityManagement';
+import ChildNeedManagement from '../pages/Admin/ChildNeed/ChildNeedManagement';
+import ChildProgressManagement from '../pages/Admin/ChildProgress/ChildProgressManagement';
+import InventoryManagement from '../pages/Admin/Inventory/InventoryManagement';
+import SchoolManagement from '../pages/Admin/School/SchoolManagement';
+import SubjectsManagement from '../pages/Admin/Subjects/SubjectsManagement';
+import TransferHistoryManagement from '../pages/Admin/TransferHistory/TransferHistoryManagement';
+import TransferRequestManagement from '../pages/Admin/TransferRequest/TransferRequestManagement';
 
 // Home and Authentication imports
 import HomePages from '../components/layout/HomePage/HomePage';
@@ -73,6 +81,14 @@ export {
     SystemWallet,
     TransactionManagement,
     VillageManagement,
+    ActivityManagement,
+    ChildNeedManagement,
+    ChildProgressManagement,
+    InventoryManagement,
+    SchoolManagement,
+    SubjectsManagement,
+    TransferHistoryManagement,
+    TransferRequestManagement,
 
     // Home and Authentication
     HomePages,
