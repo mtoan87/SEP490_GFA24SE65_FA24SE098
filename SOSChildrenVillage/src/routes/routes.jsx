@@ -45,7 +45,8 @@ import {
     VillageHistoryPage,
     ListHousePage,
     BookingHistoryPage,
-    HistoryPage
+    HistoryPage,
+    TransparencyPage,
 } from './imports';
 
 const router = createBrowserRouter([
@@ -226,6 +227,10 @@ const router = createBrowserRouter([
   {
     path: '/history',
     element: <HistoryPage />,
+  },
+  {
+    path: '/transparency',
+    element: <TransparencyPage />,
   },
   // Event and Child routes
   {

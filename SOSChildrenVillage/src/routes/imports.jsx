@@ -41,6 +41,7 @@ import UserDetail from '../components/layout/User/UserProfile';
 import EditUserProfile from '../components/layout/User/EditUserProfile';
 import ChangePasswordPage from '../components/layout/User/ChangePasswordPage';
 import HistoryPage from '../components/layout/History/HistoryPage';
+import TransparencyPage from '../components/layout/Transparency/TransparencyPage';
 
 // Event and Child Page imports
 import ChildDetailPage from '../components/layout/Child/ChildDetailPage';
@@ -98,6 +99,7 @@ export {
     EditUserProfile,
     ChangePasswordPage,
     HistoryPage,
+    TransparencyPage,
 
     // Event and Child Pages
     ChildDetailPage,

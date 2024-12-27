@@ -70,7 +70,6 @@
   transform: scale(1.05); /* Hiệu ứng phóng to nhẹ khi hover */
 }
 
-
 /* Right Column (Event Info and Donation) */
 .right-column {
   flex: 0 0 30%;
@@ -173,7 +172,6 @@
   margin-top: 80px; /* Tăng khoảng cách trên nếu cần */
 }
 
-
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .event-body {
@@ -202,4 +200,106 @@
 
 .event-detail-container::-webkit-scrollbar-thumb:hover {
   background-color: #555;
+}
+
+/* Modal Info Village */
+.ant-modal-body {
+  padding: 20px;
+}
+
+/* Image Styling */
+.village-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.village-image {
+  width: 150px; /* Đặt kích thước cố định cho hình ảnh */
+  height: 150px; /* Đảm bảo hình ảnh có chiều cao đồng đều */
+  object-fit: cover; /* Cắt ảnh theo tỷ lệ khung hình mà không bị méo */
+  border-radius: 8px; /* Góc bo tròn cho ảnh */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.village-image:hover {
+  transform: scale(1.05); /* Hiệu ứng phóng to khi hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Thêm bóng cho hình ảnh khi hover */
+}
+
+/* Descriptions Styling */
+.ant-descriptions-item-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.ant-descriptions-item-content {
+  color: #555;
+}
+
+/* Modal Title Styling */
+.ant-modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Adjust the Modal's close button */
+.ant-modal-close-x {
+  font-size: 20px;
+  color: #888;
+}
+
+.ant-modal-close-x:hover {
+  color: #333;
+}
+/* Styles for Houses Modal */
+.ant-modal-body {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f5f5f5;
+}
+
+.ant-table-tbody > tr > td {
+  background-color: #ffffff;
+}
+
+.village-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.village-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.village-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.house-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.house-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.house-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

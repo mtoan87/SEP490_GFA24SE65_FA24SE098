@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import { Row, Col, Divider } from 'antd';
-import { 
-  PhoneOutlined, 
-  MailOutlined, 
+import {
+  PhoneOutlined,
+  MailOutlined,
   EnvironmentOutlined,
   FacebookOutlined,
   YoutubeOutlined,
@@ -107,10 +107,11 @@ const Footer = forwardRef((props, ref) => {
           <Col xs={24} sm={12} md={6}>
             <h2 className="footer-heading">TRANSPARENCY</h2>
             <Divider className="footer-divider" />
-            <a href="#" className="footer-link">
+            <a href="/transparency" className="footer-link">
               Annual Financial and Activity Reports
             </a>
           </Col>
+
         </Row>
 
         <div className="footer-bottom">
@@ -129,7 +130,7 @@ const Footer = forwardRef((props, ref) => {
   );
 });
 
-Footer.displayName = 'Footer'; 
+Footer.displayName = 'Footer';
 
 export default Footer;
 
