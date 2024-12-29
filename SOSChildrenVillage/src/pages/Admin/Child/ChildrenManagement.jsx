@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
+import { getChildDetail } from "../../../services/api";
 import ViewDetailsChildren from "./ViewDetailsChildren";
 import axios from "axios";
 import moment from "moment";
@@ -45,7 +46,8 @@ const ChildrenManagement = () => {
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-  const [viewingChild, setViewingChild] = useState(null);
+  const [detailChild, setDetailChild] = useState(null);
+
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -80,6 +82,21 @@ const ChildrenManagement = () => {
       setLoading(false);
     }
   };
+
+    const fetchChildrenDetail = async (childId) => {
+      try {
+        setLoading(true);
+        const childDetail = await getChildDetail(childId);
+        console.log("Child Detail before setting:", childDetail);
+        setDetailChild(childDetail);
+        setIsDetailModalVisible(true);
+      } catch (error) {
+        console.error("Error fetching child details:", error);
+        message.error("Failed to fetch child details.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const showModal = (child = null) => {
     setEditingChild(child);
@@ -130,10 +147,21 @@ const ChildrenManagement = () => {
         try {
           const formData = new FormData();
 
-          // Append data
           formData.append("childName", values.childName);
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
+          formData.append("schoolId", values.schoolId || "");
+          formData.append("facilitiesWalletId", values.facilitiesWalletId || 0);
+          formData.append("systemWalletId", values.systemWalletId || 0);
+          formData.append("foodStuffWalletId", values.foodStuffWalletId || 0);
+          formData.append("healthWalletId", values.healthWalletId || 0);
+          formData.append(
+            "necessitiesWalletId",
+            values.necessitiesWalletId || 0
+          );
+          formData.append("amount", values.amount || 0);
+          formData.append("currentAmount", values.currentAmount || 0);
+          formData.append("amountLimit", values.amountLimit || 0);
           formData.append("gender", values.gender);
           formData.append("dob", values.dob.format("YYYY-MM-DD"));
           formData.append("status", values.status || "");
@@ -163,7 +191,7 @@ const ChildrenManagement = () => {
           }
 
           if (editingChild) {
-            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/UpdateChild?id=${editingChild.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/UpdateChild/${editingChild.id}`;
             console.log("Updating child with ID:", editingChild.id);
             console.log("Update URL:", updateUrl);
 
@@ -227,7 +255,7 @@ const ChildrenManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild?id=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild/${id}`;
           console.log("Deleting child with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -256,25 +284,13 @@ const ChildrenManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`
-      );
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`);
       message.success("Child Restored Successfully");
       fetchChildren(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
       console.error("Error occurred when restoring child:", error);
       message.error("Unable to restore child");
     }
-  };
-
-  const handleViewDetail = (child) => {
-    setViewingChild(child);
-    setIsDetailModalVisible(true);
-  };
-
-  const closeDetailModal = () => {
-    setViewingChild(null);
-    setIsDetailModalVisible(false);
   };
 
   // QUAN TRỌNG: dataIndex và key phải giống với tên của các biến trong API.
@@ -296,8 +312,13 @@ const ChildrenManagement = () => {
     },
     {
       title: "House Id",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "houseId",
+      key: "houseId",
+    },
+    {
+      title: "School Id",
+      dataIndex: "schoolId",
+      key: "schoolId",
     },
     {
       title: "Gender",
@@ -352,7 +373,7 @@ const ChildrenManagement = () => {
 
           <Button
             key={`view-${record.id}`}
-            onClick={() => handleViewDetail(record)}
+            onClick={() => fetchChildrenDetail(record)}
             icon={<EyeOutlined />}
           />
 
@@ -514,6 +535,10 @@ const ChildrenManagement = () => {
             <Input />
           </Form.Item>
 
+          <Form.Item name="schoolId" label="School Id">
+            <Input />
+          </Form.Item>
+
           <Form.Item
             name="gender"
             label="Gender"
@@ -577,6 +602,38 @@ const ChildrenManagement = () => {
             </Form.Item>
           )}
 
+          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="systemWalletId" label="System Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="healthWalletId" label="Health Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amount" label="Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="currentAmount" label="Current Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amountLimit" label="Amount Limit">
+            <Input type="number" />
+          </Form.Item>
+
           <Form.Item label="Upload New Images">
             <Dragger {...uploadProps}>
               <p className="ant-upload-drag-icon">
@@ -606,8 +663,8 @@ const ChildrenManagement = () => {
       {/* View details */}
       <ViewDetailsChildren
         isVisible={isDetailModalVisible}
-        child={viewingChild}
-        onClose={closeDetailModal}
+        child={detailChild}
+        onClose={() => setIsDetailModalVisible(false)}
       />
 
       {/* Images */}
