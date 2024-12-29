@@ -20,6 +20,17 @@ export const getChildWithImages = async (showDeleted = false) => {
   }
 };
 
+export const getChildDetail = async (childId) => {
+  try {
+    const response = await api.get(`/api/Children/GetChildDetails/${childId}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching children details:", error);
+    throw error;
+  }
+};
+
 // Houses
 export const getHouseWithImages = async (showDeleted = false) => {
   try {
@@ -36,7 +47,7 @@ export const getHouseWithImages = async (showDeleted = false) => {
 
 export const getHouseDetail = async (houseId) => {
   try {
-    const response = await api.get(`/api/Houses/GetHouseDetailsWithChildren/${houseId}`);
+    const response = await api.get(`/api/Houses/GetHouseDetails/${houseId}`);
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -122,7 +133,25 @@ export const getAccount = async (showDeleted = false) => {
 };
 
 //TransferRequest
+export const getTransferRequest = async () => {
+  try {
+    const response = await api.get("/api/TransferRequest");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Transfer Request:", error);
+    throw error;
+  }
+};
 
 //TransferHistory
+export const getTransferHistory = async () => {
+  try {
+    const response = await api.get("/api/TransferHistory");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Transfer History:", error);
+    throw error;
+  }
+};
 
 export default api;
