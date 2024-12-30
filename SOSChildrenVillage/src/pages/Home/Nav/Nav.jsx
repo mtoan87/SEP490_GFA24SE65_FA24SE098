@@ -11,15 +11,9 @@ const Nav = () => {
     const location = useLocation(); // Lấy location để kiểm tra đường dẫn hiện tại
 
     const handleDonateClick = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            navigate('/donate');
-        } else {
-            message.warning('Please log in before donating.');
-            navigate('/login');
-        }
+        navigate('/donate');
     };
-
+    
     // Hàm xử lý click vào "About Us"
     const handleAboutUsClick = () => {
         // Nếu đang ở trang khác, chuyển về trang Home và cuộn đến phần About Us

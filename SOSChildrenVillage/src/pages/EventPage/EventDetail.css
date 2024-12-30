@@ -303,3 +303,100 @@
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+/* History of Donation Button */
+.history-button {
+  background-color: #ff9800;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.history-button:hover {
+  background-color: #ffc107;
+  transform: translateY(-2px);
+}
+
+.history-button:active {
+  transform: translateY(0);
+}
+
+/* History of Donation Modal */
+.donation-history-modal {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.donation-history-modal h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+}
+
+.donation-history-modal p {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 10px 0;
+}
+
+/* Donation History Table */
+.donation-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.donation-history-table th,
+.donation-history-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.donation-history-table th {
+  background-color: #f9f9f9;
+  color: #333;
+  font-weight: bold;
+}
+
+.donation-history-table td {
+  background-color: #ffffff;
+  color: #555;
+}
+
+.donation-history-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Close Modal Button */
+.close-modal-button {
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  text-align: center;
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background-color 0.3s ease;
+}
+
+.close-modal-button:hover {
+  background-color: #e57373;
+}
