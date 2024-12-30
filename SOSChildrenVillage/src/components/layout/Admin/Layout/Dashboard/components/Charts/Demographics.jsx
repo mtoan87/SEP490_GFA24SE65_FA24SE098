@@ -39,7 +39,7 @@ const Demographics = () => {
       try {
         const response = await getAcademicPerformanceDistribution();
         const transformedData = response.$values.map((item) => ({
-          level: item.diploma,
+          level: item.schoolLevel,
           excellent: item.excellentCount,
           veryGood: item.veryGoodCount,
           good: item.goodCount,

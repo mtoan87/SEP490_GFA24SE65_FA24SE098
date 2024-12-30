@@ -35,8 +35,8 @@ const VillageManagement = () => {
   const [editingVillage, setEditingVillage] = useState(null);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  //const [selectedImages, setSelectedImages] = useState([]);
+  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -160,7 +160,7 @@ const VillageManagement = () => {
           formData.append("TotalHouses", values.totalHouses || 0);
           formData.append("TotalChildren", values.totalChildren || 0);
           formData.append("ContactNumber", values.contactNumber || "");
-          formData.append("RoleName", values.roleName || "");
+          //formData.append("RoleName", values.roleName || "");
 
           // Append các hình ảnh
           if (uploadFiles && uploadFiles.length > 0) {
@@ -299,11 +299,6 @@ const VillageManagement = () => {
       key: "contactNumber",
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
       title: "Total Houses",
       dataIndex: "totalHouses",
       key: "totalHouses",
@@ -319,37 +314,32 @@ const VillageManagement = () => {
       key: "userAccountId",
     },
     {
-      title: "Role Name",
-      dataIndex: "roleName",
-      key: "roleName",
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
     },
-    {
-      title: "Image",
-      dataIndex: "imageUrls",
-      key: "imageUrls",
-      render: (imageUrls) => (
-        <Button
-          type="link"
-          onClick={() => {
-            setSelectedImages(imageUrls || []);
-            setIsImageModalVisible(true);
-          }}
-          style={{
-            padding: 0,
-            margin: 0,
-            display: "block",
-            width: "100%",
-          }}
-        >
-          View
-        </Button>
-      ),
-    },
+    // {
+    //   title: "Image",
+    //   dataIndex: "imageUrls",
+    //   key: "imageUrls",
+    //   render: (imageUrls) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => {
+    //         setSelectedImages(imageUrls || []);
+    //         setIsImageModalVisible(true);
+    //       }}
+    //       style={{
+    //         padding: 0,
+    //         margin: 0,
+    //         display: "block",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "action",
@@ -546,9 +536,9 @@ const VillageManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item name="roleName" label="Role Name">
+          {/* <Form.Item name="roleName" label="Role Name">
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
           {editingVillage && currentImages.length > 0 && (
             <Form.Item label="Current Images">
@@ -625,7 +615,7 @@ const VillageManagement = () => {
       />
 
       {/* Modal for View Images */}
-      <Modal
+      {/* <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}
@@ -671,7 +661,7 @@ const VillageManagement = () => {
             </div>
           ))}
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

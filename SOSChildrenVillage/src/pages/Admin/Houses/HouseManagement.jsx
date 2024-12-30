@@ -37,8 +37,8 @@ const HouseManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [uploadFiles, setUploadFiles] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  //const [selectedImages, setSelectedImages] = useState([]);
+  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
@@ -173,7 +173,7 @@ const HouseManagement = () => {
               : ""
           );
           formData.append("MaintenanceStatus", values.maintenanceStatus || "Good");
-          formData.append("RoleName", values.roleName);
+          // formData.append("RoleName", values.roleName);
 
           for (var pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]); 
@@ -306,12 +306,7 @@ const HouseManagement = () => {
       key: "location",
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
-      title: "House Members",
+      title: "Capacity",
       dataIndex: "houseMember",
       key: "houseMember",
     },
@@ -334,11 +329,6 @@ const HouseManagement = () => {
       title: "Village Id",
       dataIndex: "villageId",
       key: "villageId",
-    },
-    {
-      title: "Role Name",
-      dataIndex: "roleName",
-      key: "roleName",
     },
     {
       title: "Foundation Date",
@@ -364,28 +354,28 @@ const HouseManagement = () => {
       dataIndex: "status",
       key: "status",
     },
-    {
-      title: "Image",
-      dataIndex: "imageUrls",
-      key: "imageUrls",
-      render: (imageUrls) => (
-        <Button
-          type="link"
-          onClick={() => {
-            setSelectedImages(imageUrls || []);
-            setIsImageModalVisible(true);
-          }}
-          style={{
-            padding: 0,
-            margin: 0,
-            display: "block",
-            width: "100%",
-          }}
-        >
-          View
-        </Button>
-      ),
-    },
+    // {
+    //   title: "Image",
+    //   dataIndex: "imageUrls",
+    //   key: "imageUrls",
+    //   render: (imageUrls) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => {
+    //         setSelectedImages(imageUrls || []);
+    //         setIsImageModalVisible(true);
+    //       }}
+    //       style={{
+    //         padding: 0,
+    //         margin: 0,
+    //         display: "block",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "action",
@@ -586,9 +576,9 @@ const HouseManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item name="roleName" label="Role Name">
+          {/* <Form.Item name="roleName" label="Role Name">
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item 
           name="foundationDate" 
@@ -688,7 +678,7 @@ const HouseManagement = () => {
       />
 
       {/* Modal for View Images */}
-      <Modal
+      {/* <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}
@@ -734,7 +724,7 @@ const HouseManagement = () => {
             </div>
           ))}
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
