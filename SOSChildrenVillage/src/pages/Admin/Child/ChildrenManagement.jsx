@@ -41,15 +41,15 @@ const ChildrenManagement = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
-  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
+  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  //const [selectedImages, setSelectedImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [detailChild, setDetailChild] = useState(null);
 
 
-  const navigate = useNavigate(); // Khởi tạo useNavigate
+  const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
 
   useEffect(() => {
@@ -337,29 +337,29 @@ const ChildrenManagement = () => {
       dataIndex: "status",
       key: "status",
     },
-    {
-      title: "Image",
-      dataIndex: "imageUrls",
-      key: "imageUrls",
-      align: "center",
-      render: (imageUrls) => (
-        <Button
-          type="link"
-          onClick={() => {
-            setSelectedImages(imageUrls || []);
-            setIsImageModalVisible(true);
-          }}
-          style={{
-            padding: 0,
-            margin: 0,
-            display: "block",
-            width: "100%",
-          }}
-        >
-          View
-        </Button>
-      ),
-    },
+    // {
+    //   title: "Image",
+    //   dataIndex: "imageUrls",
+    //   key: "imageUrls",
+    //   align: "center",
+    //   render: (imageUrls) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => {
+    //         setSelectedImages(imageUrls || []);
+    //         setIsImageModalVisible(true);
+    //       }}
+    //       style={{
+    //         padding: 0,
+    //         margin: 0,
+    //         display: "block",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "action",
@@ -666,55 +666,6 @@ const ChildrenManagement = () => {
         child={detailChild}
         onClose={() => setIsDetailModalVisible(false)}
       />
-
-      {/* Images */}
-      <Modal
-        title="Images"
-        open={isImageModalVisible}
-        onCancel={() => setIsImageModalVisible(false)}
-        footer={null}
-        width={800}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "16px",
-            padding: "16px",
-          }}
-        >
-          {selectedImages.map((url, index) => (
-            <div
-              key={index}
-              style={{
-                border: "1px solid #d9d9d9",
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src={url}
-                alt={`Image ${index + 1}`}
-                style={{
-                  width: "100%",
-                  height: "200px",
-                  objectFit: "cover",
-                }}
-                onClick={() => window.open(url, "_blank")}
-              />
-              <div
-                style={{
-                  padding: "8px",
-                  textAlign: "center",
-                  borderTop: "1px solid #d9d9d9",
-                }}
-              >
-                {`Image ${index + 1}`}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
     </div>
   );
 };

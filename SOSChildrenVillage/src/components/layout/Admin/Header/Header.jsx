@@ -1,7 +1,7 @@
-import { Layout, Button, Space, Badge, Avatar, Dropdown, Modal } from 'antd';
+import { Layout, Space, Avatar, Dropdown, Modal } from 'antd';
 import {
-  BellOutlined,
-  SettingOutlined,
+  // BellOutlined,
+  // SettingOutlined,
   UserOutlined,
   LogoutOutlined,
   ProfileOutlined,
@@ -75,14 +75,14 @@ const HeaderComponent = ({ collapsed }) => {
         label: 'Profile',
         onClick: showProfileModal,
       },
-      {
-        key: 'settings',
-        icon: <SettingOutlined />,
-        label: 'Settings',
-      },
-      {
-        type: 'divider',
-      },
+      // {
+      //   key: 'settings',
+      //   icon: <SettingOutlined />,
+      //   label: 'Settings',
+      // },
+      // {
+      //   type: 'divider',
+      // },
       {
         key: 'logout',
         icon: <LogoutOutlined />,
@@ -91,22 +91,22 @@ const HeaderComponent = ({ collapsed }) => {
     ],
   };
 
-  const notificationItems = {
-    items: [
-      {
-        key: '1',
-        label: 'You have a new message',
-      },
-      {
-        key: '2',
-        label: 'System update completed',
-      },
-      {
-        key: '3',
-        label: 'New user registered',
-      },
-    ],
-  };
+  // const notificationItems = {
+  //   items: [
+  //     {
+  //       key: '1',
+  //       label: 'You have a new message',
+  //     },
+  //     {
+  //       key: '2',
+  //       label: 'System update completed',
+  //     },
+  //     {
+  //       key: '3',
+  //       label: 'New user registered',
+  //     },
+  //   ],
+  // };
 
   return (
     <>
@@ -116,13 +116,13 @@ const HeaderComponent = ({ collapsed }) => {
         </div>
 
         <Space className="header-right" size="large">
-          <Dropdown menu={notificationItems} placement="bottomRight" trigger={['click']}>
+          {/* <Dropdown menu={notificationItems} placement="bottomRight" trigger={['click']}>
             <Badge count={3} size="small">
               <Button type="text" icon={<BellOutlined />} className="header-icon-btn" />
             </Badge>
-          </Dropdown>
+          </Dropdown> */}
 
-          <Button type="text" icon={<SettingOutlined />} className="header-icon-btn" />
+          {/* <Button type="text" icon={<SettingOutlined />} className="header-icon-btn" /> */}
 
           <Dropdown
             menu={{

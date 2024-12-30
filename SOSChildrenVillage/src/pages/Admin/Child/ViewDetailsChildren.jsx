@@ -1,4 +1,4 @@
-import { Modal, Tabs, Descriptions, Image, Space } from "antd";
+import { Modal, Tabs, Descriptions, Image } from "antd";
 import {
   UserOutlined,
   HeartOutlined,
@@ -18,7 +18,7 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
   return (
     <Modal
       title={<h2 className="text-2xl font-bold">Detailed Information</h2>}
-      visible={isVisible}
+      open={isVisible}
       onCancel={onClose}
       footer={null}
       width={800}
@@ -90,7 +90,7 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           }
           key="health"
         >
-          {child.healthReports && child.healthReports.$values.length > 0 ? (
+          {child.healthReports && child.healthReports.$values && child.healthReports.$values.length > 0 ? (
             child.healthReports.$values.map((report, index) => (
               <Descriptions key={index} bordered column={1}>
                 <Descriptions.Item label="Nutritional Status">
@@ -133,7 +133,7 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           }
           key="education"
         >
-          {child.academicReports && child.academicReports.$values.length > 0 ? (
+          {child.academicReports && child.academicReports.$values && child.academicReports.$values.length > 0 ? (
             child.academicReports.$values.map((report, index) => (
               <Descriptions key={index} bordered column={1}>
                 <Descriptions.Item label="Diploma">
@@ -153,8 +153,8 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
                   {report.achievement}
                 </Descriptions.Item>
                 <Descriptions.Item label="Subjects">
-                  {report.subjectDetails && report.subjectDetails.length > 0 ? (
-                    report.subjectDetails.map((subject, subIndex) => (
+                  {report.subjectDetails && report.subjectDetails.$values && report.subjectDetails.$values.length > 0 ? (
+                    report.subjectDetails.$values.map((subject, subIndex) => (
                       <div key={subIndex}>
                         {subject.subjectName}: {subject.score} (
                         {subject.remarks})
@@ -188,22 +188,6 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
       </Tabs>
 
       {/* Additional Images */}
-      {child.imageUrls && child.imageUrls.length > 1 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Images</h3>
-          <Space size="middle" wrap>
-            {child.imageUrls.map((url, index) => (
-              <Image
-                key={index}
-                width={100}
-                src={url}
-                alt={`Child image ${index + 1}`}
-                className="rounded-md shadow-sm hover:shadow-md transition-shadow duration-300"
-              />
-            ))}
-          </Space>
-        </div>
-      )}
     </Modal>
   );
 };
@@ -221,7 +205,7 @@ ViewDetailsChildren.propTypes = {
     healthReports: PropTypes.shape({
       $values: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string,
+          id: PropTypes.number,
           nutritionalStatus: PropTypes.string,
           medicalHistory: PropTypes.string,
           vaccinationStatus: PropTypes.string,
@@ -237,20 +221,23 @@ ViewDetailsChildren.propTypes = {
     academicReports: PropTypes.shape({
       $values: PropTypes.arrayOf(
         PropTypes.shape({
-          id: PropTypes.string,
+          id: PropTypes.number,
           diploma: PropTypes.string,
           schoolLevel: PropTypes.string,
           gpa: PropTypes.number,
           semester: PropTypes.string,
           academicYear: PropTypes.string,
           achievement: PropTypes.string,
-          subjectDetails: PropTypes.arrayOf(
-            PropTypes.shape({
-              subjectName: PropTypes.string,
-              score: PropTypes.number,
-              remarks: PropTypes.string,
-            })
-          ),
+          subjectDetails: PropTypes.shape({
+            $values: PropTypes.arrayOf(
+              PropTypes.shape({
+                id: PropTypes.number,
+                subjectName: PropTypes.string,
+                score: PropTypes.number,
+                remarks: PropTypes.string,
+              })
+            ),
+          }),
         })
       ),
     }),
