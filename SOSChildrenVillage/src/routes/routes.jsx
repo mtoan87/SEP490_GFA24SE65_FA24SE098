@@ -47,6 +47,7 @@ import {
     BookingHistoryPage,
     HistoryPage,
     TransparencyPage,
+    VillageDetailPage,
 } from './imports';
 
 const router = createBrowserRouter([
@@ -240,6 +241,10 @@ const router = createBrowserRouter([
   {
     path: '/childdetail/:id',
     element: <ChildDetailPage />,
+  },
+  {
+    path: '/villagedetail/:id',
+    element: <VillageDetailPage />,
   },
 
   // Financial routes

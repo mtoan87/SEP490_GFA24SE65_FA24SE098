@@ -46,6 +46,7 @@ import TransparencyPage from '../components/layout/Transparency/TransparencyPage
 // Event and Child Page imports
 import ChildDetailPage from '../components/layout/Child/ChildDetailPage';
 import EventDetailPage from '../components/layout/Event/EventDetailPage';
+import VillageDetailPage from '../components/layout/Village/VillageDetailPage';
 
 // Financial Page imports
 import Donate from '../components/layout/Donation/DonatePage';
@@ -104,7 +105,8 @@ export {
     // Event and Child Pages
     ChildDetailPage,
     EventDetailPage,
-
+    VillageDetailPage,
+    
     // Financial Pages
     Donate,
     DonateHistoryPage,
