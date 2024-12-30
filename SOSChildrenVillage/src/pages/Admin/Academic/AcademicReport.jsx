@@ -56,6 +56,13 @@ const AcademicReport = () => {
         formData.append("childId", values.childId || "");
         formData.append("gpa", values.gpa || "");
         formData.append("schoolReport", values.schoolReport || "");
+        formData.append("semester", values.semester || "");
+        formData.append("academicYear", values.academicYear || "");
+        formData.append("remarks", values.remarks || "");
+        formData.append("achievement", values.achievement || "");
+        formData.append("status", values.status || "");
+        //formData.append("class", values.class || "");
+        //formData.append("feedback", values.feedback || "");
 
         console.log("Academic Report Values:", values);
 
@@ -129,6 +136,51 @@ const AcademicReport = () => {
       dataIndex: "schoolReport",
       key: "schoolReport",
     },
+    {
+      title: "School Level",
+      dataIndex: "schoolLevel",
+      key: "schoolLevel",
+    },
+    {
+      title: "School Id",
+      dataIndex: "schoolId",
+      key: "schoolId",
+    },
+    {
+      title: "Semester",
+      dataIndex: "semester",
+      key: "semester",
+    },
+    {
+      title: "Academic Year",
+      dataIndex: "academicYear",
+      key: "academicYear",
+    },
+    {
+      title: "Remarks",
+      dataIndex: "remarks",
+      key: "remarks",
+    },
+    {
+      title: "Achievement",
+      dataIndex: "achievement",
+      key: "achievement",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    // {
+    //   title: "Class",
+    //   dataIndex: "class",
+    //   key: "class",
+    // },
+    // {
+    //   title: "Feedback",
+    //   dataIndex: "feedback",
+    //   key: "feedback",
+    // },
     {
       title: "Actions",
       key: "action",
@@ -287,6 +339,42 @@ const AcademicReport = () => {
           >
             <Input type="number" step="0.01" />
           </Form.Item>
+
+          <Form.Item name="schoolLevel" label="School Level">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="schoolId" label="School Id">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="semester" label="Semester">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="academicYear" label="Academic Year">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="remarks" label="Remarks">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="achievement" label="Achievement">
+            <Input />
+          </Form.Item>
+
+          <Form.Item name="status" label="Status">
+            <Input />
+          </Form.Item>
+
+          {/* <Form.Item name="class" label="Class">
+            <Input />
+          </Form.Item> */}
+
+          {/* <Form.Item name="feedback" label="Feedback">
+            <Input />
+          </Form.Item> */}
         </Form>
       </Modal>
     </div>

@@ -154,4 +154,79 @@ export const getTransferHistory = async () => {
   }
 };
 
+//School
+export const getSchoolWithImages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Houses/GetAllSchoolsIsDeleted"
+      : "/api/Houses/GetAllSchoolWithImg";
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Schools data:", error);
+    return [];
+  }
+};
+
+//Subject
+export const getSubjectDetail = async () => {
+  try {
+    const response = await api.get("/api/SubjectDetail");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Subjects:", error);
+    throw error;
+  }
+};
+
+//Activity
+export const getActivityWithImages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Village/GetAllActivityIsDelete"
+      : "/api/Village/GetAllActivityWithImg";
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Activities with image:", error);
+    throw error;
+  }
+};
+
+//ChildProgress
+export const getChildProgress = async () => {
+  try {
+    const response = await api.get("/api/ChildProgress");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Child Progress:", error);
+    throw error;
+  }
+};
+
+//ChildNeed
+export const getChildNeed = async () => {
+  try {
+    const response = await api.get("/api/ChildNeed");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Child Need:", error);
+    throw error;
+  }
+};
+
+//Inventory
+export const getInventoryWithImages = async (showDeleted = false) => {
+  try {
+    const endpoint = showDeleted
+      ? "/api/Village/GetAllInventoryIsDelete"
+      : "/api/Village/GetAllInventoryWithImg";
+    const response = await api.get(endpoint);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Inventory with image:", error);
+    throw error;
+  }
+};
+
 export default api;
