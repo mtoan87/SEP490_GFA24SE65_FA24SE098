@@ -22,6 +22,9 @@ export const getChildWithImages = async (showDeleted = false) => {
 
 export const getChildDetail = async (childId) => {
   try {
+    if (typeof childId === 'object') {
+      childId = childId.id;
+    }
     const response = await api.get(`/api/Children/GetChildDetails/${childId}`);
     console.log("API Response:", response.data);
     return response.data;
