@@ -337,6 +337,29 @@ const ChildrenManagement = () => {
       dataIndex: "status",
       key: "status",
     },
+    // {
+    //   title: "Image",
+    //   dataIndex: "imageUrls",
+    //   key: "imageUrls",
+    //   align: "center",
+    //   render: (imageUrls) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => {
+    //         setSelectedImages(imageUrls || []);
+    //         setIsImageModalVisible(true);
+    //       }}
+    //       style={{
+    //         padding: 0,
+    //         margin: 0,
+    //         display: "block",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "action",
@@ -535,38 +558,6 @@ const ChildrenManagement = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="systemWalletId" label="System Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="healthWalletId" label="Health Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="currentAmount" label="Current Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amountLimit" label="Amount Limit">
-            <Input type="number" />
-          </Form.Item>
-
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">
               <div
@@ -610,6 +601,38 @@ const ChildrenManagement = () => {
               </div>
             </Form.Item>
           )}
+
+          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="systemWalletId" label="System Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="healthWalletId" label="Health Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amount" label="Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="currentAmount" label="Current Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amountLimit" label="Amount Limit">
+            <Input type="number" />
+          </Form.Item>
 
           <Form.Item label="Upload New Images">
             <Dragger {...uploadProps}>

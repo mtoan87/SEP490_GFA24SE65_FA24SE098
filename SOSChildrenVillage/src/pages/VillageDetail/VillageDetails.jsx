@@ -9,8 +9,10 @@ const VillageDetails = () => {
   const navigate = useNavigate();
   const [villageInfo, setVillageInfo] = useState(null);
   const [houses, setHouses] = useState([]);
-  const [selectedHouse, setSelectedHouse] = useState(null); // State for modal
+  const [selectedHouse, setSelectedHouse] = useState(null); // State for house modal
   const [loadingHouseDetails, setLoadingHouseDetails] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false); // State for description modal
+  const [selectedImage, setSelectedImage] = useState('/default-placeholder.png');
 
   useEffect(() => {
     const fetchVillageInfo = async () => {
@@ -21,11 +23,13 @@ const VillageDetails = () => {
         setVillageInfo({
           villageName: villageData.villageName,
           totalHouses: villageData.totalHouses,
+          description: villageData.description,
           totalChildren: villageData.totalChildren,
           location: villageData.location,
           imageUrls: villageData.imageUrls || [],
           villageId: villageData.id, // Include villageId for dynamic house fetching
         });
+        setSelectedImage(villageData.imageUrls[0] || '/default-placeholder.png');
       } catch (error) {
         console.error('Error fetching village info:', error);
       }
@@ -40,7 +44,7 @@ const VillageDetails = () => {
         console.error('Village ID is missing.');
         return;
       }
-       try {
+      try {
         const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByVillageId/${villageId}`);
         console.log('Houses Info Response:', response.data);
         setHouses(response.data);
@@ -71,29 +75,49 @@ const VillageDetails = () => {
     <div className="village-detail-container">
       {villageInfo ? (
         <>
-          <div className="village-layout">
-            {/* Village Images */}
-            <div className="village-images">
-              {villageInfo.imageUrls.length > 0 ? (
-                villageInfo.imageUrls.map((url, index) => (
-                  <img key={index} src={url} alt={`Village Image ${index + 1}`} className="village-image" />
-                ))
-              ) : (
-                <p>No images available</p>
-              )}
+          {/* Village Content Layout */}
+          <div className="village-content">
+            {/* Image Gallery */}
+            <div className="village-gallery">
+              <div className="main-image">
+                <img
+                  src={selectedImage}
+                  alt="Main Village"
+                  className="gallery-main-image"
+                />
+              </div>
+              <div className="thumbnail-images">
+                {villageInfo.imageUrls.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Thumbnail ${index + 1}`}
+                    className={`gallery-thumbnail ${selectedImage === url ? 'selected' : ''
+                      }`}
+                    onClick={() => setSelectedImage(url)}
+                  />
+                ))}
+              </div>
             </div>
-  
+
             {/* Village Information */}
             <div className="village-info">
-              <Descriptions column={1} bordered>
-                <Descriptions.Item label="Village Name">{villageInfo.villageName || 'N/A'}</Descriptions.Item>
-                <Descriptions.Item label="Location">{villageInfo.location || 'N/A'}</Descriptions.Item>
-                <Descriptions.Item label="Total Houses">{villageInfo.totalHouses || 'N/A'}</Descriptions.Item>
-                <Descriptions.Item label="Total Children">{villageInfo.totalChildren || 'N/A'}</Descriptions.Item>
-              </Descriptions>
+              <h1 className="village-name">{villageInfo.villageName || 'N/A'}</h1>
+              <p className="village-location">Location: {villageInfo.location || 'N/A'}</p>
+              <p className="village-description">Description: {villageInfo.description.length > 100
+                ? `${villageInfo.description.slice(0, 100)}... `
+                : villageInfo.description || 'No description available'}
+                {villageInfo.description.length > 100 && (
+                  <Button type="link" onClick={() => setShowFullDescription(true)}>
+                    Read More
+                  </Button>
+                )}
+              </p>
+              <p className="village-location">Total Houses: {villageInfo.totalHouses || 'N/A'}</p>
+              <p className="village-location">Total Children: {villageInfo.totalChildren || 'N/A'}</p>
             </div>
           </div>
-  
+
           {/* Houses Table */}
           <h2 style={{ marginTop: '20px' }}>Houses in {villageInfo.villageName}</h2>
           <Table
@@ -107,7 +131,12 @@ const VillageDetails = () => {
                 title: 'Action',
                 key: 'action',
                 render: (_, record) => (
-                  <Button type="link" onClick={() => fetchHouseDetails(record.id)}>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      window.open(`/housedetail/${record.id}`, '_blank');  // Open in a new tab
+                    }}
+                  >
                     View
                   </Button>
                 ),
@@ -116,11 +145,12 @@ const VillageDetails = () => {
             rowKey="id"
             pagination={false}
           />
+
         </>
       ) : (
         <p>Loading village details...</p>
       )}
-  
+
       {/* House Details Modal */}
       <Modal
         visible={!!selectedHouse}
@@ -155,8 +185,18 @@ const VillageDetails = () => {
           )
         )}
       </Modal>
+
+      {/* Description Modal */}
+      <Modal
+        visible={showFullDescription}
+        title="Village Description"
+        onCancel={() => setShowFullDescription(false)}
+        footer={null}
+      >
+        <p>{villageInfo?.description}</p>
+      </Modal>
     </div>
-  );  
+  );
 };
 
 export default VillageDetails;

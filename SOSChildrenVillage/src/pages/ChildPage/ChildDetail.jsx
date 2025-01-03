@@ -7,8 +7,13 @@ import './ChildDetail.css';
 const ChildDetail = () => {
   const { id: childId } = useParams();
   const [child, setChild] = useState(null);
+  const [userId, setUserId] = useState(null); // Store userId (from login)
   const [amount, setAmount] = useState('');
-  const [userId, setUserId] = useState(null);
+  const [description, setDescription] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [donationHistory, setDonationHistory] = useState({ totalAmount: 0, details: [] });
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
 
@@ -38,15 +43,15 @@ const ChildDetail = () => {
       return;
     }
 
-    if (!userId) {
-      alert('Please log in to donate.');
-      return;
-    }
-
     try {
       const response = await axios.put(`https://soschildrenvillage.azurewebsites.net/api/EventDonate/ChildDonate?id=${childId}`, {
         amount: amount,
-        userAccountId: userId
+        userAccountId: userId || null, // Use userId if logged in, otherwise null
+        description: description,
+        userName: userName || null,            // Added userName
+        userEmail: userEmail || null,          // Added userEmail
+        phone: phone || null,                  // Added phone
+        address: address || null               // Added address
       });
 
       if (response.data && response.data.url) {
@@ -61,11 +66,6 @@ const ChildDetail = () => {
   };
 
   const fetchDonationHistory = async () => {
-    if (!userId) {
-      alert('Please log in to view donation history.');
-      return;
-    }
-
     try {
       const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationsByUserAndChildAsync/${userId}/${childId}`);
       const { totalAmount, donationDetails } = response.data;
@@ -87,7 +87,7 @@ const ChildDetail = () => {
     }
   };
 
-  const donationProgress = child.currentAmount / child.amountLimit * 100;
+  const donationProgress = (child.currentAmount / child.amountLimit) * 100;
 
   const formatDate = (dateString) => {
     const options = {
@@ -114,11 +114,9 @@ const ChildDetail = () => {
       </div>
 
       <div className="child-body">
-        {/* Left layout: Description and images */}
         <div className="left-column">
           <p className="child-description">Health Status: {child.healthStatus}</p>
 
-          {/* Display images of the child */}
           {child.imageUrls && child.imageUrls.length > 0 && (
             <div className="child-images">
               {child.imageUrls.map((url, index) => (
@@ -128,41 +126,12 @@ const ChildDetail = () => {
           )}
         </div>
 
-        {/* Right layout: Child details and Donate button */}
         <div className="right-column">
           <div className="child-info">
             <p><strong>Gender:</strong> {child.gender}</p>
             <p><strong>Date of Birth:</strong> {formatDate(child.dob)}</p>
             <p><strong>Amount Limit:</strong> {formatCurrency(child.amountLimit)}</p>
           </div>
-
-          {/* Donation progress bar */}
-          <div className="donation-progress-container">
-            <label>Donation Progress</label>
-            <div className="donation-progress-bar">
-              <div 
-                className="donation-progress-fill" 
-                style={{ width: `${donationProgress}%`, backgroundColor: donationProgress === 100 ? '#28a745' : '#1677ff' }} 
-              />
-            </div>
-            <p>{Math.round(donationProgress)}% of goal reached</p>
-          </div>
-
-          {/* Donation input and button */}
-          <div className="donation-section">
-            <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
-            <input 
-              type="number" 
-              id="donationAmount" 
-              value={amount} 
-              onChange={(e) => setAmount(e.target.value)} 
-              placeholder="Enter amount" 
-              className="donation-input" 
-            />
-            <button className="donate-button" onClick={handleDonate}>Donate</button>
-          </div>
-
-          {/* History of Donation Button */}
           <Button
             type="default"
             onClick={fetchDonationHistory}
@@ -170,10 +139,104 @@ const ChildDetail = () => {
           >
             History of Donation
           </Button>
+
+          <div className="donation-progress-container">
+            <label>Donation Progress</label>
+            <div className="donation-progress-bar">
+              <div
+                className="donation-progress-fill"
+                style={{
+                  width: `${donationProgress}%`,
+                  backgroundColor: donationProgress === 100 ? '#28a745' : '#1677ff',
+                }}
+              />
+            </div>
+            <p>{Math.round(donationProgress)}% of goal reached</p>
+          </div>
+
+          <div className="donation-section">
+            {userId ? (
+              // If logged in, show only amount and description fields
+              <>
+                <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
+                <input
+                  type="number"
+                  id="donationAmount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="donation-input"
+                />
+                <label htmlFor="donationDescription" className="donation-label">Description:</label>
+                <input
+                  type="text"
+                  id="donationDescription"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter description"
+                  className="donation-input"
+                />
+              </>
+            ) : (
+              // If not logged in, show full user information as editable
+              <>
+                <input type="hidden" value={null} id="userAccountId" />
+                <label htmlFor="userName" className="donation-label">User Name:</label>
+                <input
+                  type="text"
+                  id="userName"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="userEmail" className="donation-label">Email:</label>
+                <input
+                  type="email"
+                  id="userEmail"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="phone" className="donation-label">Phone:</label>
+                <input
+                  type="text"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="address" className="donation-label">Address:</label>
+                <input
+                  type="text"
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
+                <input
+                  type="number"
+                  id="donationAmount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="donation-input"
+                />
+                <label htmlFor="donationDescription" className="donation-label">Description:</label>
+                <input
+                  type="text"
+                  id="donationDescription"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="donation-input"
+                />
+              </>
+            )}
+
+            <button className="donate-button" onClick={handleDonate}>Donate</button>
+          </div>
         </div>
       </div>
 
-      {/* Donation History Modal */}
       <Modal
         title="Donation History"
         visible={isHistoryVisible}
