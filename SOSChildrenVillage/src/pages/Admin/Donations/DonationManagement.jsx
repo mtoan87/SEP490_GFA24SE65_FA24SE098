@@ -145,89 +145,117 @@ const DonationManagement = () => {
     });
   };
 
-  const columns = [
-    {
-      title: "User",
-      dataIndex: "userName",
-      key: "userName",
-      render: (_, record) => (
-        <Button onClick={() => showUserModal(record)} type="link">
-          View User
-        </Button>
-      ),
-      align: "center",
-    },
-    {
-      title: "Donation Type",
-      dataIndex: "donationType",
-      key: "donationType",
-      render: (donationType, record) => {
-        if (donationType === "Child") {
-          return (
-            <Button
-              type="link"
-              style={{ color: "orange" }}
-              onClick={() => showChildModal(record.childId)}
-            >
-              {donationType}
-            </Button>
-          );
-        } else if (donationType === "Event") {
-          return (
-            <Button
-              type="link"
-              style={{ color: "blue" }}
-              onClick={() => showEventModal(record.eventId)}
-            >
-              {donationType}
-            </Button>
-          );
-        }
-        return <span>{donationType}</span>;
-      },
-      align: "center", // Center alignment for the column
-    },
-    
-    {
-      title: "Date",
-      dataIndex: "dateTime",
-      key: "dateTime",
-      render: (date) => (moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : ""),
-      align: "center",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      align: "center",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      align: "center",
-    },
-    {
-      title: "Actions",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
+// Thêm hàm getWalletName để xử lý logic hiển thị tên Wallet
+const getWalletName = (record) => {
+  const wallets = {
+    facilitiesWalletId: "Facilities",
+    systemWalletId: "System",
+    foodStuffWalletId: "Food Stuff",
+    healthWalletId: "Health",
+    necessitiesWalletId: "Necessities",
+  };
+
+  for (const [key, value] of Object.entries(wallets)) {
+    if (record[key] !== null) {
+      return value;
+    }
+  }
+  return "No Wallet";
+};
+
+// Thêm cột Wallet vào mảng columns
+const columns = [
+  {
+    title: "User",
+    dataIndex: "userName",
+    key: "userName",
+    render: (_, record) => (
+      <Button onClick={() => showUserModal(record)} type="link">
+        View User
+      </Button>
+    ),
+    align: "center",
+  },
+  {
+    title: "Donation Type",
+    dataIndex: "donationType",
+    key: "donationType",
+    render: (donationType, record) => {
+      if (donationType === "Child") {
+        return (
           <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
+            type="link"
+            style={{ color: "orange" }}
+            onClick={() => showChildModal(record.childId)}
+          >
+            {donationType}
+          </Button>
+        );
+      } else if (donationType === "Event") {
+        return (
           <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
-        </Space>
-      ),
-      align: "center",
+            type="link"
+            style={{ color: "blue" }}
+            onClick={() => showEventModal(record.eventId)}
+          >
+            {donationType}
+          </Button>
+        );
+      }
+      return <span>{donationType}</span>;
     },
-  ];
+    align: "center",
+  },
+  // Thêm cột Wallet
+  {
+    title: "Wallet",
+    key: "wallet",
+    render: (_, record) => <span>{getWalletName(record)}</span>,
+    align: "center",
+  },
+  {
+    title: "Date",
+    dataIndex: "dateTime",
+    key: "dateTime",
+    render: (date) => (moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : ""),
+    align: "center",
+  },
+  {
+    title: "Amount",
+    dataIndex: "amount",
+    key: "amount",
+    align: "center",
+  },
+  {
+    title: "Description",
+    dataIndex: "description",
+    key: "description",
+    align: "center",
+  },
+  {
+    title: "Actions",
+    key: "action",
+    render: (_, record) => (
+      <Space size="middle">
+        <Button
+          key={`edit-${record.id}`}
+          onClick={() => showModal(record)}
+          icon={<EditOutlined />}
+        />
+        <Button
+          key={`delete-${record.id}`}
+          onClick={() => handleDelete(record.id)}
+          icon={<DeleteOutlined />}
+          danger
+        />
+      </Space>
+    ),
+    align: "center",
+  },
+];
+
+// Phần còn lại của mã không thay đổi
+
 
   return (
     <div style={{ width: "100%" }}>
