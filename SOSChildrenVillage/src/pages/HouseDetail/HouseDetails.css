@@ -1,0 +1,102 @@
+/* Container for the entire house details page */
+.house-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* House Gallery Section */
+.house-gallery {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.house-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.house-gallery .main-image {
+    width: 600px; /* Fix the main image width to 600px */
+    margin: 0 100px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.house-gallery .main-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.house-gallery .thumbnail-images {
+    display: flex;
+    gap: 10px;
+    justify-content: center; /* Center the thumbnails */
+}
+
+.house-gallery .thumbnail-images img {
+    width: 100px; /* Set thumbnail width */
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    object-fit: cover;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.house-gallery .thumbnail-images img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.house-gallery .thumbnail-images .selected {
+    border: 2px solid #007aff;
+    box-shadow: 0 0 5px #007aff;
+}
+
+/* House Information Section */
+.house-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.house-info h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.house-info .house-location {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.house-info .house-description {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.house-info .house-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Spinner and Loading State */
+.house-loading {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.house-loading .ant-spin {
+    margin: 20px;
+}

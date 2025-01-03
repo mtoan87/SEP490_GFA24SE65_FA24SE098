@@ -40,7 +40,7 @@ const BookingManagement = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://soschildrenvillage.azurewebsites.net/api/Booking/GetAllBookingsWithSlotsInformation"
+        "https://localhost:7073/api/Booking/GetAllBookingsWithSlotsInformation"
       );
       setBookings(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
@@ -55,7 +55,7 @@ const BookingManagement = () => {
   const handleConfirm = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Booking/ConfirmBooking?id=${id}`
+        `https://localhost:7073/api/Booking/ConfirmBooking?id=${id}`
       );
       message.success("Booking confirmed successfully.");
       fetchBookings();

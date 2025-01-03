@@ -161,7 +161,7 @@ const ActivityManagement = () => {
           }
 
           if (editingActivity) {
-            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Activity/UpdateActivity/${editingActivity.id}`;
+            const updateUrl = `https://localhost:7073/api/Activity/UpdateActivity/${editingActivity.id}`;
             console.log("Editing Activity:", editingActivity);
             console.log("Update URL:", updateUrl);
             await axios.put(updateUrl, formData, {
@@ -170,7 +170,7 @@ const ActivityManagement = () => {
             message.success("Activity updated successfully.");
           } else {
             const createUrl =
-              "https://soschildrenvillage.azurewebsites.net/api/Activity/CreateActivity";
+              "https://localhost:7073/api/Activity/CreateActivity";
             await axios.post(createUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
@@ -214,7 +214,7 @@ const ActivityManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Activity/DeleteActivity/${id}`;
+          const deleteUrl = `https://localhost:7073/api/Activity/DeleteActivity/${id}`;
           await axios.delete(deleteUrl);
           message.success("Activity deleted successfully.");
           fetchActivities();
@@ -229,7 +229,7 @@ const ActivityManagement = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Activity/RestoreActivity/${id}`
+        `https://localhost:7073/api/Activity/RestoreActivity/${id}`
       );
       message.success("Activity restored successfully.");
       fetchActivities(showDeleted);

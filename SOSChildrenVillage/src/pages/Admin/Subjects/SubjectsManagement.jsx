@@ -58,7 +58,7 @@ const SubjectsManagement = () => {
       try {
         if (editingSubject) {
           await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/UpdateSubjectDetail/${editingSubject.id}`,
+            `https://localhost:7073/api/SubjectDetail/UpdateSubjectDetail/${editingSubject.id}`,
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -67,7 +67,7 @@ const SubjectsManagement = () => {
           message.success("Updated subject successfully");
         } else {
           await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/CreateSubjectDetail",
+            "https://localhost:7073/api/SubjectDetail/CreateSubjectDetail",
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -93,7 +93,7 @@ const SubjectsManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/DeleteSubjectDetail/${id}`;
+          const deleteUrl = `https://localhost:7073/api/SubjectDetail/DeleteSubjectDetail/${id}`;
           console.log("Deleting subject with ID:", id);
 
           const response = await axios.delete(deleteUrl);

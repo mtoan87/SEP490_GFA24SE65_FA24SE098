@@ -32,7 +32,7 @@ const ListHouse = () => {
       console.log('Fetching houses for villageId:', villageId); // Log villageId
       try {
         const response = await fetch(
-          `https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByVillageId/${villageId}`
+          `https://localhost:7073/api/Houses/GetHouseByVillageId/${villageId}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch houses');
@@ -76,7 +76,7 @@ const ListHouse = () => {
 
       // Make the API call to create a booking
       const response = await axios.post(
-        'https://soschildrenvillage.azurewebsites.net/api/Booking/CreateBooking', // Correct API URL
+        'https://localhost:7073/api/Booking/CreateBooking', // Correct API URL
         bookingData
       );
 

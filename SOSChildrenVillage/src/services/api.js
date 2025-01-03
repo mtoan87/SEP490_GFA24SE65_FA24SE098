@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://soschildrenvillage.azurewebsites.net/";
+const baseURL = "https://localhost:7073/";
 
 const api = axios.create({
   baseURL: baseURL,
@@ -23,7 +23,7 @@ export const getChildWithImages = async (showDeleted = false) => {
 export const getChildDetail = async (childId) => {
   try {
     // Ensure childId is a string
-    // Extract the id if it's an object because when debug it's will show as object like this https://soschildrenvillage.azurewebsites.net/api/Children/GetChildDetails/[object%20Object]
+    // Extract the id if it's an object because when debug it's will show as object like this https://localhost:7073/api/Children/GetChildDetails/[object%20Object]
     if (typeof childId === 'object') {    
       childId = childId.id;
     }

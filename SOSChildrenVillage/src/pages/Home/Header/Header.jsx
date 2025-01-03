@@ -29,7 +29,7 @@ const Header = () => {
   const fetchUserInfo = async (userId) => {
     try {
       const response = await fetch(
-        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`
+        `https://localhost:7073/api/UserAccount/GetUserById/${userId}`
       );
       if (!response.ok) throw new Error("Failed to fetch user info");
       const data = await response.json();

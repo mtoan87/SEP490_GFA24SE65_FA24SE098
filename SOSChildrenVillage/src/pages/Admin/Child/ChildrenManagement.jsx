@@ -191,7 +191,7 @@ const ChildrenManagement = () => {
           }
 
           if (editingChild) {
-            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/UpdateChild/${editingChild.id}`;
+            const updateUrl = `https://localhost:7073/api/Children/UpdateChild/${editingChild.id}`;
             console.log("Updating child with ID:", editingChild.id);
             console.log("Update URL:", updateUrl);
 
@@ -205,7 +205,7 @@ const ChildrenManagement = () => {
             message.success("Update Children Successfully");
           } else {
             const createResponse = await axios.post(
-              "https://soschildrenvillage.azurewebsites.net/api/Children/CreateChild",
+              "https://localhost:7073/api/Children/CreateChild",
               formData,
               {
                 headers: {
@@ -255,7 +255,7 @@ const ChildrenManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild/${id}`;
+          const deleteUrl = `https://localhost:7073/api/Children/DeleteChild/${id}`;
           console.log("Deleting child with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -284,7 +284,7 @@ const ChildrenManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Children/RestoreChild/${id}`);
+      await axios.put(`https://localhost:7073/api/Children/RestoreChild/${id}`);
       message.success("Child Restored Successfully");
       fetchChildren(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
@@ -337,6 +337,29 @@ const ChildrenManagement = () => {
       dataIndex: "status",
       key: "status",
     },
+    // {
+    //   title: "Image",
+    //   dataIndex: "imageUrls",
+    //   key: "imageUrls",
+    //   align: "center",
+    //   render: (imageUrls) => (
+    //     <Button
+    //       type="link"
+    //       onClick={() => {
+    //         setSelectedImages(imageUrls || []);
+    //         setIsImageModalVisible(true);
+    //       }}
+    //       style={{
+    //         padding: 0,
+    //         margin: 0,
+    //         display: "block",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       View
+    //     </Button>
+    //   ),
+    // },
     {
       title: "Actions",
       key: "action",
@@ -535,38 +558,6 @@ const ChildrenManagement = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="systemWalletId" label="System Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="healthWalletId" label="Health Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="currentAmount" label="Current Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amountLimit" label="Amount Limit">
-            <Input type="number" />
-          </Form.Item>
-
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">
               <div
@@ -610,6 +601,38 @@ const ChildrenManagement = () => {
               </div>
             </Form.Item>
           )}
+
+          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="systemWalletId" label="System Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="healthWalletId" label="Health Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amount" label="Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="currentAmount" label="Current Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amountLimit" label="Amount Limit">
+            <Input type="number" />
+          </Form.Item>
 
           <Form.Item label="Upload New Images">
             <Dragger {...uploadProps}>

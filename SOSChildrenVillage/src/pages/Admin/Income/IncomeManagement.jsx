@@ -18,7 +18,7 @@ const IncomeManagement = () => {
   const fetchIncomes = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Incomes/FormatedIncome');
+      const response = await axios.get('https://localhost:7073/api/Incomes/FormatedIncome');
       setIncomes(response.data);
     } catch (error) {
       message.error('Failed to fetch income data', error);
@@ -41,7 +41,7 @@ const IncomeManagement = () => {
 
   const handleDeleteIncome = async (incomeId) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Incomes/SoftDelete?id=${incomeId}`);
+      await axios.put(`https://localhost:7073/api/Incomes/SoftDelete?id=${incomeId}`);
       message.success('Income deleted successfully');
       fetchIncomes();
     } catch (error) {
@@ -66,7 +66,7 @@ const IncomeManagement = () => {
         // await axios.post('https://your-backend-api/log', logDetails);
   
         await axios.put(
-          `https://soschildrenvillage.azurewebsites.net/api/Incomes/UpdateIncome?id=${editingIncome.id}`,
+          `https://localhost:7073/api/Incomes/UpdateIncome?id=${editingIncome.id}`,
           { amount: values.amount } // Payload chỉ chứa amount
         );
         message.success('Income amount updated successfully');
@@ -81,7 +81,7 @@ const IncomeManagement = () => {
           systemWalletId: values.systemWalletId,
         };
   
-        await axios.post('https://soschildrenvillage.azurewebsites.net/api/Incomes/CreateIncome', requestPayload);
+        await axios.post('https://localhost:7073/api/Incomes/CreateIncome', requestPayload);
         message.success('Income added successfully');
       }
   
@@ -95,7 +95,7 @@ const IncomeManagement = () => {
   const handleDownloadReport = async () => {
     try {
       const response = await axios.get(
-        'https://soschildrenvillage.azurewebsites.net/api/Incomes/ExportExcel',
+        'https://localhost:7073/api/Incomes/ExportExcel',
         {
           responseType: 'blob', // Đảm bảo dữ liệu trả về là file
         }

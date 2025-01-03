@@ -21,7 +21,7 @@ const UserDetail = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(
-          `https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`,
+          `https://localhost:7073/api/UserAccount/GetUserById/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

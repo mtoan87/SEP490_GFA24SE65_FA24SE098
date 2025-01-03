@@ -9,8 +9,14 @@ const EventDetail = () => {
   const { id: eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [amount, setAmount] = useState('');
-  const [userId, setUserId] = useState(null);
-  const [donationHistory, setDonationHistory] = useState({ totalAmount: 0, details: [] });  // Fixing state structure
+  const [userId, setUserId] = useState(null); // Store userId (from login)
+  const [description, setDescription] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
+  const [donationHistory, setDonationHistory] = useState({ totalAmount: 0, details: [] });
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
 
   useEffect(() => {
@@ -19,12 +25,25 @@ const EventDetail = () => {
 
     const fetchEventDetails = async () => {
       try {
-        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Event/GetEventById/${eventId}`);
+        const response = await axios.get(`https://localhost:7073/api/Event/GetEventById/${eventId}`);
         setEvent(response.data);
       } catch (error) {
         console.error('Error fetching event details:', error);
       }
     };
+
+    // Fetch user details if logged in
+    if (storedUserId) {
+      const fetchUserDetails = async () => {
+        try {
+          const response = await axios.get(`https://localhost:7073/api/User/GetUserDetails/${storedUserId}`);
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
+      };
+      fetchUserDetails();
+    }
 
     fetchEventDetails();
   }, [eventId]);
@@ -36,7 +55,7 @@ const EventDetail = () => {
     }
 
     try {
-      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationsByUserAndEvent/${userId}/${eventId}`);
+      const response = await axios.get(`https://localhost:7073/api/Donation/GetDonationsByUserAndEvent/${userId}/${eventId}`);
       const { totalAmount, donationDetails } = response.data;
 
       const formattedHistory = donationDetails?.$values?.map((donation) => ({
@@ -56,25 +75,21 @@ const EventDetail = () => {
     }
   };
 
-  const handleOpenVillageDetail = () => {
-    window.open(`/villagedetail/${eventId}`, '_blank');
-  };
-
   const handleDonate = async () => {
     if (!amount || isNaN(amount) || amount <= 0) {
       alert('Please enter a valid amount.');
       return;
     }
 
-    if (!userId) {
-      alert('Please log in to donate.');
-      return;
-    }
-
     try {
-      const response = await axios.put(`https://soschildrenvillage.azurewebsites.net/api/EventDonate/EventDonate?id=${eventId}`, {
+      const response = await axios.put(`https://localhost:7073/api/EventDonate/EventDonate?id=${eventId}`, {
         amount: amount,
-        userAccountId: userId,
+        userAccountId: userId || null, // Use userId if logged in, otherwise null
+        description: description,
+        userName: userName || null,            // Added userName
+        userEmail: userEmail || null,          // Added userEmail
+        phone: phone || null,                  // Added phone
+        address: address || null               // Added address
       });
 
       if (response.data && response.data.url) {
@@ -137,7 +152,7 @@ const EventDetail = () => {
             <p><strong>Status:</strong> {event.status}</p>
           </div>
 
-          <Button type="primary" onClick={handleOpenVillageDetail} style={{ marginTop: '20px' }}>
+          <Button type="primary" onClick={() => window.open(`/villagedetail/${eventId}`, '_blank')} style={{ marginTop: '20px' }}>
             Village Info
           </Button>
 
@@ -160,20 +175,86 @@ const EventDetail = () => {
             <p>{Math.round(donationProgress)}% of goal reached</p>
           </div>
 
-          {event.status !== 'Inactive' && (
-            <div className="donation-section">
-              <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
-              <input
-                type="number"
-                id="donationAmount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter amount"
-                className="donation-input"
-              />
-              <button className="donate-button" onClick={handleDonate}>Donate</button>
-            </div>
-          )}
+          <div className="donation-section">
+            {userId ? (
+              // If logged in, show only amount and description fields
+              <>
+                <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
+                <input
+                  type="number"
+                  id="donationAmount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="donation-input"
+                />
+                <label htmlFor="donationDescription" className="donation-label">Description:</label>
+                <input
+                  type="text"
+                  id="donationDescription"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter description"
+                  className="donation-input"
+                />
+              </>
+            ) : (
+              // If not logged in, show full user information as editable
+              <>
+                <input type="hidden" value={null} id="userAccountId" />
+                <label htmlFor="userName" className="donation-label">User Name:</label>
+                <input
+                  type="text"
+                  id="userName"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="userEmail" className="donation-label">Email:</label>
+                <input
+                  type="email"
+                  id="userEmail"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="phone" className="donation-label">Phone:</label>
+                <input
+                  type="text"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="address" className="donation-label">Address:</label>
+                <input
+                  type="text"
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value )}
+                  className="donation-input"
+                />
+                <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
+                <input
+                  type="number"
+                  id="donationAmount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="donation-input"
+                />
+                <label htmlFor="donationDescription" className="donation-label">Description:</label>
+                <input
+                  type="text"
+                  id="donationDescription"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="donation-input"
+                />
+              </>
+            )}
+
+            <button className="donate-button" onClick={handleDonate}>Donate</button>
+          </div>
         </div>
       </div>
 
@@ -193,21 +274,21 @@ const EventDetail = () => {
           <table className="donation-history-table">
             <thead>
               <tr>
-                <th>Date</th>
                 <th>Amount</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>
-              {donationHistory.details.map((donation, index) => (
+              {donationHistory.details.map((historyItem, index) => (
                 <tr key={index}>
-                  <td>{formatDate(donation.dateTime)}</td>
-                  <td>{formatCurrency(donation.amount)}</td>
+                  <td>{formatCurrency(historyItem.amount)}</td>
+                  <td>{formatDate(historyItem.dateTime)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <p>No donation history available.</p>
+          <p>No donations yet.</p>
         )}
       </Modal>
     </div>

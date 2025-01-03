@@ -21,7 +21,7 @@ const BookingHistory = () => {
     const fetchBookingHistory = async () => {
       try {
         const response = await axios.get(
-          `https://soschildrenvillage.azurewebsites.net/api/Booking/GetBookingsWithSlotsByUserAccountId?userId=${userId}`,
+          `https://localhost:7073/api/Booking/GetBookingsWithSlotsByUserAccountId?userId=${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const BookingHistory = () => {
       console.log(`Attempting to delete booking with ID: ${id}`); // Log trước khi gửi request
   
       const response = await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Booking/SoftDelete?Id=${id}`,
+        `https://localhost:7073/api/Booking/SoftDelete?Id=${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

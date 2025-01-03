@@ -22,7 +22,7 @@ const DonateHistory = () => {
 
       try {
         const response = await axios.get(
-          `https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationByUserId/${userId}`,
+          `https://localhost:7073/api/Donation/GetDonationByUserId/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Token for authentication

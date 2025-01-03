@@ -24,7 +24,7 @@ const HealthReport = () => {
   const fetchHealthReports = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("https://soschildrenvillage.azurewebsites.net/api/HealthReport");
+      const { data } = await axios.get("https://localhost:7073/api/HealthReport");
       setReports(data?.$values || []);
     } catch (error) {
       console.log(error);
@@ -58,14 +58,14 @@ const HealthReport = () => {
 
         if (editingReports) {
           await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/HealthReport/UpdateHealthReport/${editingReports.id}`,
+            `https://localhost:7073/api/HealthReport/UpdateHealthReport/${editingReports.id}`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
           message.success("Update Health Report Successfully");
         } else {
           await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/HealthReport/CreateHealthReport",
+            "https://localhost:7073/api/HealthReport/CreateHealthReport",
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
@@ -83,7 +83,7 @@ const HealthReport = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://soschildrenvillage.azurewebsites.net/api/HealthReport/DeleteHealthReport/${id}`
+        `https://localhost:7073/api/HealthReport/DeleteHealthReport/${id}`
       );
       message.success("Delete Health Report Successfully");
       fetchHealthReports();

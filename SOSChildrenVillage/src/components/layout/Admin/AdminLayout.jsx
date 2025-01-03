@@ -27,7 +27,7 @@ const AdminLayout = ({ children }) => {
 
   const fetchUserInfo = async (token) => {
     try {
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/1', {
+      const response = await axios.get('https://localhost:7073/api/UserAccount/GetUserById/1', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://soschildrenvillage.azurewebsites.net/";
+const baseURL = "https://localhost:7073/";
 
 const api = axios.create({
   baseURL: baseURL,

@@ -71,7 +71,7 @@ const ChildNeedManagement = () => {
 
         if (editingNeed) {
           await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/ChildNeed/UpdateChildNeed/${editingNeed.id}`,
+            `https://localhost:7073/api/ChildNeed/UpdateChildNeed/${editingNeed.id}`,
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -80,7 +80,7 @@ const ChildNeedManagement = () => {
           message.success("Updated child need successfully");
         } else {
           await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/ChildNeed/CreateChildNeed",
+            "https://localhost:7073/api/ChildNeed/CreateChildNeed",
             payload
           );
           message.success("Created new child need successfully");
@@ -98,7 +98,7 @@ const ChildNeedManagement = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://soschildrenvillage.azurewebsites.net/api/ChildNeed/DeleteChildNeed/${id}`
+        `https://localhost:7073/api/ChildNeed/DeleteChildNeed/${id}`
       );
       message.success("Deleted child need successfully");
       fetchChildNeedList();

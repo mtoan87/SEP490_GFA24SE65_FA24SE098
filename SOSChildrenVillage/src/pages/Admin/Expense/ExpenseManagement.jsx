@@ -24,7 +24,7 @@ const ExpenseManagement = () => {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Expenses/FormatedExpenses');
+      const response = await axios.get('https://localhost:7073/api/Expenses/FormatedExpenses');
       setExpenses(response.data);
     } catch (error) {
       console.error('Error fetching expenses:', error);
@@ -58,7 +58,7 @@ const ExpenseManagement = () => {
         ...wallets,
       };
 
-      await axios.post('https://soschildrenvillage.azurewebsites.net/api/Expenses/CreateExpense', requestPayload);
+      await axios.post('https://localhost:7073/api/Expenses/CreateExpense', requestPayload);
       message.success('Expense created successfully');
       setIsModalVisible(false);
       fetchExpenses();
@@ -71,7 +71,7 @@ const ExpenseManagement = () => {
   const handleDownloadReport = async () => {
     try {
       const response = await axios.get(
-        'https://soschildrenvillage.azurewebsites.net/api/Expenses/ExportExcel',
+        'https://localhost:7073/api/Expenses/ExportExcel',
         {
           responseType: 'blob',
         }
@@ -98,7 +98,7 @@ const ExpenseManagement = () => {
 
   const handleConfirmExpense = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`);
+      await axios.put(`https://localhost:7073/api/Expenses/ConfirmExpense?id=${id}`);
       message.success('Expense confirmed successfully');
       fetchExpenses(); // Cập nhật lại danh sách chi phí
     } catch (error) {

@@ -59,13 +59,13 @@ const TransferHistoryManagement = () => {
 
         if (editingHistory) {
           await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/TransferHistory/UpdateTransferHistory/${editingHistory.id}`,
+            `https://localhost:7073/api/TransferHistory/UpdateTransferHistory/${editingHistory.id}`,
             dataToSend
           );
           message.success("Updated transfer history successfully");
         } else {
           await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/TransferHistory/CreateTransferHistory",
+            "https://localhost:7073/api/TransferHistory/CreateTransferHistory",
             dataToSend
           );
           message.success("Created new transfer history successfully");
@@ -82,7 +82,7 @@ const TransferHistoryManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://soschildrenvillage.azurewebsites.net/api/TransferHistory/DeleteTransferHistory/${id}`);
+      await axios.delete(`https://localhost:7073/api/TransferHistory/DeleteTransferHistory/${id}`);
       message.success("Deleted transfer history successfully");
       fetchTransferHistories();
     } catch (error) {

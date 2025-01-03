@@ -5,11 +5,11 @@ import axios from 'axios';
 const { Option } = Select;
 
 const wallets = [
-  { id: 1, name: "Facilities Wallet", apiURL: "https://soschildrenvillage.azurewebsites.net/api/WalletDonation/DonateFacilitiesWallet" },
-  { id: 2, name: "Necessities Wallet", apiURL: "https://soschildrenvillage.azurewebsites.net/api/WalletDonation/DonateNecessitiesWallet" },
-  { id: 3, name: "FoodStuff Wallet", apiURL: "https://soschildrenvillage.azurewebsites.net/api/WalletDonation/DonateFoodStuffWallet" },
-  { id: 4, name: "Health Wallet", apiURL: "https://soschildrenvillage.azurewebsites.net/api/WalletDonation/DonateHealthWallet" },
-  { id: 5, name: "System Wallet", apiURL: "https://soschildrenvillage.azurewebsites.net/api/WalletDonation/DonateSystemWallet" },
+  { id: 1, name: "Facilities Wallet", apiURL: "https://localhost:7073/api/WalletDonation/DonateFacilitiesWallet" },
+  { id: 2, name: "Necessities Wallet", apiURL: "https://localhost:7073/api/WalletDonation/DonateNecessitiesWallet" },
+  { id: 3, name: "FoodStuff Wallet", apiURL: "https://localhost:7073/api/WalletDonation/DonateFoodStuffWallet" },
+  { id: 4, name: "Health Wallet", apiURL: "https://localhost:7073/api/WalletDonation/DonateHealthWallet" },
+  { id: 5, name: "System Wallet", apiURL: "https://localhost:7073/api/WalletDonation/DonateSystemWallet" },
 ];
 
 function DonateNow() {

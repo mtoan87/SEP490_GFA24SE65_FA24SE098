@@ -24,7 +24,7 @@ const HeaderComponent = ({ collapsed }) => {
     const fetchUserInfo = async () => {
       try {
         const response = await fetch(
-          `https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`,
+          `https://localhost:7073/api/UserAccount/GetUserById/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`, // Thêm token vào header

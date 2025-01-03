@@ -47,6 +47,7 @@ import TransparencyPage from '../components/layout/Transparency/TransparencyPage
 import ChildDetailPage from '../components/layout/Child/ChildDetailPage';
 import EventDetailPage from '../components/layout/Event/EventDetailPage';
 import VillageDetailPage from '../components/layout/Village/VillageDetailPage';
+import HouseDetailPage from '../components/layout/House/HouseDetailPage';
 
 // Financial Page imports
 import Donate from '../components/layout/Donation/DonatePage';
@@ -106,6 +107,7 @@ export {
     ChildDetailPage,
     EventDetailPage,
     VillageDetailPage,
+    HouseDetailPage,
     
     // Financial Pages
     Donate,
