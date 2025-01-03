@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { message, Button, Select, Input, Form, Card } from 'antd';
 import axios from 'axios';
 
@@ -16,8 +16,26 @@ function DonateNow() {
   const [selectedWallet, setSelectedWallet] = useState(null);
   const [amount, setAmount] = useState(0);
   const [fullName, setFullName] = useState("");
-  const [messageText, setMessageText] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userAccountId, setUserAccountId] = useState(null);
+
+  useEffect(() => {
+    // Kiểm tra trạng thái đăng nhập
+    const storedUserId = localStorage.getItem("userId");
+    console.log("Stored User ID:", storedUserId); // Thêm dòng này để kiểm tra giá trị userId trong localStorage
+    if (storedUserId) {
+      setIsLoggedIn(true);
+      setUserAccountId(storedUserId);
+    } else {
+      setIsLoggedIn(false);
+      setUserAccountId(null);
+    }
+  }, []);
+  
 
   const handleDonate = async () => {
     if (!amount || amount < 10000) {
@@ -31,11 +49,13 @@ function DonateNow() {
 
     // Prepare the request payload
     const paymentRequest = {
-      userAccountId: localStorage.getItem("userId"),  // Assuming user ID is stored in localStorage
+      userAccountId,
       amount,
-      fullName,
-      message: messageText,
-      address
+      userName: isLoggedIn ? null : fullName,
+      userEmail: isLoggedIn ? null : userEmail,
+      phone: isLoggedIn ? null : phone,
+      description: isLoggedIn ? null : description,
+      address: isLoggedIn ? null : address,
     };
 
     try {
@@ -77,32 +97,60 @@ function DonateNow() {
             </Form.Item>
 
             {/* Full Name */}
-            <Form.Item label="Full Name" required>
-              <Input
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your full name"
-              />
-            </Form.Item>
+            {!isLoggedIn && (
+              <Form.Item label="Full Name" required>
+                <Input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Enter your full name"
+                />
+              </Form.Item>
+            )}
 
-            {/* Message */}
-            <Form.Item label="Message (Optional)">
-              <Input.TextArea
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                placeholder="Enter your message (optional)"
-                rows={3}
-              />
-            </Form.Item>
+            {/* Email */}
+            {!isLoggedIn && (
+              <Form.Item label="Email" required>
+                <Input
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  placeholder="Enter your email"
+                />
+              </Form.Item>
+            )}
+
+            {/* Phone */}
+            {!isLoggedIn && (
+              <Form.Item label="Phone" required>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Enter your phone number"
+                />
+              </Form.Item>
+            )}
+
+            {/* Description */}
+            {!isLoggedIn && (
+              <Form.Item label="Description (Optional)">
+                <Input.TextArea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Enter your description (optional)"
+                  rows={3}
+                />
+              </Form.Item>
+            )}
 
             {/* Address */}
-            <Form.Item label="Address (Optional)">
-              <Input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter your address (optional)"
-              />
-            </Form.Item>
+            {!isLoggedIn && (
+              <Form.Item label="Address (Optional)">
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Enter your address (optional)"
+                />
+              </Form.Item>
+            )}
 
             {/* Amount */}
             <Form.Item label="Donation Amount" required>

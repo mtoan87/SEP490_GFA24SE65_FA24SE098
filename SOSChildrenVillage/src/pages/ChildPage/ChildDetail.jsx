@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Button, Modal } from 'antd';
 import axios from 'axios';
 import './ChildDetail.css';
 
@@ -8,6 +9,8 @@ const ChildDetail = () => {
   const [child, setChild] = useState(null);
   const [amount, setAmount] = useState('');
   const [userId, setUserId] = useState(null);
+  const [donationHistory, setDonationHistory] = useState({ totalAmount: 0, details: [] });
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -57,10 +60,35 @@ const ChildDetail = () => {
     }
   };
 
-  // Calculate donation progress
+  const fetchDonationHistory = async () => {
+    if (!userId) {
+      alert('Please log in to view donation history.');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationsByUserAndChildAsync/${userId}/${childId}`);
+      const { totalAmount, donationDetails } = response.data;
+
+      const formattedHistory = donationDetails?.$values?.map((donation) => ({
+        amount: donation.amount,
+        dateTime: donation.dateTime,
+      })) || [];
+
+      setDonationHistory({
+        totalAmount: totalAmount || 0,
+        details: formattedHistory,
+      });
+
+      setIsHistoryVisible(true); // Open modal
+    } catch (error) {
+      console.error('Error fetching donation history:', error);
+      alert('Failed to fetch donation history. Please try again.');
+    }
+  };
+
   const donationProgress = child.currentAmount / child.amountLimit * 100;
 
-  // Function to format date into "Thu, Nov 28 • 5:30 PM"
   const formatDate = (dateString) => {
     const options = {
       weekday: 'short', // "Thu"
@@ -75,7 +103,6 @@ const ChildDetail = () => {
     return date.toLocaleString('en-US', options).replace(',', ' •'); // Replace comma with bullet
   };
 
-  // Function to format currency in VND
   const formatCurrency = (amount) => {
     return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   };
@@ -134,8 +161,51 @@ const ChildDetail = () => {
             />
             <button className="donate-button" onClick={handleDonate}>Donate</button>
           </div>
+
+          {/* History of Donation Button */}
+          <Button
+            type="default"
+            onClick={fetchDonationHistory}
+            style={{ marginTop: '10px', backgroundColor: '#f0f0f0', color: '#333' }}
+          >
+            History of Donation
+          </Button>
         </div>
       </div>
+
+      {/* Donation History Modal */}
+      <Modal
+        title="Donation History"
+        visible={isHistoryVisible}
+        onCancel={() => setIsHistoryVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsHistoryVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        <p><strong>Total Amount Donated:</strong> {formatCurrency(donationHistory.totalAmount)}</p>
+        {donationHistory.details.length > 0 ? (
+          <table className="donation-history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {donationHistory.details.map((donation, index) => (
+                <tr key={index}>
+                  <td>{formatDate(donation.dateTime)}</td>
+                  <td>{formatCurrency(donation.amount)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No donation history available.</p>
+        )}
+      </Modal>
     </div>
   );
 };
