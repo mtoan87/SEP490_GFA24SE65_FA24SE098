@@ -90,7 +90,9 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           }
           key="health"
         >
-          {child.healthReports && child.healthReports.$values && child.healthReports.$values.length > 0 ? (
+          {child.healthReports &&
+          child.healthReports.$values &&
+          child.healthReports.$values.length > 0 ? (
             child.healthReports.$values.map((report, index) => (
               <Descriptions key={index} bordered column={1}>
                 <Descriptions.Item label="Nutritional Status">
@@ -133,7 +135,9 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           }
           key="education"
         >
-          {child.academicReports && child.academicReports.$values && child.academicReports.$values.length > 0 ? (
+          {child.academicReports &&
+          child.academicReports.$values &&
+          child.academicReports.$values.length > 0 ? (
             child.academicReports.$values.map((report, index) => (
               <Descriptions key={index} bordered column={1}>
                 <Descriptions.Item label="Diploma">
@@ -153,7 +157,9 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
                   {report.achievement}
                 </Descriptions.Item>
                 <Descriptions.Item label="Subjects">
-                  {report.subjectDetails && report.subjectDetails.$values && report.subjectDetails.$values.length > 0 ? (
+                  {report.subjectDetails &&
+                  report.subjectDetails.$values &&
+                  report.subjectDetails.$values.length > 0 ? (
                     report.subjectDetails.$values.map((subject, subIndex) => (
                       <div key={subIndex}>
                         {subject.subjectName}: {subject.score} (
@@ -171,23 +177,42 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           )}
         </TabPane>
 
-        {/* Achievements Tab */}
+        {/* Child Progress Tab */}
         <TabPane
           tab={
             <span>
-              <SmileOutlined /> Achievements
+              <SmileOutlined /> Progress
             </span>
           }
-          key="achievements"
+          key="childProgress"
         >
-          <p>
-            Additional achievements or hobbies can be displayed here if
-            available.
-          </p>
+          {child.childProgresses &&
+          child.childProgresses.$values &&
+          child.childProgresses.$values.length > 0 ? (
+            child.childProgresses.$values.map((progress, index) => (
+              <Descriptions key={index} bordered column={1}>
+                <Descriptions.Item label="Description">
+                  {progress.description}
+                </Descriptions.Item>
+                <Descriptions.Item label="Date">
+                  {progress.date ? moment(progress.date).format("DD/MM/YYYY") : "N/A"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Category">
+                  {progress.category}
+                </Descriptions.Item>
+                <Descriptions.Item label="Event">
+                  {progress.eventName}
+                </Descriptions.Item>
+                <Descriptions.Item label="Activity">
+                  {progress.activityName}
+                </Descriptions.Item>
+              </Descriptions>
+            ))
+          ) : (
+            <p>No progress records available.</p>
+          )}
         </TabPane>
       </Tabs>
-
-      {/* Additional Images */}
     </Modal>
   );
 };
@@ -241,6 +266,22 @@ ViewDetailsChildren.propTypes = {
         })
       ),
     }),
+
+    childProgresses: PropTypes.shape({
+      $values: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number,
+          description: PropTypes.string,
+          date: PropTypes.string,
+          category: PropTypes.string,
+          eventId: PropTypes.number,
+          activityId: PropTypes.number,
+          eventName: PropTypes.string,
+          activityName: PropTypes.string,
+        })
+      ),
+    }),
+
     imageUrls: PropTypes.arrayOf(PropTypes.string),
   }),
   onClose: PropTypes.func.isRequired,

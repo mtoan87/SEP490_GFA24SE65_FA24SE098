@@ -10,8 +10,8 @@ const api = axios.create({
 export const getChildWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Children/GetAllChildIsDelete" // Trẻ đã xóa
-      : "/api/Children/GetAllChildWithImg"; // Trẻ chưa xóa
+      ? "/api/Children/GetAllChildIsDelete"
+      : "/api/Children/GetAllChildWithImg";
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
@@ -22,7 +22,9 @@ export const getChildWithImages = async (showDeleted = false) => {
 
 export const getChildDetail = async (childId) => {
   try {
-    if (typeof childId === 'object') {
+    // Ensure childId is a string
+    // Extract the id if it's an object because when debug it's will show as object like this https://soschildrenvillage.azurewebsites.net/api/Children/GetChildDetails/[object%20Object]
+    if (typeof childId === 'object') {    
       childId = childId.id;
     }
     const response = await api.get(`/api/Children/GetChildDetails/${childId}`);
@@ -38,8 +40,8 @@ export const getChildDetail = async (childId) => {
 export const getHouseWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Houses/GetAllHousesIsDelete" // Nhà đã xóa
-      : "/api/Houses/GetAllHousesWithImg"; // Nhà chưa xóa
+      ? "/api/Houses/GetAllHousesIsDelete"
+      : "/api/Houses/GetAllHousesWithImg";
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
@@ -75,7 +77,7 @@ export const getVillagesWithImages = async (showDeleted = false) => {
 
 export const getVillageDetail = async (villageId) => {
   try {
-    const response = await api.get(`/api/Village/GetVillageDetailsWithHouses/${villageId}`);
+    const response = await api.get(`/api/Village/GetVillageDetails/${villageId}`);
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -93,7 +95,7 @@ export const getEventsWithImages = async (showDeleted = false) => {
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching Villages with image:", error);
+    console.error("Error fetching Events with image:", error);
     throw error;
   }
 };
@@ -161,8 +163,8 @@ export const getTransferHistory = async () => {
 export const getSchoolWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Houses/GetAllSchoolsIsDeleted"
-      : "/api/Houses/GetAllSchoolWithImg";
+      ? "/api/School/GetAllSchoolsIsDeleted"
+      : "/api/School/GetAllSchoolWithImg";
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
@@ -186,8 +188,8 @@ export const getSubjectDetail = async () => {
 export const getActivityWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Village/GetAllActivityIsDelete"
-      : "/api/Village/GetAllActivityWithImg";
+      ? "/api/Activity/GetAllActivityIsDelete"
+      : "/api/Activity/GetAllActivityWithImg";
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
@@ -222,8 +224,8 @@ export const getChildNeed = async () => {
 export const getInventoryWithImages = async (showDeleted = false) => {
   try {
     const endpoint = showDeleted
-      ? "/api/Village/GetAllInventoryIsDelete"
-      : "/api/Village/GetAllInventoryWithImg";
+      ? "/api/Inventory/GetAllInventoryIsDelete"
+      : "/api/Inventory/GetAllInventoryWithImg";
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
