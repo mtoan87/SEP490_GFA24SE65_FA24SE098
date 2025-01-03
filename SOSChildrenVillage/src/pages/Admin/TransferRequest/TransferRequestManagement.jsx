@@ -91,7 +91,6 @@ const TransferRequestManagement = () => {
             {
               headers: { "Content-Type": "multipart/form-data" },
             }
-
           );
           message.success("Updated transfer request successfully");
         } else {

@@ -72,7 +72,10 @@ const ChildNeedManagement = () => {
         if (editingNeed) {
           await axios.put(
             `https://soschildrenvillage.azurewebsites.net/api/ChildNeed/UpdateChildNeed/${editingNeed.id}`,
-            payload
+            values,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
+            }
           );
           message.success("Updated child need successfully");
         } else {
@@ -165,53 +168,120 @@ const ChildNeedManagement = () => {
   ];
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "24px",
-          flexWrap: "wrap",
-          gap: "8px",
+          marginBottom: 16,
         }}
       >
-        <Input
-          placeholder="Search for child needs"
-          prefix={<SearchOutlined />}
-          style={{ width: 500, marginRight: 8 }}
-        />
-        <Button
-          onClick={() => showModal()}
-          type="primary"
-          icon={<PlusOutlined />}
-        >
-          Add New Need
-        </Button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Input
+            placeholder="Search for items"
+            prefix={<SearchOutlined />}
+            style={{ width: 500, marginRight: 8 }}
+          />
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Button
+              onClick={() => showModal()}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New Items
+            </Button>
+
+            <Button type="default" style={{ marginRight: 8 }}>
+              Filter options
+            </Button>
+
+            {/* <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchInventoryItems(newShowDeleted);
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active Items" : "Show Deleted Items"}
+            </Button> */}
+          </div>
+        </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={childNeedList}
-        loading={loading}
-        rowKey={(record) => record.id}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: childNeedList.length,
-          onChange: (page, pageSize) => {
-            setCurrentPage(page);
-            setPageSize(pageSize);
-          },
+      <div
+        style={{
+          width: "100%",
+          overflow: "auto",
         }}
-      />
+      >
+        <Table
+          columns={columns}
+          dataSource={childNeedList}
+          loading={loading}
+          rowKey={(record) => record.id}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
+            },
+          }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: childNeedList.length,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            showTotal: (total) => `Total ${total} items`,
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPageSize(pageSize);
+            },
+            position: ["Left"],
+            itemRender: (_, type, originalElement) => {
+              if (type === "prev") {
+                return <Button>Previous</Button>;
+              }
+              if (type === "next") {
+                return <Button>Next</Button>;
+              }
+              return originalElement;
+            },
+          }}
+        />
+      </div>
 
       <Modal
-        title={editingNeed ? "Update Child Need" : "Add New Child Need"}
+        title={editingNeed ? "Edit Item" : "Add New Item"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
         width={650}
+        footer={[
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
+        ]}
       >
         <Form form={form} layout="vertical">
           <Form.Item

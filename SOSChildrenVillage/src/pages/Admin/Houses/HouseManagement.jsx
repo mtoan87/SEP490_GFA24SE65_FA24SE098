@@ -109,6 +109,7 @@ const HouseManagement = () => {
           : null,
         imageUrls: house.imageUrls || [],
       });
+
       setCurrentImages(
         house.imageUrls?.map((url, index) => ({
           uid: index,
@@ -147,7 +148,6 @@ const HouseManagement = () => {
       .validateFields()
       .then(async (values) => {
         try {
-          // Gán giá trị mặc định cho Status nếu không có
           if (!editingHouse && !values.status) {
             values.status = "Active";
           }
@@ -194,14 +194,12 @@ const HouseManagement = () => {
           }
 
           if (editingHouse) {
-            // Update house logic
             const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/UpdateHouse?id=${editingHouse.id}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
             message.success("Update House Successfully");
           } else {
-            // Create new house logic
             const createUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/CreateHouse`;
             await axios.post(createUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },

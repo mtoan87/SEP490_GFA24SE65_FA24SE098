@@ -59,13 +59,19 @@ const SubjectsManagement = () => {
         if (editingSubject) {
           await axios.put(
             `https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/UpdateSubjectDetail/${editingSubject.id}`,
-            values
+            values,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
+            }
           );
           message.success("Updated subject successfully");
         } else {
           await axios.post(
             "https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/CreateSubjectDetail",
-            values
+            values,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
+            }
           );
           message.success("Created new subject successfully");
         }
@@ -79,14 +85,39 @@ const SubjectsManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/DeleteSubjectDetail/${id}`);
-      message.success("Deleted subject successfully");
-      fetchSubjectList();
-    } catch (error) {
-      console.error("Error deleting subject:", error);
-      message.error("Failed to delete subject");
-    }
+    Modal.confirm({
+      title: "Are you sure you want to delete this item?",
+      content: "This action cannot be undone.",
+      okText: "Yes, delete it",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/SubjectDetail/DeleteSubjectDetail/${id}`;
+          console.log("Deleting subject with ID:", id);
+
+          const response = await axios.delete(deleteUrl);
+          console.log("Delete response:", response.data);
+
+          message.success("Subject deleted successfully.");
+          fetchSubjectList();
+        } catch (error) {
+          console.error("Delete error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              "Unable to delete item. Please try again."
+          );
+        }
+      },
+      onCancel: () => {
+        console.log("Deletion canceled");
+      },
+    });
   };
 
   const columns = [
@@ -132,53 +163,120 @@ const SubjectsManagement = () => {
   ];
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "24px",
-          flexWrap: "wrap",
-          gap: "8px",
+          marginBottom: 16,
         }}
       >
-        <Input
-          placeholder="Search for subjects"
-          prefix={<SearchOutlined />}
-          style={{ width: 500, marginRight: 8 }}
-        />
-        <Button
-          onClick={() => showModal()}
-          type="primary"
-          icon={<PlusOutlined />}
-        >
-          Add New Subject
-        </Button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Input
+            placeholder="Search for items"
+            prefix={<SearchOutlined />}
+            style={{ width: 500, marginRight: 8 }}
+          />
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Button
+              onClick={() => showModal()}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New Items
+            </Button>
+
+            <Button type="default" style={{ marginRight: 8 }}>
+              Filter options
+            </Button>
+
+            {/* <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchInventoryItems(newShowDeleted);
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active Items" : "Show Deleted Items"}
+            </Button> */}
+          </div>
+        </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={subjectList}
-        loading={loading}
-        rowKey={(record) => record.id}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: subjectList.length,
-          onChange: (page, pageSize) => {
-            setCurrentPage(page);
-            setPageSize(pageSize);
-          },
+      <div
+        style={{
+          width: "100%",
+          overflow: "auto",
         }}
-      />
+      >
+        <Table
+          columns={columns}
+          dataSource={subjectList}
+          loading={loading}
+          rowKey={(record) => record.id}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
+            },
+          }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: subjectList.length,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            showTotal: (total) => `Total ${total} items`,
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPageSize(pageSize);
+            },
+            position: ["Left"],
+            itemRender: (_, type, originalElement) => {
+              if (type === "prev") {
+                return <Button>Previous</Button>;
+              }
+              if (type === "next") {
+                return <Button>Next</Button>;
+              }
+              return originalElement;
+            },
+          }}
+        />
+      </div>
 
       <Modal
-        title={editingSubject ? "Update Subject" : "Add New Subject"}
+        title={editingSubject ? "Edit Subject" : "Add New Subject"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
         width={650}
+        footer={[
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
+        ]}
       >
         <Form form={form} layout="vertical">
           <Form.Item
