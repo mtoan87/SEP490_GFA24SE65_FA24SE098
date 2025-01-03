@@ -15,7 +15,7 @@ const InfoSection = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('https://localhost:7073/api/Event');
+        const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Event');
         if (Array.isArray(response.data)) {
           const updatedEvents = response.data
             .map((event) => ({
@@ -34,7 +34,7 @@ const InfoSection = () => {
 
     const fetchChildren = async () => {
       try {
-        const response = await axios.get('https://localhost:7073/api/Children/GetAllChildWithHealthStatusBad');
+        const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Children/GetAllChildWithHealthStatusBad');
         if (Array.isArray(response.data)) {
           const updatedChildren = response.data
             .map((child) => ({

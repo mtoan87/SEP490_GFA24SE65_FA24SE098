@@ -17,7 +17,7 @@ const VillageDetails = () => {
   useEffect(() => {
     const fetchVillageInfo = async () => {
       try {
-        const response = await axios.get(`https://localhost:7073/api/Village/GetVillageByEventId?eventId=${eventId}`);
+        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByEventId?eventId=${eventId}`);
         console.log('Village Info Response:', response.data);
         const villageData = response.data[0];
         setVillageInfo({
@@ -45,7 +45,7 @@ const VillageDetails = () => {
         return;
       }
       try {
-        const response = await axios.get(`https://localhost:7073/api/Houses/GetHouseByVillageId/${villageId}`);
+        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByVillageId/${villageId}`);
         console.log('Houses Info Response:', response.data);
         setHouses(response.data);
       } catch (error) {
@@ -61,7 +61,7 @@ const VillageDetails = () => {
   const fetchHouseDetails = async (houseId) => {
     setLoadingHouseDetails(true);
     try {
-      const response = await axios.get(`https://localhost:7073/api/Houses/GetHouseByIdWithImg/${houseId}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByIdWithImg/${houseId}`);
       console.log('House Details Response:', response.data);
       setSelectedHouse(response.data);
     } catch (error) {

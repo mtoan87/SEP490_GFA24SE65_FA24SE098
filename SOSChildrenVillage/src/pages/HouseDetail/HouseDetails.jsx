@@ -19,13 +19,13 @@ const HouseDetails = () => {
         const fetchHouseDetails = async () => {
             setLoadingHouseDetails(true);
             try {
-                const houseResponse = await axios.get(`https://localhost:7073/api/Houses/GetHouseByIdWithImg/${houseId}`);
+                const houseResponse = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByIdWithImg/${houseId}`);
                 console.log('House Details Response:', houseResponse.data);
                 setHouseInfo(houseResponse.data);
                 setSelectedImage(houseResponse.data.imageUrls[0] || '/default-placeholder.png');
 
                 setLoadingChildren(true);
-                const childrenResponse = await axios.get(`https://localhost:7073/api/Children/GetChildByHouseIdArray/${houseId}`);
+                const childrenResponse = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildByHouseIdArray/${houseId}`);
                 console.log('Children Response:', childrenResponse.data);
                 setChildren(Array.isArray(childrenResponse.data) ? childrenResponse.data : []);
             } catch (error) {

@@ -141,13 +141,13 @@ const SchoolManagement = () => {
           }
 
           if (editingSchool) {
-            const updateUrl = `https://localhost:7073/api/School/UpdateSchool/${editingSchool.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/School/UpdateSchool/${editingSchool.id}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
             message.success("School updated successfully.");
           } else {
-            const createUrl = "https://localhost:7073/api/School/CreateSchool";
+            const createUrl = "https://soschildrenvillage.azurewebsites.net/api/School/CreateSchool";
             await axios.post(createUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
@@ -192,7 +192,7 @@ const SchoolManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/School/DeleteSchool/${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/School/DeleteSchool/${id}`;
           console.log("Deleting school with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -221,7 +221,7 @@ const SchoolManagement = () => {
 
   const handleRestore = async (id) => {
     try {
-      await axios.put(`https://localhost:7073/api/School/RestoreSchool/${id}`);
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/School/RestoreSchool/${id}`);
       message.success("School restored successfully.");
       fetchSchools(showDeleted);
     } catch (error) {

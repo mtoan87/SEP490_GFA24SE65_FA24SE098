@@ -86,7 +86,7 @@ const TransferRequestManagement = () => {
 
         if (editingRequest) {
           await axios.put(
-            `https://localhost:7073/api/TransferRequest/UpdateTransferRequest/${editingRequest.id}`,
+            `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${editingRequest.id}`,
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -95,7 +95,7 @@ const TransferRequestManagement = () => {
           message.success("Updated transfer request successfully");
         } else {
           await axios.post(
-            "https://localhost:7073/api/TransferRequest/CreateTransferRequest",
+            "https://soschildrenvillage.azurewebsites.net/api/TransferRequest/CreateTransferRequest",
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -115,7 +115,7 @@ const TransferRequestManagement = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://localhost:7073/api/TransferRequest/DeleteTransferRequest/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/DeleteTransferRequest/${id}`
       );
       message.success("Deleted transfer request successfully");
       fetchTransferRequests();

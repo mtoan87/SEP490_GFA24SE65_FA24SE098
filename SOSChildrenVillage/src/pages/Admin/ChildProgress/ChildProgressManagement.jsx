@@ -86,7 +86,7 @@ const ChildProgressManagement = () => {
 
         if (editingProgress) {
           await axios.put(
-            `https://localhost:7073/api/ChildProgress/UpdateChildProgress/${editingProgress.id}`,
+            `https://soschildrenvillage.azurewebsites.net/api/ChildProgress/UpdateChildProgress/${editingProgress.id}`,
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -95,7 +95,7 @@ const ChildProgressManagement = () => {
           message.success("Updated child progress successfully");
         } else {
           await axios.post(
-            "https://localhost:7073/api/ChildProgress/CreateChildProgress",
+            "https://soschildrenvillage.azurewebsites.net/api/ChildProgress/CreateChildProgress",
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -116,7 +116,7 @@ const ChildProgressManagement = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://localhost:7073/api/ChildProgress/DeleteChildProgress/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/ChildProgress/DeleteChildProgress/${id}`
       );
       message.success("Deleted child progress successfully");
       fetchChildProgressList();

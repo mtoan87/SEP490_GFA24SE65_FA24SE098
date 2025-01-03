@@ -166,14 +166,14 @@ const InventoryManagement = () => {
           }
 
           if (editingItem) {
-            const updateUrl = `https://localhost:7073/api/Inventory/UpdateInventory/${editingItem.id}`;
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Inventory/UpdateInventory/${editingItem.id}`;
             await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
             });
             message.success("Inventory item updated successfully.");
           } else {
             await axios.post(
-              "https://localhost:7073/api/Inventory/CreateInventory",
+              "https://soschildrenvillage.azurewebsites.net/api/Inventory/CreateInventory",
               formData,
               {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -219,7 +219,7 @@ const InventoryManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/Inventory/DeleteInventory/${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Inventory/DeleteInventory/${id}`;
           console.log("Deleting inventory item with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -249,7 +249,7 @@ const InventoryManagement = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://localhost:7073/api/Inventory/RestoreInventory/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/Inventory/RestoreInventory/${id}`
       );
       message.success("Inventory item restored successfully.");
       fetchInventoryItems(showDeleted);

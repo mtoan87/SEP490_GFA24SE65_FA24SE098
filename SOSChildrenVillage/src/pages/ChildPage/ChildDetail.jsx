@@ -23,7 +23,7 @@ const ChildDetail = () => {
 
     const fetchChildDetails = async () => {
       try {
-        const response = await axios.get(`https://localhost:7073/api/Children/GetChildWithImg/${childId}`);
+        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg/${childId}`);
         setChild(response.data);
       } catch (error) {
         console.error('Error fetching child details:', error);
@@ -44,7 +44,7 @@ const ChildDetail = () => {
     }
 
     try {
-      const response = await axios.put(`https://localhost:7073/api/EventDonate/ChildDonate?id=${childId}`, {
+      const response = await axios.put(`https://soschildrenvillage.azurewebsites.net/api/EventDonate/ChildDonate?id=${childId}`, {
         amount: amount,
         userAccountId: userId || null, // Use userId if logged in, otherwise null
         description: description,
@@ -67,7 +67,7 @@ const ChildDetail = () => {
 
   const fetchDonationHistory = async () => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Donation/GetDonationsByUserAndChildAsync/${userId}/${childId}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationsByUserAndChildAsync/${userId}/${childId}`);
       const { totalAmount, donationDetails } = response.data;
 
       const formattedHistory = donationDetails?.$values?.map((donation) => ({

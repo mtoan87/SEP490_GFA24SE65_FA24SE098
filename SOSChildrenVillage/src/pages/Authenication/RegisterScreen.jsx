@@ -34,7 +34,7 @@ export const RegisterScreen = () => {
 
     try {
       const response = await axios.post(
-        "https://localhost:7073/api/UserAccount/CreateUser",
+        "https://soschildrenvillage.azurewebsites.net/api/UserAccount/CreateUser",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -45,7 +45,7 @@ export const RegisterScreen = () => {
         // Login immediately after successful registration
         try {
           const loginResponse = await axios.post(
-            "https://localhost:7073/api/Login",
+            "https://soschildrenvillage.azurewebsites.net/api/Login",
             {
               email: values.UserEmail,
               password: values.Password,

@@ -40,7 +40,7 @@ const DonationManagement = () => {
   const fetchDonations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://localhost:7073/api/Donation/FormatDonation");
+      const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Donation/FormatDonation");
       setDonations(response.data);
     } catch (error) {
       console.log(error);
@@ -62,7 +62,7 @@ const DonationManagement = () => {
 
   const showEventModal = async (eventId) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Event/GetEventById/${eventId}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Event/GetEventById/${eventId}`);
       setSelectedEvent(response.data);
       setIsEventModalVisible(true);
     } catch (error) {
@@ -72,7 +72,7 @@ const DonationManagement = () => {
   };
   const showChildModal = async (childId) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Children/GetChildWithImg/${childId}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg/${childId}`);
       setSelectedChild(response.data);
       setIsChildModalVisible(true);
     } catch (error) {
@@ -106,8 +106,8 @@ const DonationManagement = () => {
           }
 
           const url = editingDonation
-            ? `https://localhost:7073/api/Donation/UpdateDonation?id=${editingDonation.id}`
-            : "https://localhost:7073/api/Donation/CreateDonate";
+            ? `https://soschildrenvillage.azurewebsites.net/api/Donation/UpdateDonation?id=${editingDonation.id}`
+            : "https://soschildrenvillage.azurewebsites.net/api/Donation/CreateDonate";
 
           await axios.post(url, requestData, {
             headers: {
@@ -135,7 +135,7 @@ const DonationManagement = () => {
       content: "This action cannot be undone.",
       onOk: async () => {
         try {
-          await axios.delete(`https://localhost:7073/api/Donation/DeleteDonation?id=${id}`);
+          await axios.delete(`https://soschildrenvillage.azurewebsites.net/api/Donation/DeleteDonation?id=${id}`);
           message.success("Donation deleted successfully");
           fetchDonations();
         } catch (error) {

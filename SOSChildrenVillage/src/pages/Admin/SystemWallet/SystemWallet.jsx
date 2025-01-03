@@ -17,7 +17,7 @@ const SystemWallet = () => {
   const fetchSystemWalletData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7073/api/SystemWallet/FormatSystemWallet');
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/SystemWallet/FormatSystemWallet');
       setSystemWalletData(Array.isArray(response.data) ? response.data : []); // Ensure response data is an array
     } catch (error) {
       console.error(error);
@@ -36,7 +36,7 @@ const SystemWallet = () => {
 
   const fetchExpenseData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Expenses/GetExpenseBySystemWalletId?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseBySystemWalletId?Id=${id}`);
       const expenseArray = Array.isArray(response.data) ? response.data : []; // Ensure response data is an array
       const filteredExpenseData = expenseArray.map(expense => ({
         key: expense.id,
@@ -56,7 +56,7 @@ const SystemWallet = () => {
 
   const fetchIncomeData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Incomes/GetIncomeBySystemWallet?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeBySystemWallet?Id=${id}`);
       const incomeArray = Array.isArray(response.data) ? response.data : []; // Ensure response data is an array
       const filteredIncomeData = incomeArray.map(income => ({
         key: income.id,

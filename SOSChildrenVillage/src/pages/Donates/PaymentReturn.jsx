@@ -44,7 +44,7 @@ const PaymentReturn = () => {
   }
 
   // Build the API URL dynamically, conditionally including walletId and new wallet params
-  let apiUrl = `https://localhost:7073/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&childId=${childId || ""}&eventId=${eventId || ""}
+  let apiUrl = `https://soschildrenvillage.azurewebsites.net/api/Payments/return?vnp_TxnRef=${vnp_TxnRef}&vnp_ResponseCode=${vnp_ResponseCode}&childId=${childId || ""}&eventId=${eventId || ""}
   &systemWalletId=${systemWalletId || ""}
   &facilitiesWalletId=${facilitiesWalletId || ""}
   &necessitiesWalletId=${necessitiesWalletId || ""}

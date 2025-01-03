@@ -17,7 +17,7 @@ const NecessitiesWallet = () => {
   const fetchNecessitiesWalletData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7073/api/NecessitiesWallet/GetNecessitiesWalletsArray');
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/NecessitiesWallet/GetNecessitiesWalletsArray');
       setNecessitiesWalletData(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error(error);
@@ -36,7 +36,7 @@ const NecessitiesWallet = () => {
 
   const fetchExpenseData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Expenses/GetExpenseByNescilitiesWalletId?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseByNescilitiesWalletId?Id=${id}`);
       const expenseArray = Array.isArray(response.data) ? response.data : [];
       const filteredExpenseData = expenseArray.map(expense => ({
         key: expense.id,
@@ -56,7 +56,7 @@ const NecessitiesWallet = () => {
 
   const fetchIncomeData = async (id) => {
     try {
-      const response = await axios.get(`https://localhost:7073/api/Incomes/GetIncomeByNescilitiesWallet?Id=${id}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeByNescilitiesWallet?Id=${id}`);
       const incomeArray = Array.isArray(response.data) ? response.data : [];
       const filteredIncomeData = incomeArray.map(income => ({
         key: income.id,

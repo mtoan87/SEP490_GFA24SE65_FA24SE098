@@ -73,7 +73,7 @@ const AcademicReport = () => {
 
         if (editingReports) {
           await axios.put(
-            `https://localhost:7073/api/AcademicReport/UpdateAcademicReport/${editingReports.id}`,
+            `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/UpdateAcademicReport/${editingReports.id}`,
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -82,7 +82,7 @@ const AcademicReport = () => {
           message.success("Update Academic Report Successfully");
         } else {
           await axios.post(
-            "https://localhost:7073/api/AcademicReport/CreateAcademicReport",
+            "https://soschildrenvillage.azurewebsites.net/api/AcademicReport/CreateAcademicReport",
             values,
             {
               headers: { "Content-Type": "multipart/form-data" },
@@ -101,7 +101,7 @@ const AcademicReport = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `https://localhost:7073/api/AcademicReport/DeleteAcademicReport/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/DeleteAcademicReport/${id}`
       );
       message.success("Delete Academic Report Successfully");
       fetchAcademicReports();

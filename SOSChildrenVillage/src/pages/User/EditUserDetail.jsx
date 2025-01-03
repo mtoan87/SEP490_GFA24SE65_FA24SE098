@@ -26,7 +26,7 @@ const EditUserDetail = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7073/api/UserAccount/GetUserById/${userId}`,
+          `https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -87,7 +87,7 @@ const EditUserDetail = () => {
       });
   
       const response = await axios.put(
-        `https://localhost:7073/api/UserAccount/UpdateUser?id=${userId}`,
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UpdateUser?id=${userId}`,
         formData,
         {
           headers: {

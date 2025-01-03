@@ -133,14 +133,14 @@ const UserManagement = () => {
 
         if (editingAccount) {
           await axios.put(
-            `https://localhost:7073/api/UserAccount/UpdateUser?id=${editingAccount.id}`,
+            `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UpdateUser?id=${editingAccount.id}`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
           message.success("Updated User Successfully");
         } else {
           await axios.post(
-            "https://localhost:7073/api/UserAccount/CreateUser",
+            "https://soschildrenvillage.azurewebsites.net/api/UserAccount/CreateUser",
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
@@ -166,7 +166,7 @@ const UserManagement = () => {
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const deleteUrl = `https://localhost:7073/api/UserAccount/DeleteUser?id=${id}`;
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/UserAccount/DeleteUser?id=${id}`;
           console.log("Deleting user with ID:", id);
 
           const response = await axios.delete(deleteUrl);
@@ -196,7 +196,7 @@ const UserManagement = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://localhost:7073/api/UserAccount/RestoreUser/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser/${id}`
       );
       message.success("User Restored Successfully");
       fetchUserAccounts(showDeleted);
