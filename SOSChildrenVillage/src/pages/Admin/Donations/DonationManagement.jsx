@@ -32,18 +32,27 @@ const DonationManagement = () => {
   const [form] = Form.useForm();
   const [editingDonation, setEditingDonation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
-    fetchDonations();
-  }, []);
+    fetchDonations(showDeleted);
+  }, [showDeleted]);
 
   const fetchDonations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Donation/FormatDonation");
+      const url = showDeleted
+        ? "https://soschildrenvillage.azurewebsites.net/api/Donation/FormatDonationIsDeleted" // Show deleted donations
+        : "https://soschildrenvillage.azurewebsites.net/api/Donation/FormatDonation"; // Show normal donations
+
+      console.log("Fetching donations from:", url); // Log the URL being requested
+
+      const response = await axios.get(url);
+      console.log("Response data:", response.data); // Log the response data
+
       setDonations(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching donations:", error);
       message.error("Cannot get donation data");
     } finally {
       setLoading(false);
@@ -79,7 +88,7 @@ const DonationManagement = () => {
       message.error("Failed to fetch child data");
     }
   };
-  
+
 
   const handleOk = () => {
     form
@@ -135,7 +144,7 @@ const DonationManagement = () => {
       content: "This action cannot be undone.",
       onOk: async () => {
         try {
-          await axios.delete(`https://soschildrenvillage.azurewebsites.net/api/Donation/DeleteDonation?id=${id}`);
+          await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Donation/Delete/${id}`);
           message.success("Donation deleted successfully");
           fetchDonations();
         } catch (error) {
@@ -144,121 +153,161 @@ const DonationManagement = () => {
       },
     });
   };
+  const handleRestore = async (id) => {
+    try {
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Donation/Restore/${id}`
+      );
+      message.success("Donation Restored Successfully");
+      fetchDonations(showDeleted); // Refresh donations after restoring
+    } catch (error) {
+      console.error("Error occurred when restoring donation:", error);
+      message.error("Unable to restore donation");
+    }
+  };
+  
+  // Thêm hàm getWalletName để xử lý logic hiển thị tên Wallet
+  const getWalletName = (record) => {
+    const wallets = {
+      facilitiesWalletId: "Facilities",
+      systemWalletId: "System",
+      foodStuffWalletId: "Food Stuff",
+      healthWalletId: "Health",
+      necessitiesWalletId: "Necessities",
+    };
 
-// Thêm hàm getWalletName để xử lý logic hiển thị tên Wallet
-const getWalletName = (record) => {
-  const wallets = {
-    facilitiesWalletId: "Facilities",
-    systemWalletId: "System",
-    foodStuffWalletId: "Food Stuff",
-    healthWalletId: "Health",
-    necessitiesWalletId: "Necessities",
+    for (const [key, value] of Object.entries(wallets)) {
+      if (record[key] !== null) {
+        return value;
+      }
+    }
+    return "No Wallet";
   };
 
-  for (const [key, value] of Object.entries(wallets)) {
-    if (record[key] !== null) {
-      return value;
-    }
-  }
-  return "No Wallet";
-};
-
-// Thêm cột Wallet vào mảng columns
-const columns = [
-  {
-    title: "User",
-    dataIndex: "userName",
-    key: "userName",
-    render: (_, record) => (
-      <Button onClick={() => showUserModal(record)} type="link">
-        View User
-      </Button>
-    ),
-    align: "center",
-  },
-  {
-    title: "Donation Type",
-    dataIndex: "donationType",
-    key: "donationType",
-    render: (donationType, record) => {
-      if (donationType === "Child") {
-        return (
-          <Button
-            type="link"
-            style={{ color: "orange" }}
-            onClick={() => showChildModal(record.childId)}
-          >
-            {donationType}
-          </Button>
-        );
-      } else if (donationType === "Event") {
-        return (
-          <Button
-            type="link"
-            style={{ color: "blue" }}
-            onClick={() => showEventModal(record.eventId)}
-          >
-            {donationType}
-          </Button>
-        );
-      }
-      return <span>{donationType}</span>;
+  const columns = [
+    {
+      title: "User",
+      dataIndex: "userName",
+      key: "userName",
+      render: (_, record) => (
+        <Button onClick={() => showUserModal(record)} type="link">
+          View User
+        </Button>
+      ),
+      align: "center",
     },
-    align: "center",
-  },
-  // Thêm cột Wallet
-  {
-    title: "Wallet",
-    key: "wallet",
-    render: (_, record) => <span>{getWalletName(record)}</span>,
-    align: "center",
-  },
-  {
-    title: "Date",
-    dataIndex: "dateTime",
-    key: "dateTime",
-    render: (date) => (moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : ""),
-    align: "center",
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-    align: "center",
-  },
-  {
-    title: "Description",
-    dataIndex: "description",
-    key: "description",
-    align: "center",
-  },
-  {
-    title: "Actions",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <Button
-          key={`edit-${record.id}`}
-          onClick={() => showModal(record)}
-          icon={<EditOutlined />}
-        />
-        <Button
-          key={`delete-${record.id}`}
-          onClick={() => handleDelete(record.id)}
-          icon={<DeleteOutlined />}
-          danger
-        />
-      </Space>
-    ),
-    align: "center",
-  },
-];
+    {
+      title: "Donation Type",
+      dataIndex: "donationType",
+      key: "donationType",
+      render: (donationType, record) => {
+        if (donationType === "Child") {
+          return (
+            <Button
+              type="link"
+              style={{ color: "orange" }}
+              onClick={() => showChildModal(record.childId)}
+            >
+              {donationType}
+            </Button>
+          );
+        } else if (donationType === "Event") {
+          return (
+            <Button
+              type="link"
+              style={{ color: "blue" }}
+              onClick={() => showEventModal(record.eventId)}
+            >
+              {donationType}
+            </Button>
+          );
+        }
+        return <span>{donationType}</span>;
+      },
+      align: "center",
+    },
+    {
+      title: "Wallet",
+      key: "wallet",
+      render: (_, record) => <span>{getWalletName(record)}</span>,
+      align: "center",
+    },
+    {
+      title: "Date",
+      dataIndex: "dateTime",
+      key: "dateTime",
+      render: (date) => (moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : ""),
+      align: "center",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      align: "center",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      align: "center",
+    },
+    {
+      title: "Actions",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          {/* Show Edit and Delete buttons if the donation is not deleted */}
+          {!showDeleted || !record.isDeleted ? (
+            <>
+              <Button
+                key={`edit-${record.id}`}
+                onClick={() => showModal(record)}
+                icon={<EditOutlined />}
+              />
+              <Button
+                key={`delete-${record.id}`}
+                onClick={() => handleDelete(record.id)}
+                icon={<DeleteOutlined />}
+                danger
+              />
+            </>
+          ) : null}
 
-// Phần còn lại của mã không thay đổi
+          {/* Only show Restore button if the donation is deleted and showDeleted is true */}
+          {showDeleted && (
+            <Button
+              type="primary"
+              onClick={() => handleRestore(record.id)}
+            >
+              Restore
+            </Button>
+          )}
+        </Space>
+      ),
+    }
+
+  ];
+
+  // Phần còn lại của mã không thay đổi
 
 
   return (
     <div style={{ width: "100%" }}>
+      {/* Add a button to toggle showing deleted donations */}
+      <Button
+        onClick={() => {
+          setShowDeleted((prev) => {
+            const newShowDeleted = !prev;
+            fetchDonations(newShowDeleted); // Pass the new state to fetch donations
+            return newShowDeleted;
+          });
+        }}
+        type="default"
+      >
+        {showDeleted ? "Show Active Donations" : "Show Deleted Donations"}
+      </Button>
+
+
       <Table
         columns={columns}
         dataSource={donations}
@@ -335,54 +384,54 @@ const columns = [
           </div>
         )}
       </Modal>
+
       <Modal
-  title="Child Information"
-  visible={isChildModalVisible}
-  onCancel={() => setIsChildModalVisible(false)}
-  footer={[
-    <Button key="close" onClick={() => setIsChildModalVisible(false)}>
-      Close
-    </Button>,
-  ]}
->
-  {selectedChild && (
-    <div>
-      <p><strong>Name:</strong> {selectedChild.childName}</p>
-      <p><strong>Health Status:</strong> {selectedChild.healthStatus}</p>
-      <p><strong>Current Amount:</strong> {selectedChild.currentAmount}</p>
-      <p><strong>Amount Limit:</strong> {selectedChild.amountLimit}</p>
-      <p><strong>Gender:</strong> {selectedChild.gender}</p>
-      <p><strong>Date of Birth:</strong> {moment(selectedChild.dob).format("DD/MM/YYYY")}</p>
-      <p><strong>Status:</strong> {selectedChild.status}</p>
+        title="Child Information"
+        visible={isChildModalVisible}
+        onCancel={() => setIsChildModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsChildModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {selectedChild && (
+          <div>
+            <p><strong>Name:</strong> {selectedChild.childName}</p>
+            <p><strong>Health Status:</strong> {selectedChild.healthStatus}</p>
+            <p><strong>Current Amount:</strong> {selectedChild.currentAmount}</p>
+            <p><strong>Amount Limit:</strong> {selectedChild.amountLimit}</p>
+            <p><strong>Gender:</strong> {selectedChild.gender}</p>
+            <p><strong>Date of Birth:</strong> {moment(selectedChild.dob).format("DD/MM/YYYY")}</p>
+            <p><strong>Status:</strong> {selectedChild.status}</p>
 
-      {selectedChild.imageUrls && selectedChild.imageUrls.length > 0 ? (
-        <div>
-          <p><strong>Images:</strong></p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-            {selectedChild.imageUrls.map((url, index) => (
-              <img
-                key={index}
-                src={url}
-                alt={`Child Image ${index + 1}`}
-                style={{
-                  maxWidth: "100%",
-                  width: "150px",
-                  height: "auto",
-                  borderRadius: "8px",
-                  border: "1px solid #ddd",
-                  padding: "4px",
-                }}
-              />
-            ))}
+            {selectedChild.imageUrls && selectedChild.imageUrls.length > 0 ? (
+              <div>
+                <p><strong>Images:</strong></p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+                  {selectedChild.imageUrls.map((url, index) => (
+                    <img
+                      key={index}
+                      src={url}
+                      alt={`Child Image ${index + 1}`}
+                      style={{
+                        maxWidth: "100%",
+                        width: "150px",
+                        height: "auto",
+                        borderRadius: "8px",
+                        border: "1px solid #ddd",
+                        padding: "4px",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p>No images available</p>
+            )}
           </div>
-        </div>
-      ) : (
-        <p>No images available</p>
-      )}
-    </div>
-  )}
-</Modal>
-
+        )}
+      </Modal>
     </div>
   );
 };
