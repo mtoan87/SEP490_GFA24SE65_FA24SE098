@@ -101,23 +101,39 @@ export const getEventsWithImages = async (showDeleted = false) => {
 };
 
 //Academic Report
-export const getAcademicReport = async () => {
+// export const getAcademicReport = async () => {
+//   try {
+//     const response = await api.get("/api/AcademicReport");
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching children:", error);
+//     throw error;
+//   }
+// };
+
+export const getAcademicReportWithImages = async (showDeleted = false) => {
   try {
-    const response = await api.get("/api/AcademicReport");
+    const endpoint = showDeleted
+      ? "/api/AcademicReport/GetAllAcademicReportIsDelete"
+      : "/api/AcademicReport/GetAllAcademicReportWithImg";
+    const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching children:", error);
+    console.error("Error fetching Academic Report with image:", error);
     throw error;
   }
 };
 
 //Health Report
-export const getHealthReport = async () => {
+export const getHealthReportWithImages = async (showDeleted = false) => {
   try {
-    const response = await api.get("/api/HealthReport");
+    const endpoint = showDeleted
+      ? "/api/HealthReport/GetAllHealthReportIsDelete"
+      : "/api/HealthReport/GetAllHealthReportWithImg";
+    const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching children:", error);
+    console.error("Error fetching Academic Report with image:", error);
     throw error;
   }
 };
@@ -170,6 +186,22 @@ export const getSchoolWithImages = async (showDeleted = false) => {
   } catch (error) {
     console.error("Error fetching Schools data:", error);
     return [];
+  }
+};
+
+export const getSchoolDetail = async (schoolId) => {
+  try {
+    // Ensure childId is a string
+    // Extract the id if it's an object because when debug it's will show as object like this https://soschildrenvillage.azurewebsites.net/api/Children/GetChildDetails/[object%20Object]
+    // if (typeof schoolId === 'object') {    
+    //   schoolId = schoolId.id;
+    // }
+    const response = await api.get(`/api/School/GetSchoolDetails/${schoolId}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching School details:", error);
+    throw error;
   }
 };
 

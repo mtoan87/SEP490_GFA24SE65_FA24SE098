@@ -109,9 +109,19 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
             ),
             children: (
               <AnimatePresence>
-                <div className="flex gap-6 grid-cols-1 lg:grid-cols-2">
+                <div
+                  className="flex gap-4 mb-6"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "stretch",
+                    marginBottom: "24px",
+                    marginTop: "24px",
+                    gap: "10px",
+                  }}
+                >
                   <motion.div
-                    className="col-span-1"
+                    style={{ flex: 1 }}
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
@@ -169,7 +179,7 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                   </motion.div>
 
                   <motion.div
-                    className="col-span-1"
+                    style={{ flex: 1 }}
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
@@ -177,13 +187,20 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                   >
                     <Card
                       title={
-                        <span className="flex items-center gap-4">
+                        <span className="flex items-center gap-2">
                           <HeartOutlined className="text-green-500" />
                           Statistics
                         </span>
                       }
                     >
-                      <div className="grid grid-cols-2 gap-4">
+                      <div
+                        className="grid grid-cols-2 gap-4"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "stretch",
+                        }}
+                      >
                         <Statistic
                           title="Total Children"
                           value={village.totalChildren}

@@ -19,10 +19,12 @@ import {
   SearchOutlined,
   InboxOutlined,
   EyeOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
 import { getChildDetail } from "../../../services/api";
+import ChildrenTransfer from "./ChildrenTransfer";
 import ViewDetailsChildren from "./ViewDetailsChildren";
 import axios from "axios";
 import moment from "moment";
@@ -47,7 +49,8 @@ const ChildrenManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [detailChild, setDetailChild] = useState(null);
-
+  const [isTransferModalVisible, setIsTransferModalVisible] = useState(false);
+  const [selectedChild, setSelectedChild] = useState(null);
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -83,20 +86,25 @@ const ChildrenManagement = () => {
     }
   };
 
-    const fetchChildrenDetail = async (childId) => {
-      try {
-        setLoading(true);
-        const childDetail = await getChildDetail(childId);
-        console.log("Child Detail before setting:", childDetail);
-        setDetailChild(childDetail);
-        setIsDetailModalVisible(true);
-      } catch (error) {
-        console.error("Error fetching child details:", error);
-        message.error("Failed to fetch child details.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchChildrenDetail = async (childId) => {
+    try {
+      setLoading(true);
+      const childDetail = await getChildDetail(childId);
+      console.log("Child Detail before setting:", childDetail);
+      setDetailChild(childDetail);
+      setIsDetailModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching child details:", error);
+      message.error("Failed to fetch child details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showTransferModal = (child) => {
+    setSelectedChild(child);
+    setIsTransferModalVisible(true);
+  };
 
   const showModal = (child = null) => {
     setEditingChild(child);
@@ -203,6 +211,7 @@ const ChildrenManagement = () => {
 
             console.log("Update response:", updateResponse.data);
             message.success("Update Children Successfully");
+
           } else {
             const createResponse = await axios.post(
               "https://soschildrenvillage.azurewebsites.net/api/Children/CreateChild",
@@ -384,6 +393,14 @@ const ChildrenManagement = () => {
             danger
           />
 
+          <Button
+            key={`transfer-${record.id}`}
+            onClick={() => showTransferModal(record)}
+            icon={<SwapOutlined />}
+          >
+            Transfer
+          </Button>
+
           {/* Hiển thị nút Restore nếu House đã bị xóa */}
           {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
@@ -558,6 +575,38 @@ const ChildrenManagement = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
+          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="systemWalletId" label="System Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="healthWalletId" label="Health Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amount" label="Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="currentAmount" label="Current Amount">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="amountLimit" label="Amount Limit">
+            <Input type="number" />
+          </Form.Item>
+
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">
               <div
@@ -602,38 +651,6 @@ const ChildrenManagement = () => {
             </Form.Item>
           )}
 
-          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="systemWalletId" label="System Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="healthWalletId" label="Health Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="currentAmount" label="Current Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amountLimit" label="Amount Limit">
-            <Input type="number" />
-          </Form.Item>
-
           <Form.Item label="Upload New Images">
             <Dragger {...uploadProps}>
               <p className="ant-upload-drag-icon">
@@ -665,6 +682,12 @@ const ChildrenManagement = () => {
         isVisible={isDetailModalVisible}
         child={detailChild}
         onClose={() => setIsDetailModalVisible(false)}
+      />
+
+      <ChildrenTransfer
+        isVisible={isTransferModalVisible}
+        onClose={() => setIsTransferModalVisible(false)}
+        child={selectedChild}
       />
     </div>
   );

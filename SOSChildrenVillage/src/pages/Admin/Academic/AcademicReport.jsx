@@ -1,13 +1,25 @@
 import { useState, useEffect } from "react";
-import { Table, Space, Button, Modal, Form, Input, message } from "antd";
+import {
+  Table,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Upload,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
-import { getAcademicReport } from "../../../services/api";
+import { getAcademicReportWithImages } from "../../../services/api";
 import axios from "axios";
+
+const { Dragger } = Upload;
 
 const AcademicReport = () => {
   const [reports, setReports] = useState([]);
@@ -17,21 +29,26 @@ const AcademicReport = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [uploadFiles, setUploadFiles] = useState([]);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
     fetchAcademicReports();
   }, []);
 
-  const fetchAcademicReports = async () => {
+  const fetchAcademicReports = async (showDeleted = false) => {
     try {
       setLoading(true);
-      const data = await getAcademicReport();
-      setReports(data?.$values || []);
-      //setReports(Array.isArray(data) ? data : []);
+      const data = await getAcademicReportWithImages(showDeleted);
+      //setReports(data?.$values || []);
+      setReports(Array.isArray(data) ? data : []);
       console.log("Fetched academic report data:", data);
     } catch (error) {
       console.log(error);
       message.error("Can not get academic report data");
+      setReports([]);
     } finally {
       setLoading(false);
     }
@@ -42,74 +59,187 @@ const AcademicReport = () => {
       form.setFieldsValue({
         ...report,
       });
+      setCurrentImages(
+        report.imageUrls?.map((url, index) => ({
+          uid: index,
+          url: url,
+          status: "done",
+          name: `Image ${index + 1}`,
+        })) || []
+      );
     } else {
       form.resetFields();
+      setCurrentImages([]);
     }
+    setImagesToDelete([]);
+    setUploadFiles([]);
     setIsModalVisible(true);
   };
-  const handleOk = () => {
-    form.validateFields().then(async (values) => {
-      try {
-        const formData = new FormData();
 
-        formData.append("diploma", values.diploma || "");
-        formData.append("childId", values.childId || "");
-        formData.append("gpa", values.gpa || "");
-        formData.append("schoolReport", values.schoolReport || "");
-        formData.append("semester", values.semester || "");
-        formData.append("academicYear", values.academicYear || "");
-        formData.append("remarks", values.remarks || "");
-        formData.append("achievement", values.achievement || "");
-        formData.append("status", values.status || "");
-        //formData.append("class", values.class || "");
-        //formData.append("feedback", values.feedback || "");
-
-        console.log("Academic Report Values:", values);
-
-        console.log("FormData entries:");
-        for (let pair of formData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
-
-        if (editingReports) {
-          await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/UpdateAcademicReport/${editingReports.id}`,
-            values,
-            {
-              headers: { "Content-Type": "multipart/form-data" },
-            }
-          );
-          message.success("Update Academic Report Successfully");
-        } else {
-          await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/AcademicReport/CreateAcademicReport",
-            values,
-            {
-              headers: { "Content-Type": "multipart/form-data" },
-            }
-          );
-          message.success("Add Academic Report Successfully");
-        }
-        setIsModalVisible(false);
-        fetchAcademicReports();
-      } catch (error) {
-        console.error("Error occurred when saving data:", error);
-        message.error("Unable to save data");
+  const uploadProps = {
+    name: "images",
+    multiple: true,
+    fileList: uploadFiles,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith("image/");
+      if (!isImage) {
+        message.error(`${file.name} is not an image file`);
+        return Upload.LIST_IGNORE;
       }
+      return false;
+    },
+    onChange: (info) => {
+      setUploadFiles(info.fileList);
+    },
+  };
+
+  const handleOk = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          const formData = new FormData();
+
+          formData.append("diploma", values.diploma || "");
+          formData.append("childId", values.childId || "");
+          formData.append("gpa", values.gpa || "");
+          formData.append("schoolReport", values.schoolReport || "");
+          formData.append("semester", values.semester || "");
+          formData.append("academicYear", values.academicYear || "");
+          formData.append("remarks", values.remarks || "");
+          formData.append("achievement", values.achievement || "");
+          formData.append("status", values.status || "");
+          //formData.append("class", values.class || "");
+          //formData.append("feedback", values.feedback || "");
+
+          //Add Images
+          if (uploadFiles && uploadFiles.length > 0) {
+            uploadFiles.forEach((file) => {
+              if (file.originFileObj) {
+                formData.append("Img", file.originFileObj);
+              }
+            });
+          }
+
+          //Delete Images
+          if (imagesToDelete.length > 0) {
+            imagesToDelete.forEach((imageId) => {
+              formData.append("ImgToDelete", imageId);
+            });
+          }
+
+          console.log("Academic Report Values:", values);
+
+          console.log("FormData entries:");
+          for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+          }
+
+          if (editingReports) {
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/UpdateAcademicReport/${editingReports.id}`;
+              console.log("Updating health report with ID:", editingReports.id);
+              console.log("Update URL:", updateUrl);
+  
+              const updateResponse = await axios.put(updateUrl, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              });
+  
+              console.log("Update response:", updateResponse.data);
+              message.success("Update health report Successfully");
+          } else {
+            const createResponse = await axios.post(
+              "https://soschildrenvillage.azurewebsites.net/api/AcademicReport/CreateAcademicReport",
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            console.log("Create response:", createResponse.data);
+            message.success("Add Children Successfully");
+          }
+          setIsModalVisible(false);
+          setUploadFiles([]);
+          setCurrentImages([]);
+          setImagesToDelete([]);
+          form.resetFields();
+          fetchAcademicReports();
+        } catch (error) {
+          console.error("Error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            endpoint: editingReports
+              ? "UpdateAcademicReport"
+              : "CreateAcademicReport",
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              `Unable to ${
+                editingReports ? "update" : "create"
+              } child. Please try again.`
+          );
+        }
+      })
+      .catch((formError) => {
+        console.error("Form validation errors:", formError);
+        message.error("Please check all required fields");
+      });
+  };
+
+  const handleDelete = async (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this academic report?",
+      content: "This action cannot be undone.",
+      okText: "Yes, delete it",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/DeleteAcademicReport/${id}`;
+          console.log("Deleting academic report with ID:", id);
+
+          const response = await axios.delete(deleteUrl);
+          console.log("Delete response:", response.data);
+
+          message.success("Academic report deleted successfully");
+          fetchAcademicReports();
+        } catch (error) {
+          console.error("Delete error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              "Unable to delete academic report. Please try again."
+          );
+        }
+      },
+      onCancel: () => {
+        console.log("Deletion canceled");
+      },
     });
   };
-  const handleDelete = async (id) => {
+
+  const handleRestore = async (id) => {
     try {
-      await axios.delete(
-        `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/DeleteAcademicReport/${id}`
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreAcademicReport/${id}`
       );
-      message.success("Delete Academic Report Successfully");
-      fetchAcademicReports();
+      message.success("Academic Restored Successfully");
+      fetchAcademicReports(showDeleted);
     } catch (error) {
-      console.error("Error occurred when deleting report:", error);
-      message.error("Unable to delete report");
+      console.error("Error occurred when restoring Academic:", error);
+      message.error("Unable to restore child");
     }
   };
+
   const columns = [
     {
       title: "Academic Report Id",
@@ -197,6 +327,12 @@ const AcademicReport = () => {
             icon={<DeleteOutlined />}
             danger
           />
+
+          {showDeleted && (
+            <Button type="primary" onClick={() => handleRestore(record.id)}>
+              Restore
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -240,6 +376,19 @@ const AcademicReport = () => {
 
             <Button type="default" style={{ marginRight: 8 }}>
               Filter options
+            </Button>
+
+            <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchAcademicReports(newShowDeleted);
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active reports" : "Show Deleted reports"}
             </Button>
           </div>
         </div>
@@ -293,9 +442,7 @@ const AcademicReport = () => {
 
       <Modal
         title={
-          editingReports
-            ? "Update Academic Reports"
-            : "Add New Academic Reports"
+          editingReports ? "Update Academic Report" : "Add New Academic Report"
         }
         open={isModalVisible}
         onOk={handleOk}
@@ -375,6 +522,63 @@ const AcademicReport = () => {
           {/* <Form.Item name="feedback" label="Feedback">
             <Input />
           </Form.Item> */}
+
+          {editingReports && currentImages.length > 0 && (
+            <Form.Item label="Current Images">
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                  marginBottom: "16px",
+                }}
+              >
+                {currentImages.map((image, index) => (
+                  <div key={index} style={{ position: "relative" }}>
+                    <img
+                      src={image.url}
+                      alt={`Current ${index + 1}`}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Button
+                      type="primary"
+                      danger
+                      size="small"
+                      icon={<DeleteOutlined />}
+                      style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                      }}
+                      onClick={() => {
+                        setImagesToDelete([...imagesToDelete, image.url]);
+                        setCurrentImages(
+                          currentImages.filter((_, i) => i !== index)
+                        );
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Form.Item>
+          )}
+
+          <Form.Item label="Upload New Images">
+            <Dragger {...uploadProps}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Click or drag files to upload</p>
+              <p className="ant-upload-hint">
+                Support for single or bulk upload. Strictly prohibited from
+                uploading company data or other banned files.
+              </p>
+            </Dragger>
+          </Form.Item>
         </Form>
       </Modal>
     </div>
