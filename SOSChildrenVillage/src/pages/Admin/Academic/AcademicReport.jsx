@@ -104,6 +104,8 @@ const AcademicReport = () => {
           formData.append("childId", values.childId || "");
           formData.append("gpa", values.gpa || "");
           formData.append("schoolReport", values.schoolReport || "");
+          formData.append("schoolLevel", values.schoolLevel || "");
+          formData.append("schoolId", values.schoolId || "");
           formData.append("semester", values.semester || "");
           formData.append("academicYear", values.academicYear || "");
           formData.append("remarks", values.remarks || "");
@@ -230,13 +232,13 @@ const AcademicReport = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreAcademicReport/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/RestoreAcademicReport/${id}`
       );
-      message.success("Academic Restored Successfully");
+      message.success("Academic report Restored Successfully");
       fetchAcademicReports(showDeleted);
     } catch (error) {
       console.error("Error occurred when restoring Academic:", error);
-      message.error("Unable to restore child");
+      message.error("Unable to restore Academic report");
     }
   };
 

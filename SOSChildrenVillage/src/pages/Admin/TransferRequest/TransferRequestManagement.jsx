@@ -72,7 +72,7 @@ const TransferRequestManagement = () => {
         }
 
         const formData = new FormData();
-        
+
         formData.append("childId", values.childId || "");
         formData.append("fromHouseId", values.fromHouseId || "");
         formData.append("toHouseId", values.toHouseId || "");
@@ -88,23 +88,30 @@ const TransferRequestManagement = () => {
         }
 
         if (editingRequest) {
-          await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${editingRequest.id}`,
-            values,
-            {
-              headers: { "Content-Type": "multipart/form-data" },
-            }
-          );
-          message.success("Updated transfer request successfully");
+          const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${editingRequest.id}`;
+          console.log("Updating transfer request with ID:", editingRequest.id);
+          console.log("Update URL:", updateUrl);
+
+          const updateResponse = await axios.put(updateUrl, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          console.log("Update response:", updateResponse.data);
+          message.success("Update Children Successfully");
         } else {
-          await axios.post(
+          const createResponse = await axios.post(
             "https://soschildrenvillage.azurewebsites.net/api/TransferRequest/CreateTransferRequest",
-            values,
+            formData,
             {
-              headers: { "Content-Type": "multipart/form-data" },
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
             }
           );
-          message.success("Created new transfer request successfully");
+          console.log("Create response:", createResponse.data);
+          message.success("Add Transfer Request Successfully");
         }
         setIsModalVisible(false);
         fetchTransferRequests();
@@ -273,7 +280,11 @@ const TransferRequestManagement = () => {
       </div>
 
       <Modal
-        title={editingRequest ? "Update Transfer Request" : "Add New Transfer Request"}
+        title={
+          editingRequest
+            ? "Update Transfer Request"
+            : "Add New Transfer Request"
+        }
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
@@ -323,7 +334,7 @@ const TransferRequestManagement = () => {
 
           <Form.Item name="status" label="Status">
             <Select>
-            <Option value="Pending">Pending</Option>
+              <Option value="Pending">Pending</Option>
               <Option value="Approved">Approved</Option>
               <Option value="Rejected">Rejected</Option>
             </Select>

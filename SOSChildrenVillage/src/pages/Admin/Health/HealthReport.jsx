@@ -232,7 +232,7 @@ const HealthReport = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreHealthReport/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/HealthReport/RestoreHealthReport/${id}`
       );
       message.success("Health Reports Restored Successfully");
       fetchHealthReports(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
