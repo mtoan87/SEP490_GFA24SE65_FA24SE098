@@ -28,6 +28,8 @@ const TransferRequestManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const { Option } = Select;
+
   useEffect(() => {
     fetchTransferRequests();
   }, []);
@@ -41,6 +43,7 @@ const TransferRequestManagement = () => {
     } catch (error) {
       console.error("Error fetching transfer requests:", error);
       message.error("Failed to load transfer requests");
+      setTransferRequests([]);
     } finally {
       setLoading(false);
     }
@@ -69,7 +72,7 @@ const TransferRequestManagement = () => {
         }
 
         const formData = new FormData();
-        formData.append("id", values.id || "");
+        
         formData.append("childId", values.childId || "");
         formData.append("fromHouseId", values.fromHouseId || "");
         formData.append("toHouseId", values.toHouseId || "");
@@ -154,14 +157,14 @@ const TransferRequestManagement = () => {
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
       title: "Request Reason",
       dataIndex: "requestReason",
       key: "requestReason",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Actions",
@@ -191,46 +194,103 @@ const TransferRequestManagement = () => {
           gap: "8px",
         }}
       >
-        <Input
-          placeholder="Search for transfer request"
-          prefix={<SearchOutlined />}
-          style={{ width: 500, marginRight: 8 }}
-        />
-        <Button
-          onClick={() => showModal()}
-          type="primary"
-          icon={<PlusOutlined />}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
         >
-          Add New Request
-        </Button>
+          <Input
+            placeholder="Search for request"
+            prefix={<SearchOutlined />}
+            style={{ width: 500, marginRight: 8 }}
+          />
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Button
+              onClick={() => showModal()}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New Transfer Request
+            </Button>
+
+            <Button type="default" style={{ marginRight: 8 }}>
+              Filter options
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={transferRequests}
-        loading={loading}
-        rowKey={(record) => record.id}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: transferRequests.length,
-          onChange: (page, pageSize) => {
-            setCurrentPage(page);
-            setPageSize(pageSize);
-          },
+      <div
+        style={{
+          width: "100%",
+          overflow: "auto",
         }}
-      />
+      >
+        <Table
+          columns={columns}
+          dataSource={transferRequests}
+          loading={loading}
+          rowKey={(record) => record.id}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
+            },
+          }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: transferRequests.length,
+            showSizeChanger: false,
+            showQuickJumper: true,
+            showTotal: (total) => `Total ${total} items`,
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPageSize(pageSize);
+            },
+            position: ["Left"],
+            itemRender: (_, type, originalElement) => {
+              if (type === "prev") {
+                return <Button>Previous</Button>;
+              }
+              if (type === "next") {
+                return <Button>Next</Button>;
+              }
+              return originalElement;
+            },
+          }}
+        />
+      </div>
 
       <Modal
-        title={
-          editingRequest
-            ? "Update Transfer Request"
-            : "Add New Transfer Request"
-        }
+        title={editingRequest ? "Update Transfer Request" : "Add New Transfer Request"}
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => setIsModalVisible(false)}
         width={650}
+        footer={[
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
+        ]}
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -261,15 +321,11 @@ const TransferRequestManagement = () => {
             <Input.TextArea rows={4} />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true, message: "Please select a status" }]}
-          >
+          <Form.Item name="status" label="Status">
             <Select>
-              <Select.Option value="Pending">Pending</Select.Option>
-              <Select.Option value="Approved">Approved</Select.Option>
-              <Select.Option value="Rejected">Rejected</Select.Option>
+            <Option value="Pending">Pending</Option>
+              <Option value="Approved">Approved</Option>
+              <Option value="Rejected">Rejected</Option>
             </Select>
           </Form.Item>
         </Form>

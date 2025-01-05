@@ -1,39 +1,61 @@
+/* ViewDetailsVillage.css
 .village-details-modal .ant-modal-content {
-    @apply p-0 overflow-hidden rounded-lg;
-  }
-  
-  .village-details-modal .ant-modal-header {
-    @apply m-0 p-4 border-b;
-  }
-  
-  .village-details-modal .ant-modal-body {
-    @apply p-4;
-  }
-  
-  .village-details-modal .ant-tabs-nav {
-    @apply mb-4;
-  }
-  
-.village-details-modal .ant-card {
-  @apply h-full flex flex-col;
+  border-radius: 12px;
 }
 
-.village-details-modal .grid {
-  @apply gap-6 items-start;
+.overview-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.village-details-modal .grid-cols-2 {
-  @apply grid-cols-2;
+.description {
+  grid-column: span 2;
 }
-  
-  .village-details-modal .ant-list-item {
-    @apply py-2;
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.statistic-card {
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.statistic-card .value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.statistic-card .title {
+  color: #666;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-item .label {
+  font-weight: 500;
+  color: #666;
+}
+
+.info-item .value {
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .overview-container {
+    grid-template-columns: 1fr;
   }
-  
-  .village-details-modal .ant-table {
-    @apply mt-4;
+
+  .description {
+    grid-column: span 1;
   }
-  
-  .village-details-modal .ant-table-thead > tr > th {
-    @apply bg-gray-50 font-semibold;
-  }
+} */

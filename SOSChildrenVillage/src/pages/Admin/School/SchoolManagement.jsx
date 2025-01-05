@@ -15,10 +15,12 @@ import {
   DeleteOutlined,
   SearchOutlined,
   InboxOutlined,
-  //EyeOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getSchoolWithImages } from "../../../services/api";
+import { getSchoolDetail } from "../../../services/api";
+import ViewDetailsSchool from "./ViewDetailsSchool";
 import axios from "axios";
 
 const { Dragger } = Upload;
@@ -36,6 +38,9 @@ const SchoolManagement = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [detailSchool, setDetailSchool] = useState(null);
+
   const navigate = useNavigate();
   const messageShown = useRef(false);
 
@@ -65,6 +70,21 @@ const SchoolManagement = () => {
       console.error("Error fetching schools:", error);
       message.error("Cannot fetch school data");
       setSchools([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSchoolDetail = async (schoolId) => {
+    try {
+      setLoading(true);
+      const schoolDetail = await getSchoolDetail(schoolId);
+      console.log("School Detail before setting:", schoolDetail);
+      setDetailSchool(schoolDetail);
+      setIsDetailModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching school details:", error);
+      message.error("Failed to fetch school details.");
     } finally {
       setLoading(false);
     }
@@ -277,11 +297,11 @@ const SchoolManagement = () => {
             icon={<EditOutlined />}
           />
 
-          {/* <Button
+          <Button
             key={`view-${record.id}`}
-            onClick={() => fetchVillageDetail(record.id)}
+            onClick={() => fetchSchoolDetail(record.id)}
             icon={<EyeOutlined />}
-          ></Button> */}
+          ></Button>
 
           <Button
             key={`delete-${record.id}`}
@@ -525,11 +545,11 @@ const SchoolManagement = () => {
       </Modal>
 
       {/* View Details */}
-      {/* <ViewDetailsVillage
+      <ViewDetailsSchool
         isVisible={isDetailModalVisible}
-        village={detailVillage}
+        village={detailSchool}
         onClose={() => setIsDetailModalVisible(false)}
-      /> */}
+      />
     </div>
   );
 };

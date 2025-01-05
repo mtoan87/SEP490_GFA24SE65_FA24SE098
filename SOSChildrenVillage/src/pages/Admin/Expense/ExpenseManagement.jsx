@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, message} from 'antd';
-import { PlusOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import { saveAs } from 'file-saver';
+import { useEffect, useState } from "react";
+import { Table, Button, Modal, Form, Input, Select, message } from "antd";
+import {
+  PlusOutlined,
+  SearchOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
+import axios from "axios";
+import { saveAs } from "file-saver";
 
 const { Option } = Select;
 
@@ -10,13 +14,12 @@ const ExpenseManagement = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [form] = Form.useForm();
   const [roleId, setRoleId] = useState(null);
 
-
   useEffect(() => {
-    const storedRoleId = localStorage.getItem('roleId');
+    const storedRoleId = localStorage.getItem("roleId");
     setRoleId(parseInt(storedRoleId, 10));
     fetchExpenses();
   }, []);
@@ -24,11 +27,13 @@ const ExpenseManagement = () => {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Expenses/FormatedExpenses');
+      const response = await axios.get(
+        "https://soschildrenvillage.azurewebsites.net/api/Expenses/FormatedExpenses"
+      );
       setExpenses(response.data);
     } catch (error) {
-      console.error('Error fetching expenses:', error);
-      message.error('Unable to fetch expenses data');
+      console.error("Error fetching expenses:", error);
+      message.error("Unable to fetch expenses data");
     } finally {
       setLoading(false);
     }
@@ -58,30 +63,35 @@ const ExpenseManagement = () => {
         ...wallets,
       };
 
-      await axios.post('https://soschildrenvillage.azurewebsites.net/api/Expenses/CreateExpense', requestPayload);
-      message.success('Expense created successfully');
+      await axios.post(
+        "https://soschildrenvillage.azurewebsites.net/api/Expenses/CreateExpense",
+        requestPayload
+      );
+      message.success("Expense created successfully");
       setIsModalVisible(false);
       fetchExpenses();
     } catch (error) {
-      console.error('Error creating expense:', error);
-      message.error('Failed to create expense');
+      console.error("Error creating expense:", error);
+      message.error("Failed to create expense");
     }
   };
 
   const handleDownloadReport = async () => {
     try {
       const response = await axios.get(
-        'https://soschildrenvillage.azurewebsites.net/api/Expenses/ExportExcel',
+        "https://soschildrenvillage.azurewebsites.net/api/Expenses/ExportExcel",
         {
-          responseType: 'blob',
+          responseType: "blob",
         }
       );
-      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       saveAs(blob, `Expense_Report_${new Date().toISOString()}.xlsx`);
-      message.success('Report downloaded successfully!');
+      message.success("Report downloaded successfully!");
     } catch (error) {
-      console.error('Error downloading report:', error);
-      message.error('Failed to download report');
+      console.error("Error downloading report:", error);
+      message.error("Failed to download report");
     }
   };
 
@@ -98,77 +108,79 @@ const ExpenseManagement = () => {
 
   const handleConfirmExpense = async (id) => {
     try {
-      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`);
-      message.success('Expense confirmed successfully');
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`
+      );
+      message.success("Expense confirmed successfully");
       fetchExpenses(); // Cập nhật lại danh sách chi phí
     } catch (error) {
-      console.error('Error confirming expense:', error);
-      message.error('Failed to confirm expense');
+      console.error("Error confirming expense:", error);
+      message.error("Failed to confirm expense");
     }
   };
-  
+
   const columns = [
     {
-      title: 'Expense ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: "Expense ID",
+      dataIndex: "id",
+      key: "id",
     },
     {
-      title: 'Amount',
-      dataIndex: 'expenseAmount',
-      key: 'expenseAmount',
+      title: "Amount",
+      dataIndex: "expenseAmount",
+      key: "expenseAmount",
       render: (amount) => `${amount.toLocaleString()} VND`,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
     },
     {
-      title: 'Expense Day',
-      dataIndex: 'expenseday',
-      key: 'expenseday',
+      title: "Expense Day",
+      dataIndex: "expenseday",
+      key: "expenseday",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
-      title: 'House ID',
-      dataIndex: 'houseId',
-      key: 'houseId',
+      title: "House ID",
+      dataIndex: "houseId",
+      key: "houseId",
     },
     {
-      title: 'Wallet',
-      key: 'wallet',
+      title: "Wallet",
+      key: "wallet",
       render: (text, record) => {
         const wallets = [];
-        if (record.facilitiesWalletId) wallets.push('Facilities Wallet');
-        if (record.foodStuffWalletId) wallets.push('Food Stuff Wallet');
-        if (record.healthWalletId) wallets.push('Health Wallet');
-        if (record.necessitiesWalletId) wallets.push('Necessities Wallet');
-        if (record.systemWalletId) wallets.push('System Wallet');
-        return wallets.length > 0 ? wallets.join(', ') : 'N/A';
+        if (record.facilitiesWalletId) wallets.push("Facilities Wallet");
+        if (record.foodStuffWalletId) wallets.push("Food Stuff Wallet");
+        if (record.healthWalletId) wallets.push("Health Wallet");
+        if (record.necessitiesWalletId) wallets.push("Necessities Wallet");
+        if (record.systemWalletId) wallets.push("System Wallet");
+        return wallets.length > 0 ? wallets.join(", ") : "N/A";
       },
     },
     {
-      title: 'Created Date',
-      dataIndex: 'createdDate',
-      key: 'createdDate',
+      title: "Created Date",
+      dataIndex: "createdDate",
+      key: "createdDate",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     ...(roleId === 1
       ? [
           {
-            title: 'Active',
-            key: 'active',
+            title: "Active",
+            key: "active",
             render: (text, record) => (
               <Button
                 type="primary"
                 onClick={() => handleConfirmExpense(record.id)}
-                disabled={record.status === 'Confirmed'}
+                disabled={record.status === "Confirmed"}
               >
                 Confirm
               </Button>
@@ -177,18 +189,51 @@ const ExpenseManagement = () => {
         ]
       : []),
   ];
-  
+
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Input placeholder="Search for houses" prefix={<SearchOutlined />} style={{ width: 200, marginRight: 16 }} />
-          <Button onClick={handleAddExpense} type="primary" icon={<PlusOutlined />} style={{ marginRight: 8 }}>
-            Add New Expense
-          </Button>
-          <Button onClick={handleDownloadReport} type="default" icon={<DownloadOutlined />}>
-            Download Report
-          </Button>
+    <div style={{ width: "100%", height: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "24px",
+          flexWrap: "wrap",
+          gap: "8px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Input
+            placeholder="Search for Expense"
+            prefix={<SearchOutlined />}
+            style={{ width: 500, marginRight: 8 }}
+          />
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Button
+              onClick={handleAddExpense}
+              type="primary"
+              icon={<PlusOutlined />}
+              style={{ marginRight: 8 }}
+            >
+              Add New Expense
+            </Button>
+            <Button
+              onClick={handleDownloadReport}
+              type="default"
+              icon={<DownloadOutlined />}
+            >
+              Download Report
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -197,7 +242,11 @@ const ExpenseManagement = () => {
         dataSource={filteredExpenses}
         loading={loading}
         rowKey={(record) => record.id}
-        pagination={{ showSizeChanger: true, defaultPageSize: 10, pageSizeOptions: ['10', '20', '50', '100'] }}
+        pagination={{
+          showSizeChanger: true,
+          defaultPageSize: 10,
+          pageSizeOptions: ["10", "20", "50", "100"],
+        }}
       />
 
       <Modal
@@ -212,28 +261,30 @@ const ExpenseManagement = () => {
           <Form.Item
             name="expenseAmount"
             label="Expense Amount"
-            rules={[{ required: true, message: 'Please enter the expense amount' }]}
+            rules={[
+              { required: true, message: "Please enter the expense amount" },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             name="description"
             label="Description"
-            rules={[{ required: true, message: 'Please enter a description' }]}
+            rules={[{ required: true, message: "Please enter a description" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="houseId"
             label="House ID"
-            rules={[{ required: true, message: 'Please enter the house ID' }]}
+            rules={[{ required: true, message: "Please enter the house ID" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="wallet"
             label="Wallet"
-            rules={[{ required: true, message: 'Please select a wallet' }]}
+            rules={[{ required: true, message: "Please select a wallet" }]}
           >
             <Select>
               <Option value="systemWallet">System Wallet</Option>

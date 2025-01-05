@@ -1,12 +1,28 @@
 import { useState, useEffect } from "react";
-import { Table, Space, Button, Modal, Form, Input, message } from "antd";
+import {
+  Table,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Upload,
+  Select,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
+
+import { getHealthReportWithImages } from "../../../services/api";
 import axios from "axios";
+
+const { Dragger } = Upload;
+const { Option } = Select;
 
 const HealthReport = () => {
   const [reports, setReports] = useState([]);
@@ -16,19 +32,25 @@ const HealthReport = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [uploadFiles, setUploadFiles] = useState([]);
+  const [currentImages, setCurrentImages] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
     fetchHealthReports();
   }, []);
 
-  const fetchHealthReports = async () => {
+  const fetchHealthReports = async (showDeleted = false) => {
     try {
       setLoading(true);
-      const { data } = await axios.get("https://soschildrenvillage.azurewebsites.net/api/HealthReport");
-      setReports(data?.$values || []);
+      const data = await getHealthReportWithImages(showDeleted);
+      setReports(Array.isArray(data) ? data : []);
+      console.log("Fetched health report data with images:", data);
     } catch (error) {
       console.log(error);
-      message.error("Can not get health report data");
+      message.error("Can not get health report data with images");
+      setReports([]);
     } finally {
       setLoading(false);
     }
@@ -38,58 +60,185 @@ const HealthReport = () => {
     setEditingReports(report);
     if (report) {
       form.setFieldsValue({ ...report });
+      setCurrentImages(
+        report.imageUrls?.map((url, index) => ({
+          uid: index,
+          url: url,
+          status: "done",
+          name: `Image ${index + 1}`,
+        })) || []
+      );
     } else {
       form.resetFields();
+      setCurrentImages([]);
     }
+    setImagesToDelete([]);
+    setUploadFiles([]);
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    form.validateFields().then(async (values) => {
-      try {
-        const formData = new FormData();
-        formData.append("childId", values.childId || "");
-        formData.append("nutritionalStatus", values.nutritionalStatus || "");
-        formData.append("medicalHistory", values.medicalHistory || "");
-        formData.append("healthCertificate", values.healthCertificate || "");
-        formData.append("vaccinationStatus", values.vaccinationStatus || "");
-        formData.append("weight", values.weight || "");
-        formData.append("height", values.height || "");
-
-        if (editingReports) {
-          await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/HealthReport/UpdateHealthReport/${editingReports.id}`,
-            formData,
-            { headers: { "Content-Type": "multipart/form-data" } }
-          );
-          message.success("Update Health Report Successfully");
-        } else {
-          await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/HealthReport/CreateHealthReport",
-            formData,
-            { headers: { "Content-Type": "multipart/form-data" } }
-          );
-          message.success("Add Health Report Successfully");
-        }
-        setIsModalVisible(false);
-        fetchHealthReports();
-      } catch (error) {
-        console.error("Error occurred when saving data:", error);
-        message.error("Unable to save data");
+  const uploadProps = {
+    name: "images",
+    multiple: true,
+    fileList: uploadFiles,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith("image/");
+      if (!isImage) {
+        message.error(`${file.name} is not an image file`);
+        return Upload.LIST_IGNORE;
       }
-    });
+      return false;
+    },
+    onChange: (info) => {
+      setUploadFiles(info.fileList);
+    },
+  };
+
+  const handleOk = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          const formData = new FormData();
+          formData.append("childId", values.childId || "");
+          formData.append("nutritionalStatus", values.nutritionalStatus || "");
+          formData.append("medicalHistory", values.medicalHistory || "");
+          formData.append("healthCertificate", values.healthCertificate || "");
+          formData.append("vaccinationStatus", values.vaccinationStatus || "");
+          formData.append("weight", values.weight || "");
+          formData.append("height", values.height || "");
+          //formData.append("checkupDate", values.checkupDate ? values.checkupDate.toISOString() : ""); // Chuyển đổi Date thành chuỗi ISO
+          formData.append("doctorName", values.doctorName || "");
+          formData.append("recommendations", values.recommendations || "");
+          formData.append("healthStatus", values.healthStatus || "");
+          //formData.append("followUpDate", values.followUpDate ? values.followUpDate.toISOString() : ""); // Chuyển đổi Date thành chuỗi ISO
+          formData.append("illnesses", values.illnesses || "");
+          formData.append("allergies", values.allergies || "");
+          formData.append("status", values.status || "Active");
+
+          //Add Images
+          if (uploadFiles && uploadFiles.length > 0) {
+            uploadFiles.forEach((file) => {
+              if (file.originFileObj) {
+                formData.append("Img", file.originFileObj);
+              }
+            });
+          }
+
+          //Delete Images
+          if (imagesToDelete.length > 0) {
+            imagesToDelete.forEach((imageId) => {
+              formData.append("ImgToDelete", imageId);
+            });
+          }
+
+          console.log("FormData entries:");
+          for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+          }
+
+          if (editingReports) {
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/HealthReport/UpdateHealthReport/${editingReports.id}`;
+            console.log("Updating health report with ID:", editingReports.id);
+            console.log("Update URL:", updateUrl);
+
+            const updateResponse = await axios.put(updateUrl, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+
+            console.log("Update response:", updateResponse.data);
+            message.success("Update health report Successfully");
+          } else {
+            const createResponse = await axios.post(
+              "https://soschildrenvillage.azurewebsites.net/api/HealthReport/CreateHealthReport",
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            console.log("Create response:", createResponse.data);
+            message.success("Add Children Successfully");
+          }
+          setIsModalVisible(false);
+          setUploadFiles([]);
+          setCurrentImages([]);
+          setImagesToDelete([]);
+          form.resetFields();
+          fetchHealthReports();
+        } catch (error) {
+          console.error("Error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            endpoint: editingReports
+              ? "UpdateHealthReport"
+              : "CreateHealthReport",
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              `Unable to ${
+                editingReports ? "update" : "create"
+              } reports. Please try again.`
+          );
+        }
+      })
+      .catch((formError) => {
+        console.error("Form validation errors:", formError);
+        message.error("Please check all required fields");
+      });
   };
 
   const handleDelete = async (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this child?",
+      content: "This action cannot be undone.",
+      okText: "Yes, delete it",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        try {
+          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/HealthReport/DeleteHealthReport/${id}`;
+          console.log("Deleting child with ID:", id);
+
+          const response = await axios.delete(deleteUrl);
+          console.log("Delete response:", response.data);
+
+          message.success("Child deleted successfully");
+          fetchHealthReports();
+        } catch (error) {
+          console.error("Delete error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              "Unable to delete child. Please try again."
+          );
+        }
+      },
+      onCancel: () => {
+        console.log("Deletion canceled");
+      },
+    });
+  };
+
+  const handleRestore = async (id) => {
     try {
-      await axios.delete(
-        `https://soschildrenvillage.azurewebsites.net/api/HealthReport/DeleteHealthReport/${id}`
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/Children/RestoreHealthReport/${id}`
       );
-      message.success("Delete Health Report Successfully");
-      fetchHealthReports();
+      message.success("Health Reports Restored Successfully");
+      fetchHealthReports(showDeleted); // Không thay đổi state showDeleted sau khi khôi phục
     } catch (error) {
-      console.error("Error occurred when deleting report:", error);
-      message.error("Unable to delete report");
+      console.error("Error occurred when restoring Health Reports:", error);
+      message.error("Unable to restore Health Reports");
     }
   };
 
@@ -115,11 +264,6 @@ const HealthReport = () => {
       key: "medicalHistory",
     },
     {
-      title: "Health Certificate",
-      dataIndex: "healthCertificate",
-      key: "healthCertificate",
-    },
-    {
       title: "Vaccination Status",
       dataIndex: "vaccinationStatus",
       key: "vaccinationStatus",
@@ -133,6 +277,51 @@ const HealthReport = () => {
       title: "Height",
       dataIndex: "height",
       key: "height",
+    },
+    // {
+    //   title: "Checkup Date",
+    //   dataIndex: "checkupDate",
+    //   key: "checkupDate",
+    // },
+    {
+      title: "Doctor Name",
+      dataIndex: "doctorName",
+      key: "doctorName",
+    },
+    {
+      title: "Recommendations",
+      dataIndex: "recommendations",
+      key: "recommendations",
+    },
+    {
+      title: "Health Status",
+      dataIndex: "healthStatus",
+      key: "healthStatus",
+    },
+    // {
+    //   title: "Follow-Up Date",
+    //   dataIndex: "followUpDate",
+    //   key: "followUpDate",
+    // },
+    {
+      title: "Illnesses",
+      dataIndex: "illnesses",
+      key: "illnesses",
+    },
+    {
+      title: "Allergies",
+      dataIndex: "allergies",
+      key: "allergies",
+    },
+    {
+      title: "Health Certificate",
+      dataIndex: "healthCertificate",
+      key: "healthCertificate",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Actions",
@@ -150,6 +339,11 @@ const HealthReport = () => {
             icon={<DeleteOutlined />}
             danger
           />
+          {showDeleted && (
+            <Button type="primary" onClick={() => handleRestore(record.id)}>
+              Restore
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -185,25 +379,63 @@ const HealthReport = () => {
             <Button type="default" style={{ marginRight: 8 }}>
               Filter options
             </Button>
+            <Button
+              onClick={() => {
+                setShowDeleted((prev) => {
+                  const newShowDeleted = !prev;
+                  fetchHealthReports(newShowDeleted);
+                  return newShowDeleted;
+                });
+              }}
+              type="default"
+            >
+              {showDeleted ? "Show Active Reports" : "Show Deleted Reports"}
+            </Button>
           </div>
         </div>
       </div>
 
-      <div style={{ width: "100%", overflow: "auto" }}>
+      <div
+        style={{
+          width: "100%",
+          overflow: "auto",
+        }}
+      >
         <Table
           columns={columns}
           dataSource={reports}
           loading={loading}
           rowKey={(record) => record.id}
+          rowSelection={{
+            type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
+            },
+          }}
           pagination={{
             current: currentPage,
             pageSize: pageSize,
             total: reports.length,
             showSizeChanger: false,
             showQuickJumper: true,
+            showTotal: (total) => `Total ${total} items`,
             onChange: (page, pageSize) => {
               setCurrentPage(page);
               setPageSize(pageSize);
+            },
+            position: ["Left"],
+            itemRender: (_, type, originalElement) => {
+              if (type === "prev") {
+                return <Button>Previous</Button>;
+              }
+              if (type === "next") {
+                return <Button>Next</Button>;
+              }
+              return originalElement;
             },
           }}
         />
@@ -218,7 +450,10 @@ const HealthReport = () => {
         onCancel={() => setIsModalVisible(false)}
         width={650}
         footer={[
-          <div key="footer" style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
             <Button key="cancel" onClick={() => setIsModalVisible(false)}>
               Cancel
             </Button>
@@ -240,7 +475,9 @@ const HealthReport = () => {
           <Form.Item
             name="nutritionalStatus"
             label="Nutritional Status"
-            rules={[{ required: true, message: "Please enter nutritional status" }]}
+            rules={[
+              { required: true, message: "Please enter nutritional status" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -248,7 +485,9 @@ const HealthReport = () => {
           <Form.Item
             name="medicalHistory"
             label="Medical History"
-            rules={[{ required: true, message: "Please enter medical history" }]}
+            rules={[
+              { required: true, message: "Please enter medical history" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -256,7 +495,9 @@ const HealthReport = () => {
           <Form.Item
             name="healthCertificate"
             label="Health Certificate"
-            rules={[{ required: true, message: "Please enter health certificate" }]}
+            rules={[
+              { required: false, message: "Please enter health certificate" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -264,7 +505,9 @@ const HealthReport = () => {
           <Form.Item
             name="vaccinationStatus"
             label="Vaccination Status"
-            rules={[{ required: true, message: "Please enter vaccination status" }]}
+            rules={[
+              { required: true, message: "Please enter vaccination status" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -274,7 +517,7 @@ const HealthReport = () => {
             label="Weight"
             rules={[{ required: true, message: "Please enter weight" }]}
           >
-            <Input />
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item
@@ -282,9 +525,137 @@ const HealthReport = () => {
             label="Height"
             rules={[{ required: true, message: "Please enter height" }]}
           >
+            <Input type="number" />
+          </Form.Item>
+
+          {/* <Form.Item
+    name="checkupDate"
+    label="Checkup Date"
+    rules={[{ required: true, message: "Please select a checkup date" }]}
+  >
+    <DatePicker style={{ width: "100%" }} />
+  </Form.Item> */}
+
+          <Form.Item
+            name="doctorName"
+            label="Doctor Name"
+            rules={[{ required: true, message: "Please enter doctor's name" }]}
+          >
             <Input />
           </Form.Item>
+
+          <Form.Item
+            name="recommendations"
+            label="Recommendations"
+            rules={[
+              { required: false, message: "Please enter recommendations" },
+            ]}
+          >
+            <Input.TextArea rows={3} />
+          </Form.Item>
+
+          <Form.Item
+            name="healthStatus"
+            label="Health Status"
+            rules={[{ required: true, message: "Please enter health status" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          {/* <Form.Item
+    name="followUpDate"
+    label="Follow-Up Date"
+    rules={[{ required: false, message: "Please select a follow-up date" }]}
+  >
+    <DatePicker style={{ width: "100%" }} />
+  </Form.Item> */}
+
+          <Form.Item
+            name="illnesses"
+            label="Illnesses"
+            rules={[{ required: false, message: "Please enter illnesses" }]}
+          >
+            <Input.TextArea rows={3} />
+          </Form.Item>
+
+          <Form.Item
+            name="allergies"
+            label="Allergies"
+            rules={[{ required: false, message: "Please enter allergies" }]}
+          >
+            <Input.TextArea rows={3} />
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={[
+              { required: true, message: "Please enter the report status" },
+            ]}
+          >
+            <Select>
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
+            </Select>
+          </Form.Item>
         </Form>
+
+        {editingReports && currentImages.length > 0 && (
+          <Form.Item label="Current Images">
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                marginBottom: "16px",
+              }}
+            >
+              {currentImages.map((image, index) => (
+                <div key={index} style={{ position: "relative" }}>
+                  <img
+                    src={image.url}
+                    alt={`Current ${index + 1}`}
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <Button
+                    type="primary"
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                    }}
+                    onClick={() => {
+                      setImagesToDelete([...imagesToDelete, image.url]);
+                      setCurrentImages(
+                        currentImages.filter((_, i) => i !== index)
+                      );
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Item>
+        )}
+
+        <Form.Item label="Upload New Images">
+          <Dragger {...uploadProps}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Click or drag files to upload</p>
+            <p className="ant-upload-hint">
+              Support for single or bulk upload. Strictly prohibited from
+              uploading company data or other banned files.
+            </p>
+          </Dragger>
+        </Form.Item>
       </Modal>
     </div>
   );
