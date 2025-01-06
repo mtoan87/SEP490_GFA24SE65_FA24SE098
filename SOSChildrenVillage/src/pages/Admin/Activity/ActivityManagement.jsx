@@ -139,7 +139,7 @@ const ActivityManagement = () => {
           formData.append("TargetAudience", values.targetAudience || "");
           formData.append("Organizer", values.organizer || "");
           formData.append("Status", values.status || "Planned");
-          formData.append("EventId", values.eventId || 0);
+          formData.append("EventId", values.eventId || "");
           formData.append("Budget", values.budget || 0);
           formData.append("Feedback", values.feedback || "");
 
@@ -162,18 +162,12 @@ const ActivityManagement = () => {
 
           if (editingActivity) {
             const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Activity/UpdateActivity/${editingActivity.id}`;
-            console.log("Updating Activities with ID:", editingActivity.id);
-            console.log("Update URL:", updateUrl);
-
-            const updateResponse = await axios.put(updateUrl, formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
+            await axios.put(updateUrl, formData, {
+              headers: { "Content-Type": "multipart/form-data" },
             });
-
-            console.log("Update response:", updateResponse.data);
+            message.success("Update Activity Successfully");
           } else {
-            const createResponse = await axios.post(
+            await axios.post(
               "https://soschildrenvillage.azurewebsites.net/api/Activity/CreateActivity",
               formData,
               {
@@ -182,7 +176,6 @@ const ActivityManagement = () => {
                 },
               }
             );
-            console.log("Create response:", createResponse.data);
             message.success("Add Activity Successfully");
           }
 

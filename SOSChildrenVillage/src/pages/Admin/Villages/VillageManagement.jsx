@@ -155,12 +155,11 @@ const VillageManagement = () => {
           );
           formData.append("Location", values.location);
           formData.append("Description", values.description || "");
-          formData.append("Status", values.status || "Inactive");
+          formData.append("Status", values.status || "Active");
           formData.append("UserAccountId", values.userAccountId);
           formData.append("TotalHouses", values.totalHouses || 0);
           formData.append("TotalChildren", values.totalChildren || 0);
           formData.append("ContactNumber", values.contactNumber || "");
-          //formData.append("RoleName", values.roleName || "");
 
           // Append các hình ảnh
           if (uploadFiles && uploadFiles.length > 0) {

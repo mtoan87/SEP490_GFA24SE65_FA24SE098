@@ -9,6 +9,7 @@ import {
   message,
   Upload,
   Select,
+  DatePicker,
 } from "antd";
 import {
   PlusOutlined,
@@ -20,6 +21,7 @@ import {
 
 import { getHealthReportWithImages } from "../../../services/api";
 import axios from "axios";
+import moment from "moment";
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -59,7 +61,12 @@ const HealthReport = () => {
   const showModal = (report = null) => {
     setEditingReports(report);
     if (report) {
-      form.setFieldsValue({ ...report });
+      form.setFieldsValue({
+        ...report,
+        checkupDate: report.checkupDate ? moment(report.checkupDate) : null,
+        followUpDate: report.followUpDate ? moment(report.followUpDate) : null,
+        imageUrls: report.imageUrls || [],
+      });
       setCurrentImages(
         report.imageUrls?.map((url, index) => ({
           uid: index,
@@ -103,15 +110,20 @@ const HealthReport = () => {
           formData.append("childId", values.childId || "");
           formData.append("nutritionalStatus", values.nutritionalStatus || "");
           formData.append("medicalHistory", values.medicalHistory || "");
-          formData.append("healthCertificate", values.healthCertificate || "");
           formData.append("vaccinationStatus", values.vaccinationStatus || "");
           formData.append("weight", values.weight || "");
           formData.append("height", values.height || "");
-          //formData.append("checkupDate", values.checkupDate ? values.checkupDate.toISOString() : ""); // Chuyển đổi Date thành chuỗi ISO
+          formData.append(
+            "checkupDate",
+            values.checkupDate.format("YYYY-MM-DD")
+          );
           formData.append("doctorName", values.doctorName || "");
           formData.append("recommendations", values.recommendations || "");
           formData.append("healthStatus", values.healthStatus || "");
-          //formData.append("followUpDate", values.followUpDate ? values.followUpDate.toISOString() : ""); // Chuyển đổi Date thành chuỗi ISO
+          formData.append(
+            "followUpDate",
+            values.followUpDate.format("YYYY-MM-DD")
+          );
           formData.append("illnesses", values.illnesses || "");
           formData.append("allergies", values.allergies || "");
           formData.append("status", values.status || "Active");
@@ -278,11 +290,13 @@ const HealthReport = () => {
       dataIndex: "height",
       key: "height",
     },
-    // {
-    //   title: "Checkup Date",
-    //   dataIndex: "checkupDate",
-    //   key: "checkupDate",
-    // },
+    {
+      title: "Checkup Date",
+      dataIndex: "checkupDate",
+      key: "checkupDate",
+      render: (date) =>
+        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    },
     {
       title: "Doctor Name",
       dataIndex: "doctorName",
@@ -298,11 +312,13 @@ const HealthReport = () => {
       dataIndex: "healthStatus",
       key: "healthStatus",
     },
-    // {
-    //   title: "Follow-Up Date",
-    //   dataIndex: "followUpDate",
-    //   key: "followUpDate",
-    // },
+    {
+      title: "Follow-Up Date",
+      dataIndex: "followUpDate",
+      key: "followUpDate",
+      render: (date) =>
+        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    },
     {
       title: "Illnesses",
       dataIndex: "illnesses",
@@ -312,11 +328,6 @@ const HealthReport = () => {
       title: "Allergies",
       dataIndex: "allergies",
       key: "allergies",
-    },
-    {
-      title: "Health Certificate",
-      dataIndex: "healthCertificate",
-      key: "healthCertificate",
     },
     {
       title: "Status",
@@ -493,16 +504,6 @@ const HealthReport = () => {
           </Form.Item>
 
           <Form.Item
-            name="healthCertificate"
-            label="Health Certificate"
-            rules={[
-              { required: false, message: "Please enter health certificate" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
             name="vaccinationStatus"
             label="Vaccination Status"
             rules={[
@@ -528,13 +529,15 @@ const HealthReport = () => {
             <Input type="number" />
           </Form.Item>
 
-          {/* <Form.Item
-    name="checkupDate"
-    label="Checkup Date"
-    rules={[{ required: true, message: "Please select a checkup date" }]}
-  >
-    <DatePicker style={{ width: "100%" }} />
-  </Form.Item> */}
+          <Form.Item
+            name="checkupDate"
+            label="Checkup Date"
+            rules={[
+              { required: true, message: "Please select a checkup date" },
+            ]}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
 
           <Form.Item
             name="doctorName"
@@ -562,13 +565,15 @@ const HealthReport = () => {
             <Input />
           </Form.Item>
 
-          {/* <Form.Item
-    name="followUpDate"
-    label="Follow-Up Date"
-    rules={[{ required: false, message: "Please select a follow-up date" }]}
-  >
-    <DatePicker style={{ width: "100%" }} />
-  </Form.Item> */}
+          <Form.Item
+            name="followUpDate"
+            label="Follow-Up Date"
+            rules={[
+              { required: false, message: "Please select a follow-up date" },
+            ]}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
 
           <Form.Item
             name="illnesses"

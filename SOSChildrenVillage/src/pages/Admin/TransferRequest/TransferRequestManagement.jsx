@@ -76,7 +76,6 @@ const TransferRequestManagement = () => {
         formData.append("childId", values.childId || "");
         formData.append("fromHouseId", values.fromHouseId || "");
         formData.append("toHouseId", values.toHouseId || "");
-        //formData.append("requestDate", values.requestDate.format("YYYY-MM-DD"));
         formData.append("requestReason", values.requestReason || "");
         formData.append("status", values.status || "Pending");
 
@@ -89,31 +88,24 @@ const TransferRequestManagement = () => {
 
         if (editingRequest) {
           const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${editingRequest.id}`;
-          console.log("Updating transfer request with ID:", editingRequest.id);
-          console.log("Update URL:", updateUrl);
-
-          const updateResponse = await axios.put(updateUrl, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+          await axios.put(updateUrl, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
           });
-
-          console.log("Update response:", updateResponse.data);
-          message.success("Update Children Successfully");
+          message.success("Update Transfer Request Successfully");
         } else {
-          const createResponse = await axios.post(
+          const response = await axios.post(
             "https://soschildrenvillage.azurewebsites.net/api/TransferRequest/CreateTransferRequest",
             formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-          console.log("Create response:", createResponse.data);
-          message.success("Add Transfer Request Successfully");
-        }
+              {
+                headers: { "Content-Type": "multipart/form-data" },
+              }
+            );
+            console.log("Create response:", response.data);
+            await fetchTransferRequests();
+            message.success("Add Transfer Request Successfully");
+          }
         setIsModalVisible(false);
+        form.resetFields();
         fetchTransferRequests();
       } catch (error) {
         console.error("Error saving transfer request:", error);
