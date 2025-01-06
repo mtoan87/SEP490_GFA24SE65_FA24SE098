@@ -297,7 +297,7 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
             label: (
               <span className="flex items-center gap-1">
                 <PictureOutlined />
-                Hình ảnh
+                Images
               </span>
             ),
             children: (
@@ -305,7 +305,7 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                 title={
                   <span className="flex items-center gap-2">
                     <PictureOutlined className="text-blue-500" />
-                    Hình ảnh hoạt động
+                    Activity Images
                   </span>
                 }
               >
@@ -338,6 +338,7 @@ VillageDetailsModal.propTypes = {
     totalChildren: PropTypes.number,
     totalHouseOwners: PropTypes.number,
     totalMatureChildren: PropTypes.number,
+
     houses: PropTypes.shape({
       $values: PropTypes.arrayOf(
         PropTypes.shape({
@@ -345,6 +346,22 @@ VillageDetailsModal.propTypes = {
           houseName: PropTypes.string,
           houseOwner: PropTypes.string,
           totalChildren: PropTypes.number,
+        })
+      ),
+    }),
+
+    activities: PropTypes.shape({
+      $values: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          activityName: PropTypes.string,
+          description: PropTypes.string,
+          startDate: PropTypes.string,
+          endDate: PropTypes.string,
+          address: PropTypes.string,
+          activityType: PropTypes.string,
+          organizer: PropTypes.string,
+          status: PropTypes.string,
         })
       ),
     }),

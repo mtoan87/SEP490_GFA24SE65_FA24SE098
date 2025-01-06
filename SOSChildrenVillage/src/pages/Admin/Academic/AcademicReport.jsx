@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   message,
+  Select,
   Upload,
 } from "antd";
 import {
@@ -20,6 +21,7 @@ import { getAcademicReportWithImages } from "../../../services/api";
 import axios from "axios";
 
 const { Dragger } = Upload;
+const { Option } = Select;
 
 const AcademicReport = () => {
   const [reports, setReports] = useState([]);
@@ -111,8 +113,8 @@ const AcademicReport = () => {
           formData.append("remarks", values.remarks || "");
           formData.append("achievement", values.achievement || "");
           formData.append("status", values.status || "");
-          //formData.append("class", values.class || "");
-          //formData.append("feedback", values.feedback || "");
+          formData.append("class", values.class || "");
+          formData.append("feedback", values.feedback || "");
 
           //Add Images
           if (uploadFiles && uploadFiles.length > 0) {
@@ -139,17 +141,17 @@ const AcademicReport = () => {
 
           if (editingReports) {
             const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/AcademicReport/UpdateAcademicReport/${editingReports.id}`;
-              console.log("Updating health report with ID:", editingReports.id);
-              console.log("Update URL:", updateUrl);
-  
-              const updateResponse = await axios.put(updateUrl, formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              });
-  
-              console.log("Update response:", updateResponse.data);
-              message.success("Update health report Successfully");
+            console.log("Updating health report with ID:", editingReports.id);
+            console.log("Update URL:", updateUrl);
+
+            const updateResponse = await axios.put(updateUrl, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            });
+
+            console.log("Update response:", updateResponse.data);
+            message.success("Update health report Successfully");
           } else {
             const createResponse = await axios.post(
               "https://soschildrenvillage.azurewebsites.net/api/AcademicReport/CreateAcademicReport",
@@ -513,17 +515,26 @@ const AcademicReport = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item name="status" label="Status">
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={[
+              { required: true, message: "Please enter the report status" },
+            ]}
+          >
+            <Select>
+              <Option value="Active">Active</Option>
+              <Option value="Inactive">Inactive</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="class" label="Class">
             <Input />
           </Form.Item>
 
-          {/* <Form.Item name="class" label="Class">
+          <Form.Item name="feedback" label="Feedback">
             <Input />
-          </Form.Item> */}
-
-          {/* <Form.Item name="feedback" label="Feedback">
-            <Input />
-          </Form.Item> */}
+          </Form.Item>
 
           {editingReports && currentImages.length > 0 && (
             <Form.Item label="Current Images">

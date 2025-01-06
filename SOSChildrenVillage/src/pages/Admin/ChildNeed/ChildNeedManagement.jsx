@@ -60,39 +60,68 @@ const ChildNeedManagement = () => {
   };
 
   const handleOk = () => {
-    form.validateFields().then(async (values) => {
-      try {
-        const payload = {
-          ...values,
-          fulfilledDate: values.fulfilledDate
-            ? values.fulfilledDate.format("YYYY-MM-DD")
-            : null,
-        };
+    form
+      .validateFields()
+      .then(async (values) => {
+        try {
+          if (!editingNeed && !values.status) {
+            values.status = "Pending";
+          }
 
-        if (editingNeed) {
-          await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/ChildNeed/UpdateChildNeed/${editingNeed.id}`,
-            values,
-            {
+          const formData = new FormData();
+          formData.append("ChildId", values.childId);
+          formData.append("NeedDescription", values.needDescription || "");
+          formData.append("NeedType", values.needType || "");
+          formData.append("Priority", values.priority || "Low");
+          formData.append(
+            "FulfilledDate",
+            values.fulfilledDate
+              ? values.fulfilledDate.format("YYYY-MM-DD")
+              : null
+          );
+          formData.append("Remarks", values.remarks || "");
+          formData.append("Status", values.status || "Pending");
+
+          if (editingNeed) {
+            const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/ChildNeed/UpdateChildNeed/${editingNeed.id}`;
+            await axios.put(updateUrl, formData, {
               headers: { "Content-Type": "multipart/form-data" },
-            }
-          );
-          message.success("Updated child need successfully");
-        } else {
-          await axios.post(
-            "https://soschildrenvillage.azurewebsites.net/api/ChildNeed/CreateChildNeed",
-            payload
-          );
-          message.success("Created new child need successfully");
-        }
+            });
+            message.success("Update child need Successfully");
+          } else {
+            await axios.post(
+              "https://soschildrenvillage.azurewebsites.net/api/ChildNeed/CreateChildNeed",
+              formData,
+              {
+                headers: { "Content-Type": "multipart/form-data" },
+              }
+            );
+            message.success("Add child need Successfully");
+          }
 
-        setIsModalVisible(false);
-        fetchChildNeedList();
-      } catch (error) {
-        console.error("Error saving child need:", error);
-        message.error("Failed to save child need");
-      }
-    });
+          setIsModalVisible(false);
+          form.resetFields();
+          fetchChildNeedList();
+        } catch (error) {
+          console.error("Error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            endpoint: editingNeed ? "UpdateChildNeed" : "CreateChildNeed",
+          });
+
+          message.error(
+            error.response?.data?.message ||
+              `Unable to ${
+                editingNeed ? "update" : "create"
+              } child need. Please try again.`
+          );
+        }
+      })
+      .catch((formError) => {
+        console.error("Form validation errors:", formError);
+        message.error("Please check all required fields");
+      });
   };
 
   const handleDelete = async (id) => {
@@ -301,13 +330,10 @@ const ChildNeedManagement = () => {
             <Input />
           </Form.Item>
           <Form.Item name="fulfilledDate" label="Fulfilled Date">
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item name="remarks" label="Remarks">
             <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="status" label="Status">
-            <Input />
           </Form.Item>
         </Form>
       </Modal>
