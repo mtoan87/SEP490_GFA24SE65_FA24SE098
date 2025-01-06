@@ -2,58 +2,86 @@ import { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
   AreaChart,
+  Area,
+  BarChart,
+  Bar,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
   Legend,
-  Area,
-  Bar,
-  BarChart,
 } from "recharts";
-import { Card, Row, Col, Select, Spin } from "antd";
-import { getDonationTrends } from "../../../../../../../services/chart.api";
-import { paymentMethodData } from "../../constants/data";
+import { Card, Row, Col, Spin, Select } from "antd";
+import {
+  getDonationTrends,
+  getPaymentMethodStatistics,
+} from "../../../../../../../services/chart.api";
 
 const { Option } = Select;
 
 const DonationAnalytics = () => {
   const [donationData, setDonationData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [paymentMethodData, setPaymentMethodData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [years, setYears] = useState([]);
 
+  // Fetch years (you might want to get this from an API in a real scenario)
   useEffect(() => {
-    // Giả sử lấy danh sách các năm từ API hoặc cấu hình sẵn
-    setYears([2023, 2024, 2025]); // Bạn có thể thay đổi hoặc lấy từ BE
+    setYears([2023, 2024, 2025]);
   }, []);
 
-  useEffect(() => {
-    const fetchDonationTrends = async (year) => {
-      setLoading(true);
-      try {
-        const response = await getDonationTrends(year);
+  // Fetch payment methods data
+  const fetchPaymentMethodsData = async () => {
+    try {
+      const response = await getPaymentMethodStatistics();
 
-        const monthlyDetails = response?.monthlyDetails?.$values || [];
-
-        const formattedData = monthlyDetails.map((detail) => ({
-          month: new Date(year, detail.month - 1).toLocaleString("en-US", {
-            month: "short",
-          }),
-          event: detail.eventAmount,
-          child: detail.childAmount,
-          wallet: detail.walletAmount,
-          total: detail.totalAmount,
+      if (response?.statistics?.$values) {
+        const formattedData = response.statistics.$values.map((item) => ({
+          method: item.paymentMethod,
+          count: item.numberOfUses,
+          amount: item.totalAmount,
         }));
-
-        setDonationData(formattedData);
-      } catch (error) {
-        console.error("Failed to fetch donation trends:", error);
-      } finally {
-        setLoading(false);
+        setPaymentMethodData(formattedData);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch payment methods:", error);
+    }
+  };
 
+  // Fetch donation trends data
+  const fetchDonationTrends = async (year) => {
+    setLoading(true);
+    try {
+      const response = await getDonationTrends(year);
+
+      const monthlyDetails = response?.monthlyDetails?.$values || [];
+
+      const formattedData = monthlyDetails.map((detail) => ({
+        month: new Date(year, detail.month - 1).toLocaleString("en-US", {
+          month: "short",
+        }),
+        event: detail.eventAmount,
+        child: detail.childAmount,
+        wallet: detail.walletAmount,
+        total: detail.totalAmount,
+      }));
+
+      setDonationData(formattedData);
+    } catch (error) {
+      console.error("Failed to fetch donation trends:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch payment methods data only once when component mounts
+  useEffect(() => {
+    fetchPaymentMethodsData();
+  }, []);
+
+  // Fetch donation trends data when selected year changes
+  useEffect(() => {
     fetchDonationTrends(selectedYear);
   }, [selectedYear]);
 
@@ -64,20 +92,41 @@ const DonationAnalytics = () => {
   return (
     <Row gutter={[16, 16]}>
       <Col xs={24} lg={12}>
-        <Card title="Donation Trends">
-          <Select
-            style={{ width: 150, marginBottom: 16 }}
-            value={selectedYear}
-            onChange={handleYearChange}
-          >
-            {years.map((year) => (
-              <Option key={year} value={year}>
-                {year}
-              </Option>
-            ))}
-          </Select>
+        <Card
+          title={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>Donation Trends</span>
+              <Select
+                style={{ width: 120 }}
+                value={selectedYear}
+                onChange={handleYearChange}
+              >
+                {years.map((year) => (
+                  <Option key={year} value={year}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          }
+        >
           {loading ? (
-            <Spin tip="Loading..." />
+            <div
+              style={{
+                height: 300,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Spin tip="Loading data..." />
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={donationData}>
@@ -119,9 +168,16 @@ const DonationAnalytics = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
               <YAxis dataKey="method" type="category" />
-              <Tooltip />
+              <Tooltip
+                formatter={(value, name) =>
+                  name === "count"
+                    ? [`${value} uses`, "Number of Uses"]
+                    : [`${value}`, "Total Amount"]
+                }
+              />
               <Legend />
-              <Bar dataKey="count" fill="#1890ff" />
+              <Bar dataKey="count" fill="#1890ff" name="Number of Uses" />
+              <Bar dataKey="amount" fill="#82ca9d" name="Total Amount" />
             </BarChart>
           </ResponsiveContainer>
         </Card>

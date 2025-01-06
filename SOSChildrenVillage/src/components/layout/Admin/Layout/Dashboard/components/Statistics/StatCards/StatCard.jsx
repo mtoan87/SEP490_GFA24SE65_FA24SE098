@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Row, Col, Card, Statistic } from 'antd';
 import { TeamOutlined, CalendarOutlined, DollarOutlined } from '@ant-design/icons';
-import { getActiveChildrenStat, getTotalUsersStat, getTotalEventsStat } from '../../../../../../../../services/chart.api'; // Đường dẫn tới file API
+import { getActiveChildrenStat, getTotalUsersStat, getTotalEventsStat } from '../../../../../../../../services/chart.api';
 
 const TopStatsCards = () => {
   const [stats, setStats] = useState({

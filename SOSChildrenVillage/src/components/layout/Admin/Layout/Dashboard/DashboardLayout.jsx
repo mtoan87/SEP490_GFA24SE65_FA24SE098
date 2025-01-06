@@ -25,7 +25,6 @@ const DashboardLayout = () => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
   
-    // Chỉ cho phép roleId là "1", "3", hoặc "4"
     if (!token || !["1", "3", "4"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
@@ -41,33 +40,50 @@ const DashboardLayout = () => {
   return (
     <AdminLayout>
       <Content className="p-6 bg-gray-100 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          SOS Children Village Overview
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">
+          SOS Children Villages Overview
         </h1>
 
-        <TopStatsCards userStats={userStats} />
-        <KPIStats />
+        <div className="mb-8">
+          <TopStatsCards userStats={userStats} />
+        </div>
+
+        <div className="mb-8">
+          <KPIStats />
+        </div>
 
         {/* Main Dashboard Tabs */}
-        <Card className="mb-6 shadow-md">
+        <Card className="shadow-md">
           <Tabs defaultActiveKey="1">
             <TabPane tab="Child Trends" key="1">
-              <ChildTrends />
+              <div className="p-4">
+                <ChildTrends />
+              </div>
             </TabPane>
             <TabPane tab="Financial Overview" key="2">
-              <FinancialOverview />
+              <div className="p-4">
+                <FinancialOverview />
+              </div>
             </TabPane>
             <TabPane tab="Resource Distribution" key="3">
-              <ResourceDistribution />
+              <div className="p-4">
+                <ResourceDistribution />
+              </div>
             </TabPane>
             <TabPane tab="Donation Analytics" key="4">
-              <DonationAnalytics />
+              <div className="p-4">
+                <DonationAnalytics />
+              </div>
             </TabPane>
             <TabPane tab="Village Statistics" key="5">
-              <VillageStats />
+              <div className="p-4">
+                <VillageStats />
+              </div>
             </TabPane>
             <TabPane tab="Demographics & Academic" key="6">
-              <Demographics />
+              <div className="p-4">
+                <Demographics />
+              </div>
             </TabPane>
           </Tabs>
         </Card>

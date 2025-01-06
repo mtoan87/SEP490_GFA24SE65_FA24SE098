@@ -97,3 +97,77 @@ export const getChildTrends = async () => {
     return error;
   }
 };
+
+export const getEfficiencyByMonth = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/efficiency-by-month");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching efficiency by month:", error);
+    return error;
+  }
+};
+
+
+export const getBudgetUtilizationPercentage = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/budget-utilization");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching budget utilization percentage:", error);
+    return error;
+  }
+};
+
+
+export const getCostPerChild = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/cost-per-child");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching cost per child:", error);
+    return error;
+  }
+};
+
+/**
+ * Lấy dữ liệu phân bổ ví (wallet distribution) theo userAccountId
+ * @param {string} userAccountId
+ * @returns {Promise<Object>} 
+ */
+export const getWalletDistribution = async (userAccountId) => {
+  try {
+    const response = await api.get(`/api/Dashboard/wallet-distribution`, {
+      params: { userAccountId },
+    });
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      console.error("API Error:", response.data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching wallet distribution data:", error);
+    return null;
+  }
+};
+
+/**
+ * Lấy dữ liệu xu hướng đặt chỗ (booking trends) theo timeFrame
+ * @param {string} timeFrame - Khoảng thời gian cần lấy dữ liệu (week, month, year)
+ * @returns {Promise<Object>}
+ */
+export const getBookingTrends = async (timeFrame) => {
+  try {
+    const response = await api.get(`/api/Dashboard/booking-trends/${timeFrame}`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      console.error("API Error:", response.data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching booking trends data:", error);
+    return null;
+  }
+};
