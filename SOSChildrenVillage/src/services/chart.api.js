@@ -77,3 +77,23 @@ export const getAcademicPerformanceDistribution = async () => {
     return error;
   }
 };
+
+export const getDonationTrends = async (year) => {
+  try {
+    const response = await api.get(`/api/Dashboard/donation-trends/${year}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching donation trends for year ${year}:`, error);
+    return error;
+  }
+};
+
+export const getChildTrends = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/child-trends");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching child trends:", error);
+    return error;
+  }
+};

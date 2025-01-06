@@ -134,7 +134,7 @@ const ActivityManagement = () => {
             values.endDate ? values.endDate.format("YYYY-MM-DD") : ""
           );
           formData.append("Address", values.address || "");
-          formData.append("LocationId", values.locationId || "");
+          formData.append("VillageId", values.villageId || "");
           formData.append("ActivityType", values.activityType || "");
           formData.append("TargetAudience", values.targetAudience || "");
           formData.append("Organizer", values.organizer || "");
@@ -162,19 +162,28 @@ const ActivityManagement = () => {
 
           if (editingActivity) {
             const updateUrl = `https://soschildrenvillage.azurewebsites.net/api/Activity/UpdateActivity/${editingActivity.id}`;
-            console.log("Editing Activity:", editingActivity);
+            console.log("Updating Activities with ID:", editingActivity.id);
             console.log("Update URL:", updateUrl);
-            await axios.put(updateUrl, formData, {
-              headers: { "Content-Type": "multipart/form-data" },
+
+            const updateResponse = await axios.put(updateUrl, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
             });
-            message.success("Activity updated successfully.");
+
+            console.log("Update response:", updateResponse.data);
           } else {
-            const createUrl =
-              "https://soschildrenvillage.azurewebsites.net/api/Activity/CreateActivity";
-            await axios.post(createUrl, formData, {
-              headers: { "Content-Type": "multipart/form-data" },
-            });
-            message.success("Activity created successfully.");
+            const createResponse = await axios.post(
+              "https://soschildrenvillage.azurewebsites.net/api/Activity/CreateActivity",
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            console.log("Create response:", createResponse.data);
+            message.success("Add Activity Successfully");
           }
 
           setIsModalVisible(false);
@@ -275,9 +284,9 @@ const ActivityManagement = () => {
       key: "address",
     },
     {
-      title: "Location Id",
-      dataIndex: "locationId",
-      key: "locationId",
+      title: "Village Id",
+      dataIndex: "villageId",
+      key: "villageId",
     },
     {
       title: "Activity Type",
@@ -507,7 +516,7 @@ const ActivityManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item name="locationId" label="Location Id">
+          <Form.Item name="villageId" label="Village Id">
             <Input />
           </Form.Item>
 
