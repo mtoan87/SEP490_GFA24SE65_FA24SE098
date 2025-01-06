@@ -19,8 +19,8 @@ import {
   SwapOutlined,
   HistoryOutlined,
   //PayCircleOutlined,
-  FileImageOutlined,
-  SettingOutlined,
+  //FileImageOutlined,
+  //SettingOutlined,
   HeartOutlined,
   BankOutlined,
   ScheduleOutlined,
@@ -125,12 +125,12 @@ const Sidebar = ({ collapsed, onToggle }) => {
         {
           key: 'academic',
           icon: <BookOutlined />,
-          label: <Link to="/admin/academic-report">Academic</Link>,
+          label: <Link to="/admin/academic-report">Academic Reports</Link>,
         },
         {
           key: 'health',
           icon: <MedicineBoxOutlined />,
-          label: <Link to="/admin/health-report">Health</Link>,
+          label: <Link to="/admin/health-report">Health Reports</Link>,
         },
       ],
     },
@@ -229,22 +229,22 @@ const Sidebar = ({ collapsed, onToggle }) => {
         },     
       ],
     },
-    {
-      type: 'group',
-      label: 'System',
-      children: [
-        {
-          key: 'media',
-          icon: <FileImageOutlined />,
-          label: <Link to="/admin/media-management">Image management</Link>,
-        },
-        {
-          key: 'settings',
-          icon: <SettingOutlined />,
-          label: <Link to="/admin/settings-management">Settings</Link>,
-        },
-      ],
-    },
+    // {
+    //   type: 'group',
+    //   label: 'System',
+    //   children: [
+    //     {
+    //       key: 'media',
+    //       icon: <FileImageOutlined />,
+    //       label: <Link to="/admin/media-management">Image management</Link>,
+    //     },
+    //     {
+    //       key: 'settings',
+    //       icon: <SettingOutlined />,
+    //       label: <Link to="/admin/settings-management">Settings</Link>,
+    //     },
+    //   ],
+    // },
   ];
 
   return (
