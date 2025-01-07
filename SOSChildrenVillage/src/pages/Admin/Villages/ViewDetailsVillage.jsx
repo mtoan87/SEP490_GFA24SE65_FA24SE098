@@ -9,14 +9,15 @@ import {
   List,
   Table,
   Typography,
+  Col,
+  Row,
 } from "antd";
 import {
   HomeOutlined,
   TeamOutlined,
   HeartOutlined,
-  PictureOutlined,
 } from "@ant-design/icons";
-import { MapPin, CalendarDays, Phone, Mail } from "lucide-react";
+import { MapPin, CalendarDays, Phone } from "lucide-react";
 import moment from "moment";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
@@ -147,12 +148,12 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                               "DD/MM/YYYY"
                             ),
                           },
-                          {
-                            key: "email",
-                            icon: <Mail size={18} />,
-                            label: "Email",
-                            value: village.email || "N/A",
-                          },
+                          // {
+                          //   key: "email",
+                          //   icon: <Mail size={18} />,
+                          //   label: "Email",
+                          //   value: village.email || "N/A",
+                          // },
                           {
                             key: "contactNumber",
                             icon: <Phone size={18} />,
@@ -177,57 +178,59 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                       />
                     </Card>
                   </motion.div>
-
-                  <motion.div
-                    style={{ flex: 1 }}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <Card
-                      title={
-                        <span className="flex items-center gap-2">
-                          <HeartOutlined className="text-green-500" />
-                          Statistics
-                        </span>
-                      }
+                  <Col span={12}>
+                    <motion.div
+                      style={{ flex: 1 }}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate="visible"
+                      transition={{ duration: 0.3, delay: 0.1 }}
                     >
-                      <div
-                        className="grid grid-cols-2 gap-4"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "stretch",
-                        }}
+                      <Card
+                        title={
+                          <span className="flex items-center gap-2">
+                            <HeartOutlined className="text-green-500" />
+                            Statistics
+                          </span>
+                        }
                       >
-                        <Statistic
-                          title="Total Children"
-                          value={village.totalChildren}
-                          valueStyle={{ color: "#f97316" }}
-                          prefix={<TeamOutlined />}
-                        />
-                        <Statistic
-                          title="SOS Mothers"
-                          value={village.totalHouseOwners}
-                          valueStyle={{ color: "#2563eb" }}
-                          prefix={<HeartOutlined />}
-                        />
-                        <Statistic
-                          title="Total Houses"
-                          value={village.totalHouses}
-                          valueStyle={{ color: "#16a34a" }}
-                          prefix={<HomeOutlined />}
-                        />
-                        <Statistic
-                          title="Matured Children"
-                          value={village.totalMatureChildren}
-                          valueStyle={{ color: "#9333ea" }}
-                          prefix={<TeamOutlined />}
-                        />
-                      </div>
-                    </Card>
-                  </motion.div>
+                        <Row gutter={[16, 16]}>
+                          <Col span={12}>
+                            <Statistic
+                              title="Total Children"
+                              value={village.totalChildren}
+                              valueStyle={{ color: "#f97316" }}
+                              prefix={<TeamOutlined />}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <Statistic
+                              title="SOS Mothers"
+                              value={village.totalHouseOwners}
+                              valueStyle={{ color: "#2563eb" }}
+                              prefix={<HeartOutlined />}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <Statistic
+                              title="Total Houses"
+                              value={village.totalHouses}
+                              valueStyle={{ color: "#16a34a" }}
+                              prefix={<HomeOutlined />}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <Statistic
+                              title="Matured Children"
+                              value={village.totalMatureChildren}
+                              valueStyle={{ color: "#9333ea" }}
+                              prefix={<TeamOutlined />}
+                            />
+                          </Col>
+                        </Row>
+                      </Card>
+                    </motion.div>
+                  </Col>
                 </div>
 
                 {village.description && (
@@ -284,37 +287,11 @@ const VillageDetailsModal = ({ isVisible, village, onClose }) => {
                     showSizeChanger: false,
                   }}
                   locale={{
-                    emptyText: "Không có thông tin về nhà trong làng này",
+                    emptyText: "There is no information about houses in this village.",
                   }}
                   style={{ fontSize: "16px" }}
                   scroll={{ y: 300 }}
                 />
-              </Card>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <span className="flex items-center gap-1">
-                <PictureOutlined />
-                Images
-              </span>
-            ),
-            children: (
-              <Card
-                title={
-                  <span className="flex items-center gap-2">
-                    <PictureOutlined className="text-blue-500" />
-                    Activity Images
-                  </span>
-                }
-              >
-                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                  {/* Placeholder for future image gallery */}
-                  <div className="text-center text-gray-500 py-8">
-                    Chức năng gallery hình ảnh sẽ được cập nhật sau
-                  </div>
-                </div>
               </Card>
             ),
           },
@@ -333,7 +310,7 @@ VillageDetailsModal.propTypes = {
     establishedDate: PropTypes.string,
     description: PropTypes.string,
     contactNumber: PropTypes.string,
-    email: PropTypes.string,
+    //email: PropTypes.string,
     totalHouses: PropTypes.number,
     totalChildren: PropTypes.number,
     totalHouseOwners: PropTypes.number,

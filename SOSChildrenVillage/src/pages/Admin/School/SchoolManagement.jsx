@@ -282,11 +282,6 @@ const SchoolManagement = () => {
       key: "email",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
       title: "Actions",
       key: "action",
       render: (_, record) => (

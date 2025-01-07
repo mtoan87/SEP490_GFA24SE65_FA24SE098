@@ -37,6 +37,8 @@ const HealthReport = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
@@ -316,16 +318,16 @@ const HealthReport = () => {
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
-    {
-      title: "Doctor Name",
-      dataIndex: "doctorName",
-      key: "doctorName",
-    },
-    {
-      title: "Recommendations",
-      dataIndex: "recommendations",
-      key: "recommendations",
-    },
+    // {
+    //   title: "Doctor Name",
+    //   dataIndex: "doctorName",
+    //   key: "doctorName",
+    // },
+    // {
+    //   title: "Recommendations",
+    //   dataIndex: "recommendations",
+    //   key: "recommendations",
+    // },
     {
       title: "Health Status",
       dataIndex: "healthStatus",
@@ -352,6 +354,28 @@ const HealthReport = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+    },
+    {
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
     },
     {
       title: "Actions",
@@ -680,6 +704,55 @@ const HealthReport = () => {
             </p>
           </Dragger>
         </Form.Item>
+      </Modal>
+
+      {/* Modal for View Images */}
+      <Modal
+        title="Images"
+        open={isImageModalVisible}
+        onCancel={() => setIsImageModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+            padding: "16px",
+          }}
+        >
+          {selectedImages.map((url, index) => (
+            <div
+              key={index}
+              style={{
+                border: "1px solid #d9d9d9",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+              <div
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                  borderTop: "1px solid #d9d9d9",
+                }}
+              >
+                {`Image ${index + 1}`}
+              </div>
+            </div>
+          ))}
+        </div>
       </Modal>
     </div>
   );
