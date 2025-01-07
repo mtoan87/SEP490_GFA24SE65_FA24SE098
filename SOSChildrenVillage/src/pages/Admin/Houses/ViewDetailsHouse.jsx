@@ -11,15 +11,13 @@ import {
   Row,
   Col,
   Progress,
-  Image,
 } from "antd";
 import {
   HomeOutlined,
   TeamOutlined,
   UserOutlined,
   ToolOutlined,
-  PictureOutlined,
-  TrophyOutlined,
+  //TrophyOutlined,
   BoxPlotOutlined,
 } from "@ant-design/icons";
 import { MapPin, CalendarDays } from "lucide-react";
@@ -286,14 +284,14 @@ const ViewDetailsHouse = ({ isVisible, house, onClose }) => {
                                 prefix={<TeamOutlined />}
                               />
                             </Col>
-                            <Col span={24}>
+                            {/* <Col span={24}>
                               <Statistic
                                 title="Achievements"
                                 value={house.achievementCount}
                                 valueStyle={{ color: "#eab308" }}
                                 prefix={<TrophyOutlined />}
                               />
-                            </Col>
+                            </Col> */}
                           </Row>
                         </Card>
                       </motion.div>
@@ -414,52 +412,6 @@ const ViewDetailsHouse = ({ isVisible, house, onClose }) => {
               </Card>
             ),
           },
-          {
-            key: "4",
-            label: (
-              <span className="flex items-center gap-1">
-                <PictureOutlined />
-                Images
-              </span>
-            ),
-            children: (
-              <Card
-                title={
-                  <span className="flex items-center gap-2">
-                    <PictureOutlined className="text-blue-500" />
-                    House Images
-                  </span>
-                }
-              >
-                {house.imageUrls && house.imageUrls.length > 0 ? (
-                  <Row gutter={[16, 16]}>
-                    {house.imageUrls.$values.map((imageUrl, index) => (
-                      <Col xs={24} sm={12} md={8} key={index}>
-                        <Card
-                          hoverable
-                          cover={
-                            <Image
-                              alt={`House image ${index + 1}`}
-                              src={imageUrl}
-                              width={300}
-                              height={200}
-                              objectFit="cover"
-                            />
-                          }
-                        >
-                          <Card.Meta title={`Image ${index + 1}`} />
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
-                ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    No images available for this house
-                  </div>
-                )}
-              </Card>
-            ),
-          },
         ]}
       />
     </Modal>
@@ -509,7 +461,7 @@ ViewDetailsHouse.propTypes = {
     averageAge: PropTypes.number,
     maleCount: PropTypes.number,
     femaleCount: PropTypes.number,
-    achievementCount: PropTypes.number,
+    //achievementCount: PropTypes.number,
     imageUrls: PropTypes.arrayOf(PropTypes.string),
   }),
   onClose: PropTypes.func.isRequired,

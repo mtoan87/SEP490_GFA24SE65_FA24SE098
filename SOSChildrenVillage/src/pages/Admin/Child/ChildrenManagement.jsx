@@ -24,6 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
 import { getChildDetail } from "../../../services/api";
+import { getTransferRequest } from "../../../services/api";
 import ChildrenTransfer from "./ChildrenTransfer";
 import ViewDetailsChildren from "./ViewDetailsChildren";
 import axios from "axios";
@@ -43,14 +44,15 @@ const ChildrenManagement = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
-  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  //const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [detailChild, setDetailChild] = useState(null);
   const [isTransferModalVisible, setIsTransferModalVisible] = useState(false);
   const [selectedChild, setSelectedChild] = useState(null);
+  const [transferRequests, setTransferRequests] = useState([]);
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -101,7 +103,31 @@ const ChildrenManagement = () => {
     }
   };
 
+  const fetchTransferRequests = async () => {
+    try {
+      const data = getTransferRequest();
+      setTransferRequests(data?.$values || []);
+    } catch (error) {
+      console.error("Error fetching transfer requests:", error);
+    }
+  };
+
+  // Gọi fetchTransferRequests trong useEffect
+  useEffect(() => {
+    fetchTransferRequests();
+  }, []);
+
+  const isChildInTransfer = (childId) => {
+    return transferRequests.some(
+      (request) => request.childId === childId && request.status === "Pending"
+    );
+  };
+
   const showTransferModal = (child) => {
+    if (isChildInTransfer(child.id)) {
+      message.warning("This child is already in transfer process");
+      return;
+    }
     setSelectedChild(child);
     setIsTransferModalVisible(true);
   };
@@ -211,7 +237,6 @@ const ChildrenManagement = () => {
 
             console.log("Update response:", updateResponse.data);
             message.success("Update Children Successfully");
-
           } else {
             const createResponse = await axios.post(
               "https://soschildrenvillage.azurewebsites.net/api/Children/CreateChild",
@@ -346,69 +371,73 @@ const ChildrenManagement = () => {
       dataIndex: "status",
       key: "status",
     },
-    // {
-    //   title: "Image",
-    //   dataIndex: "imageUrls",
-    //   key: "imageUrls",
-    //   align: "center",
-    //   render: (imageUrls) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => {
-    //         setSelectedImages(imageUrls || []);
-    //         setIsImageModalVisible(true);
-    //       }}
-    //       style={{
-    //         padding: 0,
-    //         margin: 0,
-    //         display: "block",
-    //         width: "100%",
-    //       }}
-    //     >
-    //       View
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
+    },
     {
       title: "Actions",
       key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
-
-          <Button
-            key={`view-${record.id}`}
-            onClick={() => fetchChildrenDetail(record)}
-            icon={<EyeOutlined />}
-          />
-
-          <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
-
-          <Button
-            key={`transfer-${record.id}`}
-            onClick={() => showTransferModal(record)}
-            icon={<SwapOutlined />}
-          >
-            Transfer
-          </Button>
-
-          {/* Hiển thị nút Restore nếu House đã bị xóa */}
-          {showDeleted && (
-            <Button type="primary" onClick={() => handleRestore(record.id)}>
-              Restore
+      render: (_, record) => {
+        const inTransfer = isChildInTransfer(record.id);
+        
+        return (
+          <Space size="middle">
+            <Button
+              key={`edit-${record.id}`}
+              onClick={() => showModal(record)}
+              icon={<EditOutlined />}
+            />
+    
+            <Button
+              key={`view-${record.id}`}
+              onClick={() => fetchChildrenDetail(record)}
+              icon={<EyeOutlined />}
+            />
+    
+            <Button
+              key={`delete-${record.id}`}
+              onClick={() => handleDelete(record.id)}
+              icon={<DeleteOutlined />}
+              danger
+            />
+    
+            <Button
+              key={`transfer-${record.id}`}
+              onClick={() => showTransferModal(record)}
+              icon={<SwapOutlined />}
+              disabled={inTransfer}
+              style={inTransfer ? { backgroundColor: '#f0f0f0' } : {}}
+            >
+              {inTransfer ? 'In Process' : 'Transfer'}
             </Button>
-          )}
-        </Space>
-      ),
+    
+            {showDeleted && (
+              <Button type="primary" onClick={() => handleRestore(record.id)}>
+                Restore
+              </Button>
+            )}
+          </Space>
+        );
+      },
     },
   ];
 
@@ -677,6 +706,55 @@ const ChildrenManagement = () => {
         </Form>
       </Modal>
 
+            {/* Modal for View Images */}
+            <Modal
+        title="Images"
+        open={isImageModalVisible}
+        onCancel={() => setIsImageModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+            padding: "16px",
+          }}
+        >
+          {selectedImages.map((url, index) => (
+            <div
+              key={index}
+              style={{
+                border: "1px solid #d9d9d9",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+              <div
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                  borderTop: "1px solid #d9d9d9",
+                }}
+              >
+                {`Image ${index + 1}`}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
+
       {/* View details */}
       <ViewDetailsChildren
         isVisible={isDetailModalVisible}
@@ -684,10 +762,20 @@ const ChildrenManagement = () => {
         onClose={() => setIsDetailModalVisible(false)}
       />
 
+      {/* <ChildrenTransfer
+        isVisible={isTransferModalVisible}
+        onClose={() => setIsTransferModalVisible(false)}
+        child={selectedChild}
+      /> */}
+
       <ChildrenTransfer
         isVisible={isTransferModalVisible}
         onClose={() => setIsTransferModalVisible(false)}
         child={selectedChild}
+        onTransferSuccess={() => {
+          fetchTransferRequests();
+          fetchChildren();
+        }}
       />
     </div>
   );

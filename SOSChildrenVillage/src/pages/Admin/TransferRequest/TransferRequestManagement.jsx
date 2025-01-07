@@ -37,6 +37,11 @@ const TransferRequestManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
+  const [selectedRequestForAction, setSelectedRequestForAction] = useState(null);
+  const [approvalForm] = Form.useForm();
+  const [rejectionForm] = Form.useForm();
 
   // Get user role and ID from localStorage
   const userRole = localStorage.getItem("roleId");
@@ -78,37 +83,112 @@ const TransferRequestManagement = () => {
     }
   }, [navigate, redirecting, userRole, fetchTransferRequests]);
 
-  const handleStatusUpdate = async (request, newStatus) => {
+  const showApproveModal = (request) => {
+    setSelectedRequestForAction(request);
+    setIsApproveModalVisible(true);
+    approvalForm.resetFields();
+  };
+
+  const showRejectModal = (request) => {
+    setSelectedRequestForAction(request);
+    setIsRejectModalVisible(true);
+    rejectionForm.resetFields();
+  };
+
+  // const handleStatusUpdate = async (request, newStatus) => {
+  //   try {
+  //     const formData = new FormData();
+      
+  //     formData.append("id", request.id);
+  //     formData.append("childId", request.childId);
+  //     formData.append("fromHouseId", request.fromHouseId);
+  //     formData.append("toHouseId", request.toHouseId);
+  //     formData.append("requestReason", request.requestReason);
+  //     formData.append("status", newStatus);
+  //     formData.append("modifiedBy", userId);
+  //     //formData.append("approvedBy", userId);
+  //     //formData.append("directorNote", "");
+  
+  //     await axios.put(
+  //       `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${request.id}`,
+  //       formData,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
+  
+  //     message.success(`Request ${newStatus.toLowerCase()} successfully`);
+  //     fetchTransferRequests();
+  //   } catch (error) {
+  //     console.error("Error updating request status:", error);
+  //     if (error.response?.data) {
+  //       message.error(error.response.data);
+  //     } else {
+  //       message.error("Failed to update request status");
+  //     }
+  //   }
+  // };
+
+  const handleApprove = async () => {
     try {
+      const values = await approvalForm.validateFields();
       const formData = new FormData();
       
-      formData.append("id", request.id);
-      formData.append("childId", request.childId);
-      formData.append("fromHouseId", request.fromHouseId);
-      formData.append("toHouseId", request.toHouseId);
-      formData.append("requestReason", request.requestReason);
-      formData.append("status", newStatus);
+      formData.append("id", selectedRequestForAction.id);
+      formData.append("childId", selectedRequestForAction.childId);
+      formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
+      formData.append("toHouseId", selectedRequestForAction.toHouseId);
+      formData.append("requestReason", selectedRequestForAction.requestReason);
+      formData.append("status", "Approved");
       formData.append("modifiedBy", userId);
-      //formData.append("approvedBy", userId); // Nếu là approve thì cần thêm approvedBy
-      //formData.append("directorNote", ""); // Có thể để trống vì bạn không cần lưu note
-  
+      formData.append("approvedBy", userId);
+      formData.append("directorNote", values.notes);
+
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${request.id}`,
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-  
-      message.success(`Request ${newStatus.toLowerCase()} successfully`);
+
+      message.success("Request approved successfully");
+      setIsApproveModalVisible(false);
       fetchTransferRequests();
     } catch (error) {
-      console.error("Error updating request status:", error);
-      if (error.response?.data) {
-        message.error(error.response.data);
-      } else {
-        message.error("Failed to update request status");
-      }
+      console.error("Error approving request:", error);
+      message.error(error.response?.data || "Failed to approve request");
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const values = await rejectionForm.validateFields();
+      const formData = new FormData();
+      
+      formData.append("id", selectedRequestForAction.id);
+      formData.append("childId", selectedRequestForAction.childId);
+      formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
+      formData.append("toHouseId", selectedRequestForAction.toHouseId);
+      formData.append("requestReason", selectedRequestForAction.requestReason);
+      formData.append("status", "Rejected");
+      formData.append("modifiedBy", userId);
+      formData.append("directorNote", values.rejectionReason);
+
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      message.success("Request rejected successfully");
+      setIsRejectModalVisible(false);
+      fetchTransferRequests();
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+      message.error(error.response?.data || "Failed to reject request");
     }
   };
 
@@ -291,7 +371,7 @@ const TransferRequestManagement = () => {
                   <Button
                     type="primary"
                     icon={<CheckCircleOutlined />}
-                    onClick={() => handleStatusUpdate(record, "Approved")}
+                    onClick={() => showApproveModal(record)}
                     title="Approve Request"
                   >
                     Approve
@@ -299,7 +379,7 @@ const TransferRequestManagement = () => {
                   <Button
                     danger
                     icon={<CloseCircleOutlined />}
-                    onClick={() => handleStatusUpdate(record, "Rejected")}
+                    onClick={() => showRejectModal(record)}
                     title="Reject Request"
                   >
                     Reject
@@ -420,6 +500,49 @@ const TransferRequestManagement = () => {
               <Option value="Approved">Approved</Option>
               <Option value="Rejected">Rejected</Option>
             </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Modal for Approve */}
+      {/* Approve Modal */}
+      <Modal
+        title="Approve Transfer Request"
+        open={isApproveModalVisible}
+        onOk={handleApprove}
+        onCancel={() => {
+          setIsApproveModalVisible(false);
+          approvalForm.resetFields();
+        }}
+      >
+        <Form form={approvalForm} layout="vertical">
+          <Form.Item
+            name="notes"
+            label="Approval Notes"
+            rules={[{ required: true, message: "Please enter approval notes" }]}
+          >
+            <TextArea rows={4} placeholder="Enter your approval notes" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Reject Modal */}
+      <Modal
+        title="Reject Transfer Request"
+        open={isRejectModalVisible}
+        onOk={handleReject}
+        onCancel={() => {
+          setIsRejectModalVisible(false);
+          rejectionForm.resetFields();
+        }}
+      >
+        <Form form={rejectionForm} layout="vertical">
+          <Form.Item
+            name="rejectionReason"
+            label="Rejection Reason"
+            rules={[{ required: true, message: "Please enter rejection reason" }]}
+          >
+            <TextArea rows={4} placeholder="Enter your reason for rejection" />
           </Form.Item>
         </Form>
       </Modal>

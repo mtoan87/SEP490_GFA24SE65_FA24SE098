@@ -37,13 +37,13 @@ const HouseManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [uploadFiles, setUploadFiles] = useState([]);
-  //const [selectedImages, setSelectedImages] = useState([]);
-  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
-  const [detailHouse, setDetailHouse] = useState(null); 
+  const [detailHouse, setDetailHouse] = useState(null);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
@@ -354,28 +354,28 @@ const HouseManagement = () => {
       dataIndex: "status",
       key: "status",
     },
-    // {
-    //   title: "Image",
-    //   dataIndex: "imageUrls",
-    //   key: "imageUrls",
-    //   render: (imageUrls) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => {
-    //         setSelectedImages(imageUrls || []);
-    //         setIsImageModalVisible(true);
-    //       }}
-    //       style={{
-    //         padding: 0,
-    //         margin: 0,
-    //         display: "block",
-    //         width: "100%",
-    //       }}
-    //     >
-    //       View
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
+    },
     {
       title: "Actions",
       key: "action",
@@ -667,15 +667,8 @@ const HouseManagement = () => {
         </Form>
       </Modal>
 
-      {/* View details */}
-      <ViewDetailsHouse
-        isVisible={isDetailModalVisible}
-        house={detailHouse}
-        onClose={() => setIsDetailModalVisible(false)}
-      />
-
       {/* Modal for View Images */}
-      {/* <Modal
+      <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}
@@ -721,7 +714,14 @@ const HouseManagement = () => {
             </div>
           ))}
         </div>
-      </Modal> */}
+      </Modal>
+
+      {/* View details */}
+      <ViewDetailsHouse
+        isVisible={isDetailModalVisible}
+        house={detailHouse}
+        onClose={() => setIsDetailModalVisible(false)}
+      />
     </div>
   );
 };

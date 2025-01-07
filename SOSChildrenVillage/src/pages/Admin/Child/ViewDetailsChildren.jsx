@@ -1,4 +1,4 @@
-import { Modal, Tabs, Descriptions, Image } from "antd";
+import { Modal, Tabs, Descriptions, Tag } from "antd";
 import {
   UserOutlined,
   HeartOutlined,
@@ -26,13 +26,13 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
     >
       {/* Header: Child Image and Basic Info */}
       <div className="flex gap-6 mb-6">
-        <div className="relative w-48 h-48 rounded-lg overflow-hidden">
+        {/* <div className="relative w-48 h-48 rounded-lg overflow-hidden">
           <Image
             src={child.imageUrls?.[0] || "/placeholder.svg"}
             alt={child.childName}
             className="object-cover"
           />
-        </div>
+        </div> */}
 
         <div className="flex-1">
           <h2 className="text-2xl font-bold mb-4">
@@ -189,25 +189,44 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
           {child.childProgresses &&
           child.childProgresses.$values &&
           child.childProgresses.$values.length > 0 ? (
-            child.childProgresses.$values.map((progress, index) => (
-              <Descriptions key={index} bordered column={1}>
-                <Descriptions.Item label="Description">
-                  {progress.description}
-                </Descriptions.Item>
-                <Descriptions.Item label="Date">
-                  {progress.date ? moment(progress.date).format("DD/MM/YYYY") : "N/A"}
-                </Descriptions.Item>
-                <Descriptions.Item label="Category">
-                  {progress.category}
-                </Descriptions.Item>
-                <Descriptions.Item label="Event">
-                  {progress.eventName}
-                </Descriptions.Item>
-                <Descriptions.Item label="Activity">
-                  {progress.activityName}
-                </Descriptions.Item>
-              </Descriptions>
-            ))
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label="Event">
+                {child.childProgresses.$values.some(
+                  (progress) => progress.eventName
+                ) ? (
+                  child.childProgresses.$values
+                    .filter((progress) => progress.eventName)
+                    .map((progress, index) => (
+                      <Tag color="blue" key={index}>
+                        {progress.eventName}
+                      </Tag>
+                    ))
+                ) : (
+                  <>
+                    <Tag color="red">No Event</Tag>
+                    <Tag color="red">No Event</Tag>
+                  </>
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label="Activity">
+                {child.childProgresses.$values.some(
+                  (progress) => progress.activityName
+                ) ? (
+                  child.childProgresses.$values
+                    .filter((progress) => progress.activityName)
+                    .map((progress, index) => (
+                      <Tag color="green" key={index}>
+                        {progress.activityName}
+                      </Tag>
+                    ))
+                ) : (
+                  <>
+                    <Tag color="red">No Activity</Tag>
+                    <Tag color="red">No Activity</Tag>
+                  </>
+                )}
+              </Descriptions.Item>
+            </Descriptions>
           ) : (
             <p>No progress records available.</p>
           )}

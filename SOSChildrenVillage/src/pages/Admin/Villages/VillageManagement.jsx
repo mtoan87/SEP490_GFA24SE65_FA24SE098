@@ -35,9 +35,9 @@ const VillageManagement = () => {
   const [editingVillage, setEditingVillage] = useState(null);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
-  //const [selectedImages, setSelectedImages] = useState([]);
-  //const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -316,28 +316,28 @@ const VillageManagement = () => {
       dataIndex: "status",
       key: "status",
     },
-    // {
-    //   title: "Image",
-    //   dataIndex: "imageUrls",
-    //   key: "imageUrls",
-    //   render: (imageUrls) => (
-    //     <Button
-    //       type="link"
-    //       onClick={() => {
-    //         setSelectedImages(imageUrls || []);
-    //         setIsImageModalVisible(true);
-    //       }}
-    //       style={{
-    //         padding: 0,
-    //         margin: 0,
-    //         display: "block",
-    //         width: "100%",
-    //       }}
-    //     >
-    //       View
-    //     </Button>
-    //   ),
-    // },
+    {
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
+    },
     {
       title: "Actions",
       key: "action",
@@ -605,15 +605,8 @@ const VillageManagement = () => {
         </Form>
       </Modal>
 
-      {/* View Details */}
-      <ViewDetailsVillage
-        isVisible={isDetailModalVisible}
-        village={detailVillage}
-        onClose={() => setIsDetailModalVisible(false)}
-      />
-
-      {/* Modal for View Images */}
-      {/* <Modal
+            {/* Modal for View Images */}
+            <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}
@@ -659,7 +652,14 @@ const VillageManagement = () => {
             </div>
           ))}
         </div>
-      </Modal> */}
+      </Modal>
+
+      {/* View Details */}
+      <ViewDetailsVillage
+        isVisible={isDetailModalVisible}
+        village={detailVillage}
+        onClose={() => setIsDetailModalVisible(false)}
+      />
     </div>
   );
 };
