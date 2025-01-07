@@ -17,7 +17,8 @@ const Header = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-
+    console.log('Stored token:', token);  // Check token here
+    console.log('Stored userId:', userId);  // Check userId here
     if (token && userId) {
       setIsLoggedIn(true);
       fetchUserInfo(userId);
@@ -35,6 +36,7 @@ const Header = () => {
       const data = await response.json();
 
       setUserName(data.userName || "Guest");
+      console.log("username :", userName);
       const imageUrl = data.images?.$values?.[0]?.urlPath;
       setUserImage(imageUrl || "");
       setUserRoleId(data.roleId || null);
@@ -65,7 +67,7 @@ const Header = () => {
       <Text strong className="user-name">
         {userName}
       </Text>
-      {[1, 3, 4].includes(userRoleId) ? (
+      {[1, 3, 4, 6].includes(userRoleId) ? (
         <div className="admin-links">
           <Link to="/userDetail">
             <Button type="link">View Profile</Button>
@@ -91,7 +93,7 @@ const Header = () => {
         </div>
       )}
       <Button
-      style={{width:"100px"}}
+        style={{ width: "100px" }}
         type="primary"
         danger
         onClick={handleLogout}
