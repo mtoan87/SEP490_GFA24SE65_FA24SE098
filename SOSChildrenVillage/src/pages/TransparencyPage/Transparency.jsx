@@ -11,7 +11,7 @@ const Transparency = () => {
     const handleDownloadReport = async () => {
         try {
             const response = await axios.get(
-                'https://soschildrenvillage.azurewebsites.net/api/Incomes/ExportExcel',
+                'https://soschildrenvillage.azurewebsites.net/api/Donation/ExportExcel',
                 {
                     responseType: 'blob', // Ensure the response is a file
                 }
