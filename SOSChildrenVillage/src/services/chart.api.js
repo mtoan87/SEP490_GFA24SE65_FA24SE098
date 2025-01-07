@@ -46,6 +46,36 @@ export const getVillageHouseDistribution = async () => {
   }
 };
 
+export const getTotalDonationStat = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/total-donation-stats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching total donation stats:", error);
+    return error;
+  }
+};
+
+export const getTotalIncomeStat = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/total-income-stats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching total income stats:", error);
+    return error;
+  }
+};
+
+export const getTotalExpenseStat = async () => {
+  try {
+    const response = await api.get("/api/Dashboard/total-expense-stats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching total expense stats:", error);
+    return error;
+  }
+};
+
 export const getChildrenDemographics = async () => {
   try {
     const response = await api.get("/api/Dashboard/children-demographics");
