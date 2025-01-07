@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Card } from 'antd';
 import {
   BarChart,
@@ -9,29 +10,53 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-
-// Dữ liệu mẫu
-const data = [
-  { month: 'Jan', income: 4000, expense: 2400 },
-  { month: 'Feb', income: 3000, expense: 1398 },
-  { month: 'Mar', income: 2000, expense: 9800 },
-  { month: 'Apr', income: 2780, expense: 3908 },
-  { month: 'May', income: 1890, expense: 4800 },
-  { month: 'Jun', income: 2390, expense: 3800 },
-  { month: 'Jul', income: 3490, expense: 4300 },
-  { month: 'Aug', income: 4000, expense: 2400 },
-  { month: 'Sep', income: 3000, expense: 1398 },
-  { month: 'Oct', income: 2000, expense: 9800 },
-  { month: 'Nov', income: 2780, expense: 3908 },
-  { month: 'Dec', income: 1890, expense: 4800 },
-];
+import { getIncomeExpenseComparison } from '../../../../../../../services/chart.api';
 
 function IncomeExpenseChart() {
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const year = 2025;
+        const response = await getIncomeExpenseComparison(year);
+
+        if (response) {
+          const transformedData = response.labels.$values.map((label, index) => ({
+            month: label,
+            income: response.incomeData.$values[index] || 0,
+            expense: response.expenseData.$values[index] || 0,
+          }));
+          setChartData(transformedData);
+        } else {
+          setError('No data available');
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <Card>Loading...</Card>;
+  }
+
+  if (error) {
+    return <Card>Error: {error}</Card>;
+  }
+
   return (
     <Card title="Income vs Expense Chart" style={{ width: '100%', maxWidth: 800, margin: '0 auto' }}>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
-          data={data}
+          data={chartData}
           margin={{
             top: 20,
             right: 30,
