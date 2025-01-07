@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   Space,
@@ -20,7 +20,6 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { getAccount } from "../../../services/api";
 import moment from "moment";
 
@@ -39,41 +38,29 @@ const UserManagement = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
-  const navigate = useNavigate();
-  const messageShown = useRef(false);
+  const [searchTerm, setSearchTerm] = useState(""); // Thêm trạng thái searchTerm
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userRole = localStorage.getItem("roleId");
+    fetchUserAccounts();
+  }, [showDeleted, searchTerm]); // Thêm searchTerm vào dependency
 
-    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
-      if (!redirecting && !messageShown.current) {
-        setRedirecting(true);
-        message.error("You do not have permission to access this page");
-        navigate("/home");
-        messageShown.current = true;
-      }
-    } else {
-      fetchUserAccounts();
-    }
-  }, [navigate, redirecting]);
-
-  // useEffect(() => {
-  //   fetchUserAccounts();
-  // }, []);
-
-  const fetchUserAccounts = async (showDeleted = false) => {
+  const fetchUserAccounts = async () => {
     try {
       setLoading(true);
-      const data = await getAccount(showDeleted);
+      const data = await getAccount(showDeleted, searchTerm);
       setAccounts(data);
-      console.log("Fetched user data:", data);
     } catch (error) {
       console.error("Error fetching user accounts:", error);
       message.error("Cannot fetch user accounts.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
+    if (!value) {
+      fetchUserAccounts(); // Nếu ô tìm kiếm trống thì gọi lại danh sách đầy đủ
     }
   };
 
@@ -203,7 +190,7 @@ const UserManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              "Unable to delete user. Please try again."
+            "Unable to delete user. Please try again."
           );
         }
       },
@@ -326,8 +313,19 @@ const UserManagement = () => {
           <Input
             placeholder="Search user"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchUserAccounts()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => fetchUserAccounts()} // Gọi hàm tìm kiếm
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",

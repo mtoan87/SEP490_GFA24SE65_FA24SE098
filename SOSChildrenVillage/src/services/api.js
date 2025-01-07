@@ -139,14 +139,19 @@ export const getHealthReportWithImages = async (showDeleted = false) => {
 };
 
 //User Accounts
-export const getAccount = async (showDeleted = false) => {
+export const getAccount = async (showDeleted = false, search = "") => {
   try {
-    //const response = await api.get("/api/UserAccount");
-    const endpoint = showDeleted
-      ? "/api/UserAccount/GetAllUserIsDelete"
-      : "/api/UserAccount";
+    let endpoint;
+    if (search) {
+      endpoint = `/api/UserAccount/Search?SearchTerm=${encodeURIComponent(search)}`;
+    } else {
+      endpoint = showDeleted
+        ? "/api/UserAccount/GetAllUserIsDelete"
+        : "/api/UserAccount";
+    }
+
     const response = await api.get(endpoint);
-    return response.data?.$values || []; //nếu trả data là $values thì nhận luôn
+    return response.data?.$values || []; // Trả về `$values` nếu có, ngược lại trả về mảng rỗng
   } catch (error) {
     console.error("Error fetching User Account:", error);
     throw error;
