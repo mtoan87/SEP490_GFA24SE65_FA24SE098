@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -17,6 +17,7 @@ import {
   SearchOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import { getAcademicReportWithImages } from "../../../services/api";
 import axios from "axios";
 
@@ -35,10 +36,29 @@ const AcademicReport = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchAcademicReports();
-  }, []);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchAcademicReports();
+    }
+  }, [navigate, redirecting]);
+
+  // useEffect(() => {
+  //   fetchAcademicReports();
+  // }, []);
 
   const fetchAcademicReports = async (showDeleted = false) => {
     try {

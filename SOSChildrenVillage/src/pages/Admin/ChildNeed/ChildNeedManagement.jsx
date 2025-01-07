@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -15,6 +15,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import { getChildNeed } from "../../../services/api";
@@ -27,10 +28,29 @@ const ChildNeedManagement = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchChildNeedList();
-  }, []);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchChildNeedList();
+    }
+  }, [navigate, redirecting]);
+
+  // useEffect(() => {
+  //   fetchChildNeedList();
+  // }, []);
 
   const fetchChildNeedList = async () => {
     try {

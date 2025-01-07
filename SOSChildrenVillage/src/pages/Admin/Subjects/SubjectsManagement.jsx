@@ -1,19 +1,12 @@
-import { useState, useEffect } from "react";
-import {
-  Table,
-  Space,
-  Button,
-  Modal,
-  Form,
-  Input,
-  message,
-} from "antd";
+import { useState, useEffect, useRef } from "react";
+import { Table, Space, Button, Modal, Form, Input, message } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getSubjectDetail } from "../../../services/api";
 
@@ -25,10 +18,29 @@ const SubjectsManagement = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchSubjectList();
-  }, []);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchSubjectList();
+    }
+  }, [navigate, redirecting]);
+
+  // useEffect(() => {
+  //   fetchSubjectList();
+  // }, []);
 
   const fetchSubjectList = async () => {
     try {
@@ -282,7 +294,9 @@ const SubjectsManagement = () => {
           <Form.Item
             name="academicReportId"
             label="Academic Report ID"
-            rules={[{ required: true, message: "Please enter Academic Report ID" }]}
+            rules={[
+              { required: true, message: "Please enter Academic Report ID" },
+            ]}
           >
             <Input />
           </Form.Item>

@@ -46,7 +46,7 @@ const InventoryManagement = () => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
 
-    if (!token || !["1", "3", "4"].includes(userRole)) {
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");

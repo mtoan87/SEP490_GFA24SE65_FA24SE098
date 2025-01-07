@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Table,
   Space,
@@ -20,6 +20,7 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { getAccount } from "../../../services/api";
 import moment from "moment";
 
@@ -38,10 +39,29 @@ const UserManagement = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchUserAccounts();
-  }, []);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("roleId");
+
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchUserAccounts();
+    }
+  }, [navigate, redirecting]);
+
+  // useEffect(() => {
+  //   fetchUserAccounts();
+  // }, []);
 
   const fetchUserAccounts = async (showDeleted = false) => {
     try {
