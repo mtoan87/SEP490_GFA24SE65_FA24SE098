@@ -19,7 +19,7 @@ import {
   InboxOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom"; // Thêm useNavigate từ react-router-dom
+import { useNavigate } from "react-router-dom";
 import { getHouseWithImages } from "../../../services/api";
 import { getHouseDetail } from "../../../services/api";
 import ViewDetailsHouse from "./ViewDetailsHouse";
@@ -42,10 +42,9 @@ const HouseManagement = () => {
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [redirecting, setRedirecting] = useState(false); // Thêm trạng thái để kiểm soát việc điều hướng
-  const [detailHouse, setDetailHouse] = useState(null); // Lưu thông tin chi tiết House
-  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false); 
-
+  const [redirecting, setRedirecting] = useState(false);
+  const [detailHouse, setDetailHouse] = useState(null); 
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -54,7 +53,7 @@ const HouseManagement = () => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
 
-    if (!token || !["1", "3", "4"].includes(userRole)) {
+    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");
@@ -86,13 +85,13 @@ const HouseManagement = () => {
       setLoading(true);
       const houseDetail = await getHouseDetail(houseId);
       console.log("House Detail before setting:", houseDetail);
-      setDetailHouse(houseDetail); 
+      setDetailHouse(houseDetail);
       setIsDetailModalVisible(true);
     } catch (error) {
       console.error("Error fetching house details:", error);
       message.error("Failed to fetch house details.");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -172,11 +171,14 @@ const HouseManagement = () => {
               ? values.lastInspectionDate.format("YYYY-MM-DD")
               : ""
           );
-          formData.append("MaintenanceStatus", values.maintenanceStatus || "Good");
+          formData.append(
+            "MaintenanceStatus",
+            values.maintenanceStatus || "Good"
+          );
           // formData.append("RoleName", values.roleName);
 
           for (var pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]); 
+            console.log(pair[0] + ": " + pair[1]);
           }
 
           // Append các hình ảnh
@@ -578,22 +580,19 @@ const HouseManagement = () => {
             <Input />
           </Form.Item> */}
 
-          <Form.Item 
-          name="foundationDate" 
-          label="Foundation Date"
-          rules={[
-            { required: true, message: "Please select foundation date" },
-          ]}
+          <Form.Item
+            name="foundationDate"
+            label="Foundation Date"
+            rules={[
+              { required: true, message: "Please select foundation date" },
+            ]}
           >
-            <DatePicker format="YYYY-MM-DD"/>
+            <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
           {/* Last Inspection Date */}
-          <Form.Item 
-          name="lastInspectionDate" 
-          label="Last Inspection Date"
-          >
-            <DatePicker format="YYYY-MM-DD"/>
+          <Form.Item name="lastInspectionDate" label="Last Inspection Date">
+            <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
           {/* Maintenance Status */}

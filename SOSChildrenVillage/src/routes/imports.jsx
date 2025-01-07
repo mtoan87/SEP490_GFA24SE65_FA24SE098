@@ -117,22 +117,3 @@ export {
     ListHousePage,
     BookingHistoryPage
 };
-
-
-// import { createBrowserRouter, Navigate } from 'react-router-dom';
-// import AdminLayout from '../components/layout/Admin/AdminLayout';
-// import AdminDashboard from '../pages/Admin/Dashboard/AdminDashboard';
-// import UserManagement from '../pages/Admin/User/UserManagement';
-// import HouseManagement from '../pages/Admin/Houses/HouseManagement';
-// import ChildManagement from '../pages/Admin/Child/ChildrenManagement';
-// import HomePages from '../pages/Home/HomePage';
-// import Login from '../pages/Authenication/Login';
-// import UserDetail from '../pages/User/UserProfile';
-// import Register from '../pages/Authenication/Register';
-// import Donate from '../pages/Donates/DonatePage';
-// // import { element } from 'prop-types';
-// import PaymentReturnPage from '../pages/Donates/PaymentReturnPage';
-// import EditUserProfile from '../pages/User/EditUserProfile';
-// import EventDetailPage from '../pages/EventPage/EventDetailPage';
-// import ChildDetailPage from '../pages/ChildPage/ChildDetailPage';
-// import DonateHistoryPage from '../pages/User/DonateHistoryPage';
