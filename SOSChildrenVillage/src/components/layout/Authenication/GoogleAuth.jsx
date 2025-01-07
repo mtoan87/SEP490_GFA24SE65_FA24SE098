@@ -1,15 +1,13 @@
-import React from "react";
-import LoginScreen from "../../../pages/Authenication/LoginScreen";
+import React from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Layout, Row, Col } from "antd"; // Ant Design components
 import background from "../../../assets/images/background.png";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import CallbackPage from '../../../pages/Authenication/Callback'; // Trang callback
 
 const { Content } = Layout;
-const redirectUri = 'https://localhost:5173/callback'; // Đảm bảo URL này khớp với URI đã khai báo trong Google Console
-// Replace "YOUR_GOOGLE_CLIENT_ID" with your actual client ID from Google Cloud Console
-const GOOGLE_CLIENT_ID = "334049821575-i56alrskjiqp857pn7ceustmbrkvr9aj.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = '334049821575-i56alrskjiqp857pn7ceustmbrkvr9aj.apps.googleusercontent.com';
 
-export const Login = () => {
+const GoogleAuth = () => {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <Layout
@@ -27,8 +25,7 @@ export const Login = () => {
             <div className="login__section--inner" style={{ height: "100%" }}>
               <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
                 <Col xs={24} sm={24} md={12} lg={10}>
-                  {/* LoginScreen Component */}
-                  <LoginScreen redirectUri={redirectUri} />
+                <CallbackPage />
                 </Col>
               </Row>
             </div>
@@ -39,4 +36,4 @@ export const Login = () => {
   );
 };
 
-export default Login;
+export default GoogleAuth;

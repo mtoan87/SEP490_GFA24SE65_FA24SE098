@@ -49,6 +49,7 @@ import {
     TransparencyPage,
     VillageDetailPage,
     HouseDetailPage,
+    GoogleAuth,
 } from './imports';
 
 const router = createBrowserRouter([
@@ -203,6 +204,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+  },
+  {
+    path: '/callback',
+    element: <GoogleAuth />,
   },
 
   // User routes
