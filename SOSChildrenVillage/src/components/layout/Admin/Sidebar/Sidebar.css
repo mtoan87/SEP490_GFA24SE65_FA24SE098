@@ -1,48 +1,101 @@
 .site-sidebar {
-    position: fixed;
-    height: 100vh;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    background: #001529;
-    z-index: 1001;
-  }
-  
-  .sidebar-header {
-    height: 64px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #1a2531;
-  }
-  
-  .logo-text {
-    color: white;
-    font-size: 20px;
-    transition: opacity 0.3s;
-  }
-  
-  .sidebar-menu {
-    height: calc(100vh - 64px);
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  
-  .collapse-button {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-  
-  .collapse-button:hover {
-    background-color: #2c3a47;
-  }
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh !important;
+  background: #001529;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  height: 64px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a2531;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.logo-image {
+  height: 40px;
+  transition: margin 0.3s;
+}
+
+.logo-text {
+  color: white;
+  font-size: 20px;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-menu {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 64px);
+}
+
+/* Ensure menu container takes full height */
+.sidebar-menu .ant-menu {
+  height: 100%;
+  border-right: none !important;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.collapse-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.collapse-button:hover {
+  background-color: #2c3a47;
+}
+
+/* Fix for Ant Design Menu styles */
+.ant-menu-inline, 
+.ant-menu-vertical {
+  border-right: none !important;
+}
+
+.ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
