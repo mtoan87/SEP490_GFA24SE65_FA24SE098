@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line } from "recharts";
 import { Card } from "antd";
-import { getChildTrends } from "../../../../../../../services/chart.api"; // Đường dẫn tới file api của bạn
+import { getChildTrends } from "../../../../../../../services/chart.api";
 
-const colors = ["#8884d8", "#82ca9d", "#ffc658"]; // Màu cho từng Year
+const colors = ["#8884d8", "#82ca9d", "#ffc658"];
+const monthAbbreviations = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const ChildTrends = () => {
   const [chartData, setChartData] = useState([]);
@@ -12,9 +13,8 @@ const ChildTrends = () => {
     const fetchData = async () => {
       const response = await getChildTrends();
       if (response) {
-        // Chuyển đổi dữ liệu từ API sang format phù hợp với biểu đồ
         const transformedData = Array.from({ length: 12 }, (_, i) => ({
-          month: (i + 1).toString(),
+          month: monthAbbreviations[i],
           "2023": response.data2023.$values[i].count,
           "2024": response.data2024.$values[i].count,
           "2025": response.data2025.$values[i].count,
@@ -35,12 +35,12 @@ const ChildTrends = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey="month" 
-            tickFormatter={(value) => `Month ${value}`}
+            tickFormatter={(value) => value}
           />
           <YAxis />
           <Tooltip 
             formatter={(value, name) => [`${value} Children`, `Year ${name}`]}
-            labelFormatter={(label) => `Month ${label}`}
+            labelFormatter={(label) => `Month: ${label}`}
           />
           <Legend formatter={(value) => `Year ${value}`} />
           {years.map((year, index) => (

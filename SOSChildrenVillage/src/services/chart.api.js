@@ -171,3 +171,23 @@ export const getBookingTrends = async (timeFrame) => {
     return null;
   }
 };
+
+/**
+ * Lấy dữ liệu thu chi (income-expense) theo năm
+ * @param {number} year - Năm cần lấy dữ liệu
+ * @returns {Promise<Object>}
+ */
+export const getIncomeExpenseComparison = async (year) => {
+  try {
+    const response = await api.get(`/api/Dashboard/income-expense/${year}`);
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      console.error("API Error:", response.data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching income-expense data:", error);
+    return null;
+  }
+};
