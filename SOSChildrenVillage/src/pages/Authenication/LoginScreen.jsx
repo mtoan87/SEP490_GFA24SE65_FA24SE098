@@ -22,7 +22,7 @@ const LoginScreen = () => {
       return null;
     }
   };
-  
+
 
   const fetchLogin = async (email, password) => {
     try {
@@ -54,40 +54,40 @@ const LoginScreen = () => {
 
   const handleGoogleLogin = async (credentialResponse) => {
     const token = credentialResponse.credential;
-  
+
     if (!token) {
       console.error('Google token retrieval failed:', credentialResponse);
       message.error('Failed to retrieve Google token. Please try again.');
       return;
     }
-  
+
     console.log('Google token retrieved:', token);
-  
+
     try {
       // Xác minh token với Google
       const tokenInfo = await verifyGoogleToken(token);
       if (!tokenInfo) return; // If no token info, stop here
-  
+
       // Send token to the backend
       const response = await axios.post(
         'https://soschildrenvillage.azurewebsites.net/api/Login/LoginGoogle',
         { googleToken: token },
         { headers: { 'Content-Type': 'application/json' } }
       );
-  
+
       console.log('Backend response for Google Login:', response.data);
-  
+
       if (response.data.token) {
         const { token: token, roleId, userAccountId } = response.data;
 
         console.log('Google Login Success:', { token, roleId, userAccountId });
-      
+
         // Store the accessToken and userId in localStorage
         localStorage.setItem("token", token);  // Store access token here
         localStorage.setItem("roleId", roleId);
         localStorage.setItem("userId", userAccountId); // Store user ID here
         // Navigate based on user role
-        navigate(roleId === '1' ? '/admin' : '/home');
+        navigate(roleId === '1' ? '/admin' : '/edituserprofile');
       } else {
         console.log('Google Login failed:', response.data);
         message.error('Google login failed. Please try again.');
@@ -97,7 +97,7 @@ const LoginScreen = () => {
       message.error('An error occurred while logging in with Google.');
     }
   };
-  
+
   return (
     <div
       style={{
@@ -168,6 +168,17 @@ const LoginScreen = () => {
             </Button>
           </Text>
         </div>
+        <Form.Item>
+          <Button
+            type="default"
+            block
+            onClick={() => navigate('/home')}
+            style={{ marginTop: '16px' }}
+          >
+            Back to Home
+          </Button>
+        </Form.Item>
+
       </Form>
     </div>
   );

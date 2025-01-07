@@ -65,7 +65,7 @@ const ListHouse = () => {
   const handleBooking = async (values) => {
     try {
       const bookingData = {
-        houseId: selectedHouse.houseId, // Get the houseId from the selected house
+        houseId: selectedHouse.id, // Get the houseId from the selected house
         visitday: values.visitday.format('YYYY-MM-DD'),
         bookingSlotId: values.bookingSlotId,
         userAccountId: userId, // Use the correct userId here
@@ -173,9 +173,9 @@ const ListHouse = () => {
           type="primary"
           icon={<EyeOutlined />}
           onClick={() => {
-            setSelectedHouse(record); // Set selected house for booking
-            setIsModalVisible(true); // Show booking modal
-          }}
+            setSelectedHouse(record); // Đặt nhà được chọn
+            setIsModalVisible(true);  // Hiển thị modal
+          }}          
         >
           Book Now
         </Button>
