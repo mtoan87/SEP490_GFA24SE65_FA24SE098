@@ -404,10 +404,6 @@ const ActivityManagement = () => {
               Add New Activity
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {

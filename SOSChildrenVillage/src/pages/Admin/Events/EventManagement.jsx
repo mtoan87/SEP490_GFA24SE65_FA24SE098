@@ -6,19 +6,26 @@ import {
   Modal,
   Form,
   Input,
-  Select,
-  DatePicker,
+  //Select,
+  //DatePicker,
   message,
-  Checkbox,
-  Upload,
+  //Checkbox,
+  //Upload,
 } from "antd";
-import { EyeOutlined, EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, InboxOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  EditOutlined,
+  //DeleteOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  //InboxOutlined,
+} from "@ant-design/icons";
 import { getEventsWithImages } from "../../../services/api";
-import axios from "axios";
+//import axios from "axios";
 import moment from "moment";
 
-const { Option } = Select;
-const { Dragger } = Upload;
+//const { Option } = Select;
+//const { Dragger } = Upload;
 
 const EventManagement = () => {
   const [events, setEvents] = useState([]);
@@ -28,14 +35,29 @@ const EventManagement = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
+//  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+// const [selectedImages, setSelectedImages] = useState([]);
   const [eventDetails, setEventDetails] = useState(null);
   const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  const showModal = (event = null) => {
+    setEditingEvent(event);
+    if (event) {
+      form.setFieldsValue({
+        ...event,
+        startTime: event.startTime ? moment(event.startTime) : null,
+        endTime: event.endTime ? moment(event.endTime) : null,
+        imageUrls: event.imageUrls || [],
+      });
+    } else {
+      form.resetFields();
+    }
+    setIsModalVisible(true);
+  };
 
   const fetchEvents = async (showDeleted = false) => {
     try {
@@ -54,7 +76,7 @@ const EventManagement = () => {
 
   const showEventDetails = (event) => {
     setEventDetails(event);
-    setIsModalVisible(true);  // Open the modal to display event details
+    setIsModalVisible(true); // Open the modal to display event details
   };
 
   const columns = [
@@ -106,12 +128,12 @@ const EventManagement = () => {
             onClick={() => showModal(record)}
             icon={<EditOutlined />}
           />
-          <Button
+          {/* <Button
             key={`delete-${record.id}`}
             onClick={() => handleDelete(record.id)}
             icon={<DeleteOutlined />}
             danger
-          />
+          /> */}
         </Space>
       ),
     },
@@ -154,10 +176,6 @@ const EventManagement = () => {
               Add New Events
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {
@@ -188,7 +206,11 @@ const EventManagement = () => {
           rowSelection={{
             type: "checkbox",
             onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+              console.log(
+                `selectedRowKeys: ${selectedRowKeys}`,
+                "selectedRows: ",
+                selectedRows
+              );
             },
           }}
           pagination={{
@@ -226,14 +248,33 @@ const EventManagement = () => {
       >
         {eventDetails && (
           <div>
-            <p><strong>Event Name:</strong> {eventDetails.name}</p>
-            <p><strong>Event Code:</strong> {eventDetails.eventCode || "N/A"}</p>
-            <p><strong>Description:</strong> {eventDetails.description || "No description provided"}</p>
-            <p><strong>Start Time:</strong> {moment(eventDetails.startTime).format("YYYY-MM-DD HH:mm")}</p>
-            <p><strong>End Time:</strong> {moment(eventDetails.endTime).format("YYYY-MM-DD HH:mm")}</p>
-            <p><strong>Current Amount:</strong> {eventDetails.currentAmount}</p>
-            <p><strong>Amount Limit:</strong> {eventDetails.amountLimit}</p>
-            <p><strong>Images:</strong></p>
+            <p>
+              <strong>Event Name:</strong> {eventDetails.name}
+            </p>
+            <p>
+              <strong>Event Code:</strong> {eventDetails.eventCode || "N/A"}
+            </p>
+            <p>
+              <strong>Description:</strong>{" "}
+              {eventDetails.description || "No description provided"}
+            </p>
+            <p>
+              <strong>Start Time:</strong>{" "}
+              {moment(eventDetails.startTime).format("YYYY-MM-DD HH:mm")}
+            </p>
+            <p>
+              <strong>End Time:</strong>{" "}
+              {moment(eventDetails.endTime).format("YYYY-MM-DD HH:mm")}
+            </p>
+            <p>
+              <strong>Current Amount:</strong> {eventDetails.currentAmount}
+            </p>
+            <p>
+              <strong>Amount Limit:</strong> {eventDetails.amountLimit}
+            </p>
+            <p>
+              <strong>Images:</strong>
+            </p>
             <div
               style={{
                 display: "grid",
