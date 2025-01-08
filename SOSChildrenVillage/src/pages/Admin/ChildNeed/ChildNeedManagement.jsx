@@ -31,6 +31,7 @@ const ChildNeedManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [searchTerm, setSearchTerm] = useState(""); 
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,6 +48,11 @@ const ChildNeedManagement = () => {
       fetchChildNeedList();
     }
   }, [navigate, redirecting]);
+
+  
+  useEffect(() => {
+    fetchChildNeedList();
+  }, [ searchTerm]); 
 
   // useEffect(() => {
   //   fetchChildNeedList();
@@ -227,11 +233,22 @@ const ChildNeedManagement = () => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Input
-            placeholder="Search for items"
+        <Input
+            placeholder="Search user"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchChildNeedList()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => fetchChildNeedList()} // Gọi hàm tìm kiếm
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",
@@ -244,10 +261,6 @@ const ChildNeedManagement = () => {
               style={{ marginRight: 8 }}
             >
               Add New Items
-            </Button>
-
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
             </Button>
 
             {/* <Button

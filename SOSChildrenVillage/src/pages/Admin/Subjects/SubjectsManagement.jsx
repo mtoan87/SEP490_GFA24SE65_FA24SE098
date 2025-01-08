@@ -204,10 +204,6 @@ const SubjectsManagement = () => {
               Add New Items
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             {/* <Button
               onClick={() => {
                 setShowDeleted((prev) => {

@@ -430,9 +430,6 @@ const HealthReport = () => {
             >
               Add New Health Report
             </Button>
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {

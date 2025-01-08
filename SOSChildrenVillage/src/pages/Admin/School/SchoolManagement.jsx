@@ -344,10 +344,6 @@ const SchoolManagement = () => {
               Add New School
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {

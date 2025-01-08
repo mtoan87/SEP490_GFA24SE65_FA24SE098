@@ -340,10 +340,6 @@ const UserManagement = () => {
               Add New User
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {

@@ -422,10 +422,6 @@ const AcademicReport = () => {
               Add New Report
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {

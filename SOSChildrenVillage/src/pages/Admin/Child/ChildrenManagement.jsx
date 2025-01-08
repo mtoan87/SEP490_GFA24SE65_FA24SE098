@@ -478,10 +478,6 @@ const ChildrenManagement = () => {
               Add New Children
             </Button>
 
-            <Button type="default" style={{ marginRight: 8 }}>
-              Filter options
-            </Button>
-
             <Button
               onClick={() => {
                 setShowDeleted((prev) => {
