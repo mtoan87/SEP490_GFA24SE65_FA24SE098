@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Table, Input, message, Tooltip } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { getTransferHistory } from "../../../services/api";
 
@@ -9,24 +10,69 @@ const TransferHistoryManagement = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [redirecting, setRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const messageShown = useRef(false);
 
-  useEffect(() => {
-    fetchTransferHistories();
-  }, []);
+  const userRole = localStorage.getItem("roleId");
+  const userId = localStorage.getItem("userId");
 
-  const fetchTransferHistories = async () => {
+  const fetchTransferHistories = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getTransferHistory();
-      setTransferHistories(data?.$values || []);
-      console.log("Fetched transfer histories data:", data);
+      let requests = data?.$values || [];
+
+      // Filter requests based on user role
+      if (userRole === "3") {
+        // HouseMother
+        requests = requests.filter(
+          (request) => String(request.createdBy) === userId
+        );
+      }
+
+      setTransferHistories(requests);
     } catch (error) {
-      console.error("Error fetching transfer histories:", error);
-      message.error("Failed to load transfer histories");
+      console.error("Error fetching transfer requests:", error);
+      message.error("Failed to load transfer requests");
+      setTransferHistories([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [userRole, userId]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token || !["1", "3", "6"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/home");
+        messageShown.current = true;
+      }
+    } else {
+      fetchTransferHistories();
+    }
+  }, [navigate, redirecting, userRole, fetchTransferHistories]);
+
+  // useEffect(() => {
+  //   fetchTransferHistories();
+  // }, []);
+
+  // const fetchTransferHistories = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const data = await getTransferHistory();
+  //     setTransferHistories(data?.$values || []);
+  //     console.log("Fetched transfer histories data:", data);
+  //   } catch (error) {
+  //     console.error("Error fetching transfer histories:", error);
+  //     message.error("Failed to load transfer histories");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const columns = [
     {
@@ -65,11 +111,7 @@ const TransferHistoryManagement = () => {
           Completed: "green",
           Rejected: "red",
         };
-        return (
-          <span style={{ color: statusColors[status] }}>
-            {status}
-          </span>
-        );
+        return <span style={{ color: statusColors[status] }}>{status}</span>;
       },
     },
     {

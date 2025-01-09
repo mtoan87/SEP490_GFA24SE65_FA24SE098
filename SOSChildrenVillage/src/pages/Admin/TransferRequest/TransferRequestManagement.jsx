@@ -39,7 +39,8 @@ const TransferRequestManagement = () => {
   const messageShown = useRef(false);
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
-  const [selectedRequestForAction, setSelectedRequestForAction] = useState(null);
+  const [selectedRequestForAction, setSelectedRequestForAction] =
+    useState(null);
   const [approvalForm] = Form.useForm();
   const [rejectionForm] = Form.useForm();
 
@@ -54,8 +55,11 @@ const TransferRequestManagement = () => {
       let requests = data?.$values || [];
 
       // Filter requests based on user role
-      if (userRole === "3") { // HouseMother
-        requests = requests.filter(request => String(request.createdBy) === userId);
+      if (userRole === "3") {
+        // HouseMother
+        requests = requests.filter(
+          (request) => String(request.createdBy) === userId
+        );
       }
 
       setTransferRequests(requests);
@@ -99,7 +103,7 @@ const TransferRequestManagement = () => {
     try {
       const values = await approvalForm.validateFields();
       const formData = new FormData();
-      
+
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
@@ -131,7 +135,7 @@ const TransferRequestManagement = () => {
     try {
       const values = await rejectionForm.validateFields();
       const formData = new FormData();
-      
+
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
@@ -178,7 +182,7 @@ const TransferRequestManagement = () => {
     form.validateFields().then(async (values) => {
       try {
         const formData = new FormData();
-        Object.keys(values).forEach(key => {
+        Object.keys(values).forEach((key) => {
           formData.append(key, values[key] || "");
         });
 
@@ -201,7 +205,9 @@ const TransferRequestManagement = () => {
         } else {
           // Only HouseMother can create new requests
           if (userRole !== "3") {
-            message.error("Only House Mothers can create new transfer requests");
+            message.error(
+              "Only House Mothers can create new transfer requests"
+            );
             return;
           }
 
@@ -228,7 +234,7 @@ const TransferRequestManagement = () => {
   const handleDelete = async (id) => {
     try {
       // Only allow HouseMother to delete their own requests
-      const request = transferRequests.find(r => r.id === id);
+      const request = transferRequests.find((r) => r.id === id);
       if (userRole === "3" && request.createdBy !== userId) {
         message.error("You can only delete your own requests");
         return;
@@ -245,121 +251,135 @@ const TransferRequestManagement = () => {
     }
   };
 
-  const columns = [
-    {
-      title: "Request ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Child ID",
-      dataIndex: "childId",
-      key: "childId",
-    },
-    {
-      title: "From House",
-      dataIndex: "fromHouseId",
-      key: "fromHouseId",
-    },
-    {
-      title: "To House",
-      dataIndex: "toHouseId",
-      key: "toHouseId",
-    },
-    {
-      title: "Request Date",
-      dataIndex: "requestDate",
-      key: "requestDate",
-      render: (date) =>
-        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
-    },
-    {
-      title: "Request Reason",
-      dataIndex: "requestReason",
-      key: "requestReason",
-      ellipsis: {
-        showTitle: false,
+  const getVisibleColumns = () => {
+    let baseColumns = [
+      {
+        title: "Request ID",
+        dataIndex: "id",
+        key: "id",
       },
-      render: (reason) => (
-        <Tooltip placement="topLeft" title={reason}>
-          {reason}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => {
-        const statusColors = {
-          Pending: "orange",
-          Approved: "green",
-          Rejected: "red",
-        };
-        return (
-          <span style={{ color: statusColors[status] }}>
-            {status}
-          </span>
-        );
+      {
+        title: "Child ID",
+        dataIndex: "childId",
+        key: "childId",
       },
-    },
-    {
-      title: "Actions",
-      key: "action",
-      render: (_, record) => {
-        if (userRole === "3") { // HouseMother
-          return (
-            <Space size="middle">
-              {record.status === "Pending" && record.createdBy === userId && (
-                <>
-                  <Button 
-                    onClick={() => showModal(record)} 
-                    icon={<EditOutlined />}
-                    title="Edit Request"
-                  />
-                  <Button
-                    onClick={() => handleDelete(record.id)}
-                    icon={<DeleteOutlined />}
-                    danger
-                    title="Delete Request"
-                  />
-                </>
-              )}
-            </Space>
-          );
-        }
+      {
+        title: "From House",
+        dataIndex: "fromHouseId",
+        key: "fromHouseId",
+      },
+      {
+        title: "To House",
+        dataIndex: "toHouseId",
+        key: "toHouseId",
+      },
+      {
+        title: "Request Date",
+        dataIndex: "requestDate",
+        key: "requestDate",
+        render: (date) =>
+          moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+      },
+      {
+        title: "Request Reason",
+        dataIndex: "requestReason",
+        key: "requestReason",
+        ellipsis: {
+          showTitle: false,
+        },
+        render: (reason) => (
+          <Tooltip placement="topLeft" title={reason}>
+            {reason}
+          </Tooltip>
+        ),
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        render: (status) => {
+          const statusColors = {
+            Pending: "orange",
+            Approved: "green",
+            Rejected: "red",
+          };
+          return <span style={{ color: statusColors[status] }}>{status}</span>;
+        },
+      },
+      {
+        title: "Actions",
+        key: "action",
+        width: 120,
+        render: (_, record) => {
+          if (userRole === "3") {
+            // HouseMother
+            return (
+              <Space size="middle">
+                {record.status === "Pending" && record.createdBy === userId && (
+                  <>
+                    <Button
+                      onClick={() => showModal(record)}
+                      icon={<EditOutlined />}
+                      title="Edit Request"
+                    />
+                    <Button
+                      onClick={() => handleDelete(record.id)}
+                      icon={<DeleteOutlined />}
+                      danger
+                      title="Delete Request"
+                    />
+                  </>
+                )}
+              </Space>
+            );
+          }
 
-        if (["1", "6"].includes(userRole)) { // Admin or Director
-          return (
-            <Space size="middle">
-              {record.status === "Pending" && (
-                <>
-                  <Button
-                    type="primary"
-                    icon={<CheckCircleOutlined />}
-                    onClick={() => showApproveModal(record)}
-                    title="Approve Request"
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    danger
-                    icon={<CloseCircleOutlined />}
-                    onClick={() => showRejectModal(record)}
-                    title="Reject Request"
-                  >
-                    Reject
-                  </Button>
-                </>
-              )}
-            </Space>
-          );
-        }
+          if (["1", "6"].includes(userRole)) {
+            // Admin or Director
+            return (
+              <Space size="small" direction="vertical" style={{ width: '100%' }}>
+                {record.status === "Pending" && (
+                  <>
+                    <Button
+                      type="primary"
+                      icon={<CheckCircleOutlined />}
+                      onClick={() => showApproveModal(record)}
+                      title="Approve Request"
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      danger
+                      icon={<CloseCircleOutlined />}
+                      onClick={() => showRejectModal(record)}
+                      title="Reject Request"
+                    >
+                      Reject
+                    </Button>
+                  </>
+                )}
+              </Space>
+            );
+          }
 
-        return null;
+          return null;
+        },
       },
-    },
-  ];
+    ];
+
+    // Thêm cột CreatedBy nếu user là Admin hoặc Director
+    if (["1", "6"].includes(userRole)) {
+      baseColumns.splice(6, 0, {
+        title: "Created By",
+        dataIndex: "createdBy",
+        key: "createdBy",
+      });
+    }
+
+    return baseColumns;
+  };
+
+  const columns = getVisibleColumns();
 
   return (
     <div style={{ padding: "24px" }}>
@@ -410,7 +430,9 @@ const TransferRequestManagement = () => {
 
       {/* Modal for Create/Edit */}
       <Modal
-        title={selectedRequest ? "Edit Transfer Request" : "New Transfer Request"}
+        title={
+          selectedRequest ? "Edit Transfer Request" : "New Transfer Request"
+        }
         open={isModalVisible}
         onOk={handleOk}
         onCancel={() => {
@@ -456,11 +478,7 @@ const TransferRequestManagement = () => {
             <TextArea rows={4} />
           </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
             <Select disabled={userRole === "3"}>
               <Option value="Pending">Pending</Option>
               <Option value="Approved">Approved</Option>
@@ -506,7 +524,9 @@ const TransferRequestManagement = () => {
           <Form.Item
             name="rejectionReason"
             label="Rejection Reason"
-            rules={[{ required: true, message: "Please enter rejection reason" }]}
+            rules={[
+              { required: true, message: "Please enter rejection reason" },
+            ]}
           >
             <TextArea rows={4} placeholder="Enter your reason for rejection" />
           </Form.Item>
