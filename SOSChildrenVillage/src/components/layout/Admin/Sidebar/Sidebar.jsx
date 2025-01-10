@@ -35,13 +35,19 @@ const { Sider } = Layout;
 const Sidebar = ({ collapsed, onToggle }) => {
   const menuItems = [
     {
-      key: "dashboard",
-      icon: <DashboardOutlined />,
-      label: <Link to="/admin">Overview dashboard</Link>,
+      type: "group",
+      label: <span className="font-bold">Overview dashboard</span>,
+      children: [
+        {
+          key: "dashboard",
+          icon: <DashboardOutlined />,
+          label: <Link to="/admin">Dashboard</Link>,
+        },
+      ],
     },
     {
       type: "group",
-      label: "User & Organization",
+      label: <span className="font-bold">User & Organization</span>,
       children: [
         {
           key: "users",
@@ -73,7 +79,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     {
       type: "group",
       key: "child-transfers",
-      label: "Child Transfers",
+      label: <span className="font-bold">Child Transfers</span>,
       children: [
         {
           key: "transfer-requests",
@@ -97,7 +103,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: "Academic Management",
+      label: <span className="font-bold">Academic Management</span>,
       children: [
         {
           key: "schools",
@@ -125,7 +131,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: "Child Care",
+      label: <span className="font-bold">Child Care</span>,
       children: [
         {
           key: "child-needs",
@@ -146,7 +152,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: "Event & Booking",
+      label: <span className="font-bold">Event & Booking</span>,
       children: [
         {
           key: "events",
@@ -167,7 +173,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: "Financial",
+      label: <span className="font-bold">Financial</span>,
       children: [
         {
           key: "income",
@@ -197,7 +203,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
         {
           type: "group",
           key: "wallets-group",
-          label: "Wallets",
+          label: <span className="font-bold">Wallets</span>,
           children: [
             {
               key: "foodstuff-wallet",
@@ -232,7 +238,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: "Inventory",
+      label: <span className="font-bold">Inventory</span>,
       children: [
         {
           key: "inventory",
@@ -259,9 +265,9 @@ const Sidebar = ({ collapsed, onToggle }) => {
           alt="Project Logo"
           className="logo-image"
           style={{
-            height: "40px", // Chiều cao logo
+            height: "40px",
             marginRight: collapsed ? 0 : "10px", // Thay đổi margin dựa trên trạng thái collapsed
-            transition: "margin 0.3s", // Hiệu ứng chuyển đổi
+            transition: "margin 0.3s",
           }}
         />
         <button

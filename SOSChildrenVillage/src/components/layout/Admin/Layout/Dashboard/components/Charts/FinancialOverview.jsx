@@ -53,8 +53,8 @@ function IncomeExpenseChart() {
   }
 
   return (
-    <Card title="Income vs Expense Chart" style={{ width: '100%', maxWidth: 800, margin: '0 auto' }}>
-      <ResponsiveContainer width="100%" height={400}>
+    <Card title="Income vs Expense Chart" style={{ width: '100%', maxWidth: 1555, margin: '0 auto' }}>
+      <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={chartData}
           margin={{
