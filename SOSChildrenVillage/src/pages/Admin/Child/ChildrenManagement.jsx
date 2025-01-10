@@ -185,13 +185,13 @@ const ChildrenManagement = () => {
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
           formData.append("schoolId", values.schoolId || "");
-          formData.append("facilitiesWalletId", values.facilitiesWalletId || 0);
-          formData.append("systemWalletId", values.systemWalletId || 0);
-          formData.append("foodStuffWalletId", values.foodStuffWalletId || 0);
-          formData.append("healthWalletId", values.healthWalletId || 0);
+          formData.append("facilitiesWalletId", values.facilitiesWalletId || "");
+          formData.append("systemWalletId", values.systemWalletId || "");
+          formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
+          formData.append("healthWalletId", values.healthWalletId || "");
           formData.append(
             "necessitiesWalletId",
-            values.necessitiesWalletId || 0
+            values.necessitiesWalletId || ""
           );
           formData.append("amount", values.amount || 0);
           formData.append("currentAmount", values.currentAmount || 0);
@@ -621,10 +621,6 @@ const ChildrenManagement = () => {
           </Form.Item>
 
           <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="currentAmount" label="Current Amount">
             <Input type="number" />
           </Form.Item>
 

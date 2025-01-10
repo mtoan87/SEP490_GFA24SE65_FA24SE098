@@ -400,3 +400,64 @@
 .close-modal-button:hover {
   background-color: #e57373;
 }
+.donors-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.donors-table th, .donors-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.donors-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.donors-table td {
+  word-wrap: break-word; /* Đảm bảo nội dung không bị tràn ra ngoài */
+}
+
+.donors-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.donors-table td {
+  max-width: 200px; /* Giới hạn chiều rộng của cột */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.donors-table th:nth-child(1),
+.donors-table td:nth-child(1) {
+  width: 30%; /* Cột User Name chiếm 30% */
+}
+
+.donors-table th:nth-child(2),
+.donors-table td:nth-child(2) {
+  width: 20%; /* Cột Date chiếm 20% */
+}
+
+.donors-table th:nth-child(3),
+.donors-table td:nth-child(3) {
+  width: 20%; /* Cột Amount chiếm 20% */
+}
+
+.donors-table th:nth-child(4),
+.donors-table td:nth-child(4) {
+  width: 20%; /* Cột Description chiếm 20% */
+}
+
+.donors-table th:nth-child(5),
+.donors-table td:nth-child(5) {
+  width: 10%; /* Cột Status chiếm 10% */
+}
+
+.donors-table td {
+  max-width: 200px; /* Giới hạn chiều rộng của cột */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
