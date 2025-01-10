@@ -187,7 +187,7 @@ const UserManagement = () => {
             response: error.response?.data,
             status: error.response?.status,
           });
-
+          
           message.error(
             error.response?.data?.message ||
             "Unable to delete user. Please try again."
@@ -203,7 +203,7 @@ const UserManagement = () => {
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser/${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser/id=${id}`
       );
       message.success("User Restored Successfully");
       fetchUserAccounts(showDeleted);

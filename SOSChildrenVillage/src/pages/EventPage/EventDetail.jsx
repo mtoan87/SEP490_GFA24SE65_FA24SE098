@@ -18,6 +18,8 @@ const EventDetail = () => {
 
   const [donationHistory, setDonationHistory] = useState({ totalAmount: 0, details: [] });
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [donors, setDonors] = useState([]); // State to store donors data
+  const [isDonorsVisible, setIsDonorsVisible] = useState(false); // Control visibility of donors modal
 
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
@@ -75,6 +77,23 @@ const EventDetail = () => {
     }
   };
 
+  const fetchDonors = async () => {
+    try {
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationByEventId?eventId=${eventId}`);
+      const donorsData = response.data.map(donor => ({
+        userName: donor.userName,
+        dateTime: donor.dateTime,
+        amount: donor.amount,
+        description: donor.description,
+        status: donor.status,
+      }));
+      setDonors(donorsData);
+      setIsDonorsVisible(true); // Show donors modal
+    } catch (error) {
+      console.error('Error fetching donor details:', error);
+    }
+  };
+
   const handleDonate = async () => {
     if (!amount || isNaN(amount) || amount <= 0) {
       alert('Please enter a valid amount.');
@@ -103,8 +122,8 @@ const EventDetail = () => {
     }
   };
 
-  const donationProgress = (event?.currentAmount && event?.amountLimit) 
-    ? (event.currentAmount / event.amountLimit) * 100 
+  const donationProgress = (event?.currentAmount && event?.amountLimit)
+    ? (event.currentAmount / event.amountLimit) * 100
     : 0;
 
   const formatDate = (dateString) => {
@@ -144,6 +163,14 @@ const EventDetail = () => {
 
         <div className="right-column">
           <div className="event-info">
+            {/* History of Donation button in the top-right corner */}
+            <Button
+              type="default"
+              onClick={fetchDonors}
+              style={{ position: 'right' }}
+            >
+              History of Donation
+            </Button>
             <p><strong>Event Code:</strong> {event.eventCode}</p>
             <p><strong>Start Time:</strong> {formatDate(event.startTime)}</p>
             <p><strong>End Time:</strong> {formatDate(event.endTime)}</p>
@@ -161,7 +188,7 @@ const EventDetail = () => {
             onClick={fetchDonationHistory}
             style={{ marginTop: '10px', backgroundColor: '#f0f0f0', color: '#333' }}
           >
-            History of Donation
+            My Donation
           </Button>
 
           <div className="donation-progress-container">
@@ -207,7 +234,7 @@ const EventDetail = () => {
                   type="text"
                   id="userName"
                   value={userName}
-                  onChange={(e) => setUserName(e.target.value )}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="donation-input"
                 />
                 <label htmlFor="userEmail" className="donation-label">Email:</label>
@@ -215,7 +242,7 @@ const EventDetail = () => {
                   type="email"
                   id="userEmail"
                   value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value )}
+                  onChange={(e) => setUserEmail(e.target.value)}
                   className="donation-input"
                 />
                 <label htmlFor="phone" className="donation-label">Phone:</label>
@@ -223,7 +250,7 @@ const EventDetail = () => {
                   type="text"
                   id="phone"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value )}
+                  onChange={(e) => setPhone(e.target.value)}
                   className="donation-input"
                 />
                 <label htmlFor="address" className="donation-label">Address:</label>
@@ -231,7 +258,7 @@ const EventDetail = () => {
                   type="text"
                   id="address"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value )}
+                  onChange={(e) => setAddress(e.target.value)}
                   className="donation-input"
                 />
                 <label htmlFor="donationAmount" className="donation-label">Enter Amount:</label>
@@ -291,6 +318,46 @@ const EventDetail = () => {
           <p>No donations yet.</p>
         )}
       </Modal>
+
+      {/* Donors Modal */}
+      <Modal
+        title="Donors History"
+        visible={isDonorsVisible}
+        onCancel={() => setIsDonorsVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsDonorsVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {donors.length > 0 ? (
+          <table className="donors-table">
+            <thead>
+              <tr>
+                <th>User Name</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {donors.map((donor, index) => (
+                <tr key={index}>
+                  <td>{donor.userName}</td>
+                  <td>{formatDate(donor.dateTime)}</td>
+                  <td>{formatCurrency(donor.amount)}</td>
+                  <td>{donor.description}</td>
+                  <td>{donor.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No donations yet.</p>
+        )}
+      </Modal>
+
     </div>
   );
 };

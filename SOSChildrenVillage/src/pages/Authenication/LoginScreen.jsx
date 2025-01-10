@@ -87,7 +87,7 @@ const LoginScreen = () => {
         localStorage.setItem("roleId", roleId);
         localStorage.setItem("userId", userAccountId); // Store user ID here
         // Navigate based on user role
-        navigate(roleId === '1' ? '/admin' : '/edituserprofile');
+        navigate(roleId === '1' ? '/admin' : '/home');
       } else {
         console.log('Google Login failed:', response.data);
         message.error('Google login failed. Please try again.');

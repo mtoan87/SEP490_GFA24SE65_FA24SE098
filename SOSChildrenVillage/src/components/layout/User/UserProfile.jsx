@@ -1,7 +1,7 @@
 import Header from "../../../pages/Home/Header/Header";
 import Nav from "../../../pages/Home/Nav/Nav";
-import UserDetail from "../../../pages/User/UserDetail";
 import Footer from "../../../pages/Home/Footer/Footer";
+import UserDetail from "../../../pages/User/UserDetail";
 
 const App = () => {
     return (

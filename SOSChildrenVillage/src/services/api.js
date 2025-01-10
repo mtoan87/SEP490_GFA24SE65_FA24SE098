@@ -150,13 +150,18 @@ export const getAccount = async (showDeleted = false, search = "") => {
         : "/api/UserAccount";
     }
 
+    console.log("Calling endpoint:", endpoint);
+
     const response = await api.get(endpoint);
-    return response.data?.$values || []; // Trả về `$values` nếu có, ngược lại trả về mảng rỗng
+    console.log("Response data:", response.data);
+
+    return response.data?.$values || [];
   } catch (error) {
-    console.error("Error fetching User Account:", error);
+    console.error("Error fetching User Account:", error.response || error.message);
     throw error;
   }
 };
+
 
 //TransferRequest
 export const getTransferRequest = async () => {
