@@ -23,6 +23,8 @@ import {
   SwapOutlined,
 } from "@ant-design/icons";
 import { getEventsWithImages } from "../../../services/api";
+import { getVillagesWithImages } from "../../../services/api";
+import { getVillageDetail } from "../../../services/api";
 import axios from "axios";
 import moment from "moment";
 
@@ -43,21 +45,88 @@ const EventManagement = () => {
   const [eventDetails, setEventDetails] = useState(null);
   const [showDeleted, setShowDeleted] = useState(false);
   const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [villages, setVillages] = useState([]);
+  const [villageName, setVillageName] = useState([]);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+    getVillagesWithImages()
+      .then(data => {
+        setVillages(data);
+      })
+      .catch(error => {
+        console.error('Error fetching villages:', error);
+      });
+    const fetchVillageName = async () => {
+      if (eventDetails?.villageId) {
+        try {
+          const villageData = await getVillageDetail(eventDetails.villageId); // API call to get village details
+          setVillageName(villageData.villageName || "Village name not found");
+        } catch (error) {
+          console.error("Error fetching village name:", error);
+          setVillageName("Village not found");
+        }
+      }
+    };
+
+    fetchVillageName();
+  }, [eventDetails]);
+
+  const handleVillageClick = () => {
+    if (eventDetails?.id) {
+      window.open(`/villagedetail/${eventDetails.id}`, "_blank");
+    }
+  };
+  const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) {
+      return 'N/A'; // Prevent error in case of null/undefined value
+    }
+    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  };
+
+  if (!event) {
+    return <div className="loading">Loading...</div>;
+  }
+  const formatDate = (dateString) => {
+    const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options).replace(',', ' •');
+  };
 
   const showModal = (event = null) => {
     setEditingEvent(event);
+  
     if (event) {
+      // Find the first wallet that is not null
+      const wallets = [
+        "facilitiesWalletId",
+        "foodStuffWalletId",
+        "systemWalletId",
+        "healthWalletId",
+        "necessitiesWalletId",
+      ];
+  
+      let selectedWallet = null;
+      // Loop through wallets and find the first non-null value
+      for (const wallet of wallets) {
+        if (event[wallet] !== null) {
+          selectedWallet = wallet; // Set the selected wallet
+          break;
+        }
+      }
+  
+      // Set the form values, including the specific wallet
       form.setFieldsValue({
         ...event,
         startTime: event.startTime && moment(event.startTime).isValid() ? moment(event.startTime) : null,
         endTime: event.endTime && moment(event.endTime).isValid() ? moment(event.endTime) : null,
+        wallet: selectedWallet, // Set the selected wallet
       });
-
-      // Update cái state currentImages khi mở modal edit
+  
+      console.log("Editing event wallet:", selectedWallet); // Check the value of wallet
+  
+      // Update the current images when opening the modal for edit
       setCurrentImages(
         event.imageUrls?.map((url, index) => ({
           event: index,
@@ -70,10 +139,11 @@ const EventManagement = () => {
       form.resetFields();
       setCurrentImages([]);
     }
+  
     setImagesToDelete([]);
     setIsModalVisible(true);
   };
-
+  
   const fetchEvents = async (showDeleted = false) => {
     try {
       setLoading(true);
@@ -131,21 +201,31 @@ const EventManagement = () => {
         formData.append("eventCode", values.eventCode);
         formData.append("startTime", values.startTime.format("YYYY-MM-DD"));
         formData.append("endTime", values.endTime.format("YYYY-MM-DD"));
-        formData.append("amount", values.amount || 0);
+        formData.append("currentAmount", values.currentAmount || 0);
         formData.append("amountLimit", values.amountLimit || 0);
         formData.append("villageId", values.villageId || "");
 
         // Set wallet fields
-        formData.append("facilitiesWalletId", values.facilitiesWalletId || "");
-        formData.append("systemWalletId", values.systemWalletId || "");
-        formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
-        formData.append("healthWalletId", values.healthWalletId || "");
-        formData.append(
-          "necessitiesWalletId",
-          values.necessitiesWalletId || ""
-        );
+        // formData.append("facilitiesWalletId", values.facilitiesWalletId || "");
+        // formData.append("systemWalletId", values.systemWalletId || "");
+        // formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
+        // formData.append("healthWalletId", values.healthWalletId || "");
+        // formData.append(
+        //   "necessitiesWalletId",
+        //   values.necessitiesWalletId || ""
+        // );
         formData.append("status", values.status || "");
         formData.append("isDeleted", values.isDeleted ? "true" : "false");
+        const wallets = [
+          "facilitiesWalletId",
+          "foodStuffWalletId",
+          "systemWalletId",
+          "healthWalletId",
+          "necessitiesWalletId",
+        ];
+        wallets.forEach((wallet) => {
+          formData.append(wallet, wallet === values.wallet ? 1 : "");
+        });
         console.log("Form Values:", values);
 
         if (uploadFiles && uploadFiles.length > 0) {
@@ -205,36 +285,48 @@ const EventManagement = () => {
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this event?",
-      content: "This action cannot be undone.",
-      okText: "Yes, delete it",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Event/DeleteEvent?id=${id}`;
-          console.log("Deleting event with ID:", id);
+      // centered: true,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Button
+            type="primary"
+            danger
+            style={{ width: "120px" }} // Nút Yes
+            onClick={async () => {
+              try {
+                const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Event/DeleteEvent?id=${id}`;
+                console.log("Deleting event with ID:", id);
 
-          const response = await axios.delete(deleteUrl);
-          console.log("Delete response:", response.data);
+                const response = await axios.delete(deleteUrl);
+                console.log("Delete response:", response.data);
 
-          message.success("Event deleted successfully");
-          fetchEvents();
-        } catch (error) {
-          console.error("Delete error details:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
+                message.success("Event deleted successfully");
+                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                fetchEvents();
+              } catch (error) {
+                console.error("Delete error details:", {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                });
 
-          message.error(
-            error.response?.data?.message ||
-            "Unable to delete event. Please try again."
-          );
-        }
-      },
-      onCancel: () => {
-        console.log("Deletion canceled");
-      },
+                message.error(
+                  error.response?.data?.message ||
+                  "Unable to delete event. Please try again."
+                );
+              }
+            }}
+          >
+            Yes, delete it
+          </Button>
+          <Button
+            onClick={() => Modal.destroyAll()}
+            style={{ width: "120px" }} // Nút Cancel
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
   };
 
@@ -287,22 +379,26 @@ const EventManagement = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            key={`view-${record.id}`}
-            onClick={() => showEventDetails(record.id)}
-            icon={<EyeOutlined />}
-          />
-          <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
-          <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
+          {!showDeleted && (
+            <>
+              <Button
+                key={`view-${record.id}`}
+                onClick={() => showEventDetails(record.id)}
+                icon={<EyeOutlined />}
+              />
+              <Button
+                key={`edit-${record.id}`}
+                onClick={() => showModal(record)}
+                icon={<EditOutlined />}
+              />
+              <Button
+                key={`delete-${record.id}`}
+                onClick={() => handleDelete(record.id)}
+                icon={<DeleteOutlined />}
+                danger
+              />
+            </>
+          )}
 
           {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
@@ -311,7 +407,7 @@ const EventManagement = () => {
           )}
         </Space>
       ),
-    },
+    }
   ];
 
   return (
@@ -429,19 +525,52 @@ const EventManagement = () => {
               <strong>Event Code:</strong> {eventDetails.eventCode || "N/A"}
             </p>
             <p>
-              <strong>Description:</strong> {eventDetails.description || "No description provided"}
+              <strong>Description:</strong> {eventDetails.description.length > 100
+                ? `${eventDetails.description.slice(0, 100)}...`
+                : eventDetails.description || 'No description'}
+              {eventDetails.description.length > 100 && (
+                <Button type="link" onClick={() => setShowFullDescription(true)}>
+                  Read More
+                </Button>
+              )}
             </p>
             <p>
-              <strong>Start Time:</strong> {eventDetails.startTime}
+              <strong>Village: </strong>
+              <span
+                style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={handleVillageClick}
+              >
+                {villageName || "Loading..."}
+              </span>
             </p>
             <p>
-              <strong>End Time:</strong> {eventDetails.endTime}
+              <strong>Start Time:</strong> {formatDate(eventDetails.startTime)}
             </p>
             <p>
-              <strong>Amount:</strong> {eventDetails.amount}
+              <strong>End Time:</strong> {formatDate(eventDetails.endTime)}
             </p>
             <p>
-              <strong>Amount Limit:</strong> {eventDetails.amountLimit}
+              <strong>Wallet: </strong>
+              {
+                (() => {
+                  const walletNames = [];
+
+                  // Check each wallet type based on the IDs
+                  if (eventDetails.facilitiesWalletId) walletNames.push("Facilities Wallet");
+                  if (eventDetails.foodStuffWalletId) walletNames.push("Food Stuff Wallet");
+                  if (eventDetails.systemWalletId) walletNames.push("System Wallet");
+                  if (eventDetails.healthWalletId) walletNames.push("Health Wallet");
+                  if (eventDetails.necessitiesWalletId) walletNames.push("Necessities Wallet");
+
+                  // Return the joined wallet names or "No Wallet" if none found
+                  return walletNames.length > 0 ? walletNames.join(", ") : "No Wallet";
+                })()}
+            </p>
+            <p>
+              <strong>Current Amount:</strong> {formatCurrency(eventDetails.currentAmount)}
+            </p>
+            <p>
+              <strong>Amount Limit:</strong> {formatCurrency(eventDetails.amountLimit)}
             </p>
             <p>
               <strong>Images:</strong>
@@ -524,7 +653,18 @@ const EventManagement = () => {
           <Form.Item
             name="endTime"
             label="End Time"
-            rules={[{ required: true, message: "Please select end time" }]}
+            rules={[
+              { required: true, message: "Please select end time" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || value.isAfter(getFieldValue('startTime'))) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('End Time must be after Start Time'));
+                },
+              }),
+            ]}
+
           >
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
@@ -539,30 +679,30 @@ const EventManagement = () => {
 
           <Form.Item
             name="villageId"
-            label="Village ID"
+            label="Village"
             rules={[{ required: true, message: "Please select village" }]}
           >
-            <Input />
+            <Select placeholder="Select a village">
+              {villages.map(village => (
+                <Select.Option key={village.id} value={village.id}>
+                  {village.villageName}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
-          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="systemWalletId" label="System Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="healthWalletId" label="Health Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
-            <Input type="number" />
+          <Form.Item
+            name="wallet"
+            label="Wallet"
+            rules={[{ required: true, message: "Please select a wallet" }]}
+          >
+            <Select>
+              <Option value="systemWalletId">System Wallet</Option>
+              <Option value="facilitiesWalletId">Facilities Wallet</Option>
+              <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
+              <Option value="healthWalletId">Health Wallet</Option>
+              <Option value="necessitiesWalletId">Necessities Wallet</Option>
+            </Select>
           </Form.Item>
 
           {editingEvent && currentImages.length > 0 && (
@@ -621,13 +761,24 @@ const EventManagement = () => {
               </p>
             </Dragger>
           </Form.Item>
-          <Form.Item name="status" label="Status">
-            <Select>
-              <Option value="Active">Active</Option>
-              <Option value="Inactive">Inactive</Option>
-            </Select>
-          </Form.Item>
+          {editingEvent && (
+            <Form.Item name="status" label="Status">
+              <Select>
+                <Option value="Active">Active</Option>
+                <Option value="Inactive">Inactive</Option>
+              </Select>
+            </Form.Item>
+          )}
+
         </Form>
+      </Modal>
+      <Modal
+        visible={showFullDescription}
+        title="Village Description"
+        onCancel={() => setShowFullDescription(false)}
+        footer={null}
+      >
+        <p>{eventDetails?.description}</p>
       </Modal>
     </div>
   );
