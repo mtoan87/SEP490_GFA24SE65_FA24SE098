@@ -93,7 +93,7 @@ const HouseDetails = () => {
                                 )}
                             </p>
                             <p className="house-location">House Number: {houseInfo.houseNumber || 'N/A'}</p>
-                            <p className="house-location">Total Members: {houseInfo.houseMember || 'N/A'}</p>
+                            {/* <p className="house-location">Total Members: {houseInfo.houseMember || 'N/A'}</p> */}
                             <p className="house-location">Owner: {houseInfo.houseOwner || 'N/A'}</p>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  font-family: 'Roboto', 'Arial', sans-serif;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -21,11 +22,16 @@
 }
 
 .main-image {
-  width: 600px; /* Fix the main image width to 600px */
-  margin: 0 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Để chiều rộng tự điều chỉnh */
+  max-width: 600px; /* Giới hạn tối đa */
+  margin: 0 auto; /* Tự động căn giữa */
   border-radius: 10px;
   overflow: hidden;
 }
+
 
 .gallery-main-image {
   width: 100%;

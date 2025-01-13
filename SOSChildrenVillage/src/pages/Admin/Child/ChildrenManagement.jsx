@@ -53,6 +53,7 @@ const ChildrenManagement = () => {
   const [isTransferModalVisible, setIsTransferModalVisible] = useState(false);
   const [selectedChild, setSelectedChild] = useState(null);
   const [transferRequests, setTransferRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -71,12 +72,12 @@ const ChildrenManagement = () => {
     } else {
       fetchChildren();
     }
-  }, [navigate, redirecting]);
+  }, [navigate, redirecting, showDeleted, searchTerm]);
 
-  const fetchChildren = async (showDeleted = false) => {
+  const fetchChildren = async () => {
     try {
       setLoading(true);
-      const data = await getChildWithImages(showDeleted);
+      const data = await getChildWithImages(showDeleted, searchTerm);
       setChildren(Array.isArray(data) ? data : []);
       console.log("Fetched children data with images:", data);
     } catch (error) {
@@ -86,6 +87,11 @@ const ChildrenManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
+    fetchChildren(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
   };
 
   const fetchChildrenDetail = async (childId) => {
@@ -268,9 +274,8 @@ const ChildrenManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              `Unable to ${
-                editingChild ? "update" : "create"
-              } child. Please try again.`
+            `Unable to ${editingChild ? "update" : "create"
+            } child. Please try again.`
           );
         }
       })
@@ -280,39 +285,52 @@ const ChildrenManagement = () => {
       });
   };
 
+
   const handleDelete = async (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this child?",
-      content: "This action cannot be undone.",
-      okText: "Yes, delete it",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild/${id}`;
-          console.log("Deleting child with ID:", id);
+      title: "Are you sure you want to delete this children?",
+      // centered: true,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Button
+            type="primary"
+            danger
+            style={{ width: "120px" }} // Nút Yes
+            onClick={async () => {
+              try {
+                const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Children/DeleteChild/${id}`;
+                console.log("Deleting children with ID:", id);
 
-          const response = await axios.delete(deleteUrl);
-          console.log("Delete response:", response.data);
+                const response = await axios.delete(deleteUrl);
+                console.log("Delete response:", response.data);
 
-          message.success("Child deleted successfully");
-          fetchChildren();
-        } catch (error) {
-          console.error("Delete error details:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
+                message.success("Children deleted successfully");
+                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                fetchChildren();
+              } catch (error) {
+                console.error("Delete error details:", {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                });
 
-          message.error(
-            error.response?.data?.message ||
-              "Unable to delete child. Please try again."
-          );
-        }
-      },
-      onCancel: () => {
-        console.log("Deletion canceled");
-      },
+                message.error(
+                  error.response?.data?.message ||
+                  "Unable to delete user. Please try again."
+                );
+              }
+            }}
+          >
+            Yes, delete it
+          </Button>
+          <Button
+            onClick={() => Modal.destroyAll()}
+            style={{ width: "120px" }} // Nút Cancel
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
   };
 
@@ -398,38 +416,42 @@ const ChildrenManagement = () => {
       key: "action",
       render: (_, record) => {
         const inTransfer = isChildInTransfer(record.id);
-        
+
         return (
           <Space size="middle">
-            <Button
-              key={`edit-${record.id}`}
-              onClick={() => showModal(record)}
-              icon={<EditOutlined />}
-            />
-    
-            <Button
-              key={`view-${record.id}`}
-              onClick={() => fetchChildrenDetail(record)}
-              icon={<EyeOutlined />}
-            />
-    
-            <Button
-              key={`delete-${record.id}`}
-              onClick={() => handleDelete(record.id)}
-              icon={<DeleteOutlined />}
-              danger
-            />
-    
-            <Button
-              key={`transfer-${record.id}`}
-              onClick={() => showTransferModal(record)}
-              icon={<SwapOutlined />}
-              disabled={inTransfer}
-              style={inTransfer ? { backgroundColor: '#f0f0f0' } : {}}
-            >
-              {inTransfer ? 'In Process' : 'Transfer'}
-            </Button>
-    
+            {!showDeleted && (
+              <>
+                <Button
+                  key={`edit-${record.id}`}
+                  onClick={() => showModal(record)}
+                  icon={<EditOutlined />}
+                />
+
+                <Button
+                  key={`view-${record.id}`}
+                  onClick={() => fetchChildrenDetail(record)}
+                  icon={<EyeOutlined />}
+                />
+
+                <Button
+                  key={`delete-${record.id}`}
+                  onClick={() => handleDelete(record.id)}
+                  icon={<DeleteOutlined />}
+                  danger
+                />
+
+                <Button
+                  key={`transfer-${record.id}`}
+                  onClick={() => showTransferModal(record)}
+                  icon={<SwapOutlined />}
+                  disabled={inTransfer}
+                  style={inTransfer ? { backgroundColor: '#f0f0f0' } : {}}
+                >
+                  {inTransfer ? 'In Process' : 'Transfer'}
+                </Button>
+              </>
+            )}
+
             {showDeleted && (
               <Button type="primary" onClick={() => handleRestore(record.id)}>
                 Restore
@@ -440,6 +462,7 @@ const ChildrenManagement = () => {
       },
     },
   ];
+  const sortedchildren = children.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -460,10 +483,21 @@ const ChildrenManagement = () => {
           }}
         >
           <Input
-            placeholder="Search for children"
+            placeholder="Search children"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchChildren()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",
@@ -502,7 +536,7 @@ const ChildrenManagement = () => {
       >
         <Table
           columns={columns}
-          dataSource={children}
+          dataSource={sortedchildren}
           loading={loading}
           rowKey={(record) => record.id}
           rowSelection={{
@@ -698,8 +732,8 @@ const ChildrenManagement = () => {
         </Form>
       </Modal>
 
-            {/* Modal for View Images */}
-            <Modal
+      {/* Modal for View Images */}
+      <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}

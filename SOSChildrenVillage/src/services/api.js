@@ -7,16 +7,34 @@ const api = axios.create({
 });
 
 // Children
-export const getChildWithImages = async (showDeleted = false) => {
+// export const getChildWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/Children/GetAllChildIsDelete"
+//       : "/api/Children/GetAllChildWithImg";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching children data:", error);
+//     return [];
+//   }
+// };
+export const getChildWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
-      ? "/api/Children/GetAllChildIsDelete"
+    let endpoint = showDeleted 
+      ? "/api/Children/GetAllChildIsDelete" 
       : "/api/Children/GetAllChildWithImg";
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/Children/SearchChildren?searchTerm=${encodeURIComponent(search)}`;
+    }
+
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching children data:", error);
-    return [];
+    console.error("Error fetching User Account:", error);
+    throw error;
   }
 };
 
@@ -37,16 +55,34 @@ export const getChildDetail = async (childId) => {
 };
 
 // Houses
-export const getHouseWithImages = async (showDeleted = false) => {
+// export const getHouseWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/Houses/GetAllHousesIsDelete"
+//       : "/api/Houses/GetAllHousesWithImg";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching Houses data:", error);
+//     return [];
+//   }
+// };
+export const getHouseWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
-      ? "/api/Houses/GetAllHousesIsDelete"
+    let endpoint = showDeleted 
+      ? "/api/Houses/GetAllHousesIsDelete" 
       : "/api/Houses/GetAllHousesWithImg";
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/Houses/SearchHouse?searchTerm=${encodeURIComponent(search)}`;
+    }
+
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching Houses data:", error);
-    return [];
+    console.error("Error fetching User Account:", error);
+    throw error;
   }
 };
 
@@ -62,15 +98,33 @@ export const getHouseDetail = async (houseId) => {
 };
 
 // Villages
-export const getVillagesWithImages = async (showDeleted = false) => {
+// export const getVillagesWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/Village/GetAllVillageIsDelete"
+//       : "/api/Village/GetAllVillageWithImg";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching Villages with image:", error);
+//     throw error;
+//   }
+// };
+export const getVillagesWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
-      ? "/api/Village/GetAllVillageIsDelete"
+    let endpoint = showDeleted 
+      ? "/api/Village/GetAllVillageIsDelete" 
       : "/api/Village/GetAllVillageWithImg";
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/Village/SearchVillage?searchTerm=${encodeURIComponent(search)}`;
+    }
+
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching Villages with image:", error);
+    console.error("Error fetching User Account:", error);
     throw error;
   }
 };
@@ -87,15 +141,33 @@ export const getVillageDetail = async (villageId) => {
 };
 
 //Events
-export const getEventsWithImages = async (showDeleted = false) => {
+// export const getEventsWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/Event/GetAllEventsIsDelete"
+//       : "/api/Event/GetAllEventsArray";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching Events with image:", error);
+//     throw error;
+//   }
+// };
+export const getEventsWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
-      ? "/api/Event/GetAllEventsIsDelete"
-      : "/api/Event";
+    let endpoint = showDeleted 
+      ? "/api/Event/GetAllEventsIsDelete" 
+      : "/api/Event/GetAllEventsArray";
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/Event/SearchArrayEvent?searchTerm=${encodeURIComponent(search)}`;
+    }
+
     const response = await api.get(endpoint);
     return response.data;
   } catch (error) {
-    console.error("Error fetching Events with image:", error);
+    console.error("Error fetching User Account:", error);
     throw error;
   }
 };
@@ -141,27 +213,45 @@ export const getHealthReportWithImages = async (showDeleted = false) => {
 //User Accounts
 export const getAccount = async (showDeleted = false, search = "") => {
   try {
-    let endpoint;
+    let endpoint = showDeleted 
+      ? "/api/UserAccount/GetAllUserIsDelete" 
+      : "/api/UserAccount/GetAllUserArray";
+
+    // Nếu có tham số tìm kiếm, gọi API Search
     if (search) {
-      endpoint = `/api/UserAccount/Search?SearchTerm=${encodeURIComponent(search)}`;
-    } else {
-      endpoint = showDeleted
-        ? "/api/UserAccount/GetAllUserIsDelete"
-        : "/api/UserAccount";
+      endpoint = `/api/UserAccount/SearchArray?searchTerm=${encodeURIComponent(search)}`;
     }
 
-    console.log("Calling endpoint:", endpoint);
-
     const response = await api.get(endpoint);
-    console.log("Response data:", response.data);
-
-    return response.data?.$values || [];
+    return response.data;
   } catch (error) {
-    console.error("Error fetching User Account:", error.response || error.message);
+    console.error("Error fetching User Account:", error);
     throw error;
   }
 };
 
+// export const getAccount = async (showDeleted = false, search = "") => {
+//   try {
+//     let endpoint;
+//     if (search) {
+//       endpoint = `/api/UserAccount/Search?SearchTerm=${encodeURIComponent(search)}`;
+//     } else {
+//       endpoint = showDeleted
+//         ? "/api/UserAccount/GetAllUserIsDelete"
+//         : "/api/UserAccount/GetAllUserArray";
+//     }
+
+//     console.log("Calling endpoint:", endpoint);
+
+//     const response = await api.get(endpoint);
+//     console.log("Response data:", response.data);
+
+//     return response.data?.$values || [];
+//   } catch (error) {
+//     console.error("Error fetching User Account:", error.response || error.message);
+//     throw error;
+//   }
+// };
 
 //TransferRequest
 export const getTransferRequest = async () => {

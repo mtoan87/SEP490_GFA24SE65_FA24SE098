@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { message, Button } from 'antd';
+import { message, Button, Spin, Divider } from 'antd';
+import './FoodStuffWallet.css'; // Import file CSS
 
 const FoodStuffWallet = () => {
   const [foodStuffWalletData, setFoodStuffWalletData] = useState([]);
@@ -28,76 +29,70 @@ const FoodStuffWallet = () => {
     }
   };
 
-  // Fetch Expense data based on FoodStuffWallet ID
   const fetchExpenseData = async (id) => {
     try {
       const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseByFoodWalletId?Id=${id}`);
-      
-      // Lọc và lấy chỉ những field cần thiết
       const filteredExpenseData = response.data.map(expense => ({
         expenseAmount: expense.expenseAmount,
         description: expense.description,
         expenseday: expense.expenseday,
         houseId: expense.houseId
       }));
-
       setExpenseData(filteredExpenseData);
       setShowExpense(true);
-      setShowIncome(false); // Khi hiển thị Expense thì ẩn Income
+      setShowIncome(false);
     } catch (error) {
       console.error(error);
       message.error('Failed to fetch expense data');
     }
   };
 
-  // Fetch Income data based on FoodStuffWallet ID
   const fetchIncomeData = async (id) => {
     try {
       const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeByFoodWallet?Id=${id}`);
-      
-      // Lọc và lấy chỉ những field cần thiết
       const filteredIncomeData = response.data.map(income => ({
-        amount: income.amount ? income.amount : 'N/A',  // Nếu amount không có thì thay bằng 'N/A'
+        amount: income.amount ? income.amount : 'N/A',
         receiveday: income.receiveday,
         userAccountId: income.userAccountId
       }));
-
       setIncomeData(filteredIncomeData);
       setShowIncome(true);
-      setShowExpense(false); // Khi hiển thị Income thì ẩn Expense
+      setShowExpense(false);
     } catch (error) {
       console.error(error);
       message.error('Failed to fetch income data');
     }
   };
+  const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) {
+      return 'N/A'; // Prevent error in case of null/undefined value
+    }
+    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  };
 
+  if (!event) {
+    return <div className="loading">Loading...</div>;
+  }
   return (
-    <div>
-      <h1>FoodStuff Wallet</h1>
+    <div className="food-wallet-container">
+      <h1 className="food-wallet-title">FoodStuff Wallet</h1>
 
       {loading ? (
-        <p>Loading...</p>
+        <Spin size="large" className="loading-spinner" />
       ) : (
-        <div>
+        <div className="wallet-list">
           {foodStuffWalletData.length > 0 ? (
-            <ul>
+            <div className="wallet-items">
               {foodStuffWalletData.map((item) => (
-                <li key={item.id} style={{ marginBottom: '16px' }}>
-                  <div>
-                    <strong>ID:</strong> {item.id}
+                <div key={item.id} className="wallet-item">
+                  <div><strong>Budget:</strong> {formatCurrency(item.budget)}</div>
+                  <div className="wallet-actions">
+                    <Button onClick={() => fetchExpenseData(item.id)} className="action-btn expense-btn">Show Expense</Button>
+                    <Button onClick={() => fetchIncomeData(item.id)} className="action-btn income-btn">Show Income</Button>
                   </div>
-                  <div>
-                    <strong>Budget:</strong> {item.budget}
-                  </div>
-                  <div>
-                    <strong>User Account ID:</strong> {item.userAccountId}
-                  </div>
-                  {/* Add buttons to fetch Expense and Income data */}
-                  <Button onClick={() => fetchExpenseData(item.id)} style={{ marginRight: '8px' }}>Show Expense</Button>
-                  <Button onClick={() => fetchIncomeData(item.id)}>Show Income</Button>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No data available</p>
           )}
@@ -106,27 +101,19 @@ const FoodStuffWallet = () => {
 
       {/* Show Expense Data */}
       {showExpense && (
-        <div>
-          <h2>Expense Data</h2>
+        <div className="data-section">
+          <h2 className="data-title">Expense Data</h2>
           {expenseData.length > 0 ? (
-            <ul>
+            <div className="data-items">
               {expenseData.map((expense, index) => (
-                <li key={index}>
-                  <div>
-                    <strong>Expense Amount:</strong> {expense.expenseAmount}
-                  </div>
-                  <div>
-                    <strong>Description:</strong> {expense.description}
-                  </div>
-                  <div>
-                    <strong>Expense Day:</strong> {expense.expenseday}
-                  </div>
-                  <div>
-                    <strong>House ID:</strong> {expense.houseId}
-                  </div>
-                </li>
+                <div key={index} className="data-item">
+                  <div><strong>Expense Amount:</strong> {formatCurrency(expense.expenseAmount)}</div>
+                  <div><strong>Description:</strong> {expense.description}</div>
+                  <div><strong>Expense Day:</strong> {expense.expenseday}</div>
+                  <div><strong>House ID:</strong> {expense.houseId}</div>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No expense data available</p>
           )}
@@ -135,24 +122,18 @@ const FoodStuffWallet = () => {
 
       {/* Show Income Data */}
       {showIncome && (
-        <div>
-          <h2>Income Data</h2>
+        <div className="data-section">
+          <h2 className="data-title">Income Data</h2>
           {incomeData.length > 0 ? (
-            <ul>
+            <div className="data-items">
               {incomeData.map((income, index) => (
-                <li key={index}>
-                  <div>
-                    <strong>Amount:</strong> {income.amount}
-                  </div>
-                  <div>
-                    <strong>Receive Day:</strong> {income.receiveday}
-                  </div>
-                  <div>
-                    <strong>User Account ID:</strong> {income.userAccountId}
-                  </div>
-                </li>
+                <div key={index} className="data-item">
+                  <div><strong>Amount:</strong> {formatCurrency(income.amount)}</div>
+                  <div><strong>Receive Day:</strong> {income.receiveday}</div>
+                  <div><strong>User Account ID:</strong> {income.userAccountId}</div>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No income data available</p>
           )}

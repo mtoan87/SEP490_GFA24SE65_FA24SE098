@@ -47,6 +47,7 @@ const VillageManagement = () => {
   const messageShown = useRef(false);
   const [detailVillage, setDetailVillage] = useState(null);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,12 +63,17 @@ const VillageManagement = () => {
     } else {
       fetchVillages();
     }
-  }, [navigate, redirecting]);
+  }, [navigate, redirecting, showDeleted, searchTerm]);
 
-  const fetchVillages = async (showDeleted = false) => {
+  const handleSearch = (value) => {
+    setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
+    fetchVillages(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
+  };
+
+  const fetchVillages = async () => {
     try {
       setLoading(true);
-      const data = await getVillagesWithImages(showDeleted);
+      const data = await getVillagesWithImages(showDeleted, searchTerm);
       setVillages(Array.isArray(data) ? data : []);
       console.log("Fetched Village data with images:", data);
     } catch (error) {
@@ -207,9 +213,8 @@ const VillageManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              `Unable to ${
-                editingVillage ? "update" : "create"
-              } village. Please try again.`
+            `Unable to ${editingVillage ? "update" : "create"
+            } village. Please try again.`
           );
         }
       })
@@ -222,36 +227,48 @@ const VillageManagement = () => {
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this village?",
-      content: "This action cannot be undone.",
-      okText: "Yes, delete it",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Village/DeleteVillage?villageId=${id}`;
-          console.log("Deleting village with ID:", id);
+      // centered: true,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Button
+            type="primary"
+            danger
+            style={{ width: "120px" }} // Nút Yes
+            onClick={async () => {
+              try {
+                const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Village/DeleteVillage?villageId=${id}`;
+                console.log("Deleting village with ID:", id);
 
-          const response = await axios.delete(deleteUrl);
-          console.log("Delete response:", response.data);
+                const response = await axios.delete(deleteUrl);
+                console.log("Delete response:", response.data);
 
-          message.success("Village deleted successfully");
-          fetchVillages();
-        } catch (error) {
-          console.error("Delete error details:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
+                message.success("Village deleted successfully");
+                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                fetchVillages();
+              } catch (error) {
+                console.error("Delete error details:", {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                });
 
-          message.error(
-            error.response?.data?.message ||
-              "Unable to delete village. Please try again."
-          );
-        }
-      },
-      onCancel: () => {
-        console.log("Deletion canceled");
-      },
+                message.error(
+                  error.response?.data?.message ||
+                  "Unable to delete village. Please try again."
+                );
+              }
+            }}
+          >
+            Yes, delete it
+          </Button>
+          <Button
+            onClick={() => Modal.destroyAll()}
+            style={{ width: "120px" }} // Nút Cancel
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
   };
 
@@ -343,24 +360,29 @@ const VillageManagement = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
+          {!showDeleted && (
+            <>
+              <Button
+                key={`edit-${record.id}`}
+                onClick={() => showModal(record)}
+                icon={<EditOutlined />}
+              />
 
-          <Button
-            key={`view-${record.id}`}
-            onClick={() => fetchVillageDetail(record.id)}
-            icon={<EyeOutlined />}
-          ></Button>
+              <Button
+                key={`view-${record.id}`}
+                onClick={() => fetchVillageDetail(record.id)}
+                icon={<EyeOutlined />}
+              ></Button>
 
-          <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
+              <Button
+                key={`delete-${record.id}`}
+                onClick={() => handleDelete(record.id)}
+                icon={<DeleteOutlined />}
+                danger
+              />
+            </>
+          )}
+
           {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
               Restore
@@ -383,10 +405,21 @@ const VillageManagement = () => {
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <Input
-            placeholder="Search for villages"
+            placeholder="Search village"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchVillages()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",
@@ -601,8 +634,8 @@ const VillageManagement = () => {
         </Form>
       </Modal>
 
-            {/* Modal for View Images */}
-            <Modal
+      {/* Modal for View Images */}
+      <Modal
         title="Images"
         open={isImageModalVisible}
         onCancel={() => setIsImageModalVisible(false)}

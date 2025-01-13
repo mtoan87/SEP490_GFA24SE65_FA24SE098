@@ -1,0 +1,123 @@
+/* Container for the entire component */
+.food-wallet-container {
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .food-wallet-title {
+    text-align: center;
+    color: #333;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  
+  .loading-spinner {
+    display: block;
+    margin: 50px auto;
+  }
+  
+  .wallet-list {
+    margin-bottom: 30px;
+  }
+  
+  .wallet-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .wallet-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 30%;
+    font-size: 18px;
+  }
+  
+  .wallet-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .action-btn {
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-right: 12px;
+  }
+  
+  .expense-btn {
+    background-color: #f4a261;
+    color: white;
+    border: none;
+    font-weight: 600;
+  }
+  
+  .income-btn {
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    font-weight: 600;
+  }
+  
+  .data-section {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .data-title {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 25px;
+    font-weight: bold;
+  }
+  
+  .data-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .data-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
+    width: 45%;
+    margin-bottom: 15px;
+  }
+  
+  .data-item:last-child {
+    border-bottom: none;
+  }
+  
+  .data-item strong {
+    font-weight: 700;
+  }
+  
+  /* Responsive layout */
+  @media (max-width: 768px) {
+    .food-wallet-container {
+      padding: 20px;
+    }
+  
+    .wallet-item {
+      width: 100%;
+      padding: 15px;
+    }
+  
+    .action-btn {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  }
