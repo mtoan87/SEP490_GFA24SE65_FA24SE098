@@ -48,6 +48,7 @@ const EventManagement = () => {
   const [villages, setVillages] = useState([]);
   const [villageName, setVillageName] = useState([]);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchEvents();
@@ -71,7 +72,12 @@ const EventManagement = () => {
     };
 
     fetchVillageName();
-  }, [eventDetails]);
+  }, [eventDetails, showDeleted, searchTerm]);
+
+  const handleSearch = (value) => {
+    setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
+    fetchEvents(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
+  };
 
   const handleVillageClick = () => {
     if (eventDetails?.id) {
@@ -96,7 +102,7 @@ const EventManagement = () => {
 
   const showModal = (event = null) => {
     setEditingEvent(event);
-  
+
     if (event) {
       // Find the first wallet that is not null
       const wallets = [
@@ -106,7 +112,7 @@ const EventManagement = () => {
         "healthWalletId",
         "necessitiesWalletId",
       ];
-  
+
       let selectedWallet = null;
       // Loop through wallets and find the first non-null value
       for (const wallet of wallets) {
@@ -115,7 +121,7 @@ const EventManagement = () => {
           break;
         }
       }
-  
+
       // Set the form values, including the specific wallet
       form.setFieldsValue({
         ...event,
@@ -123,9 +129,9 @@ const EventManagement = () => {
         endTime: event.endTime && moment(event.endTime).isValid() ? moment(event.endTime) : null,
         wallet: selectedWallet, // Set the selected wallet
       });
-  
+
       console.log("Editing event wallet:", selectedWallet); // Check the value of wallet
-  
+
       // Update the current images when opening the modal for edit
       setCurrentImages(
         event.imageUrls?.map((url, index) => ({
@@ -139,15 +145,15 @@ const EventManagement = () => {
       form.resetFields();
       setCurrentImages([]);
     }
-  
+
     setImagesToDelete([]);
     setIsModalVisible(true);
   };
-  
-  const fetchEvents = async (showDeleted = false) => {
+
+  const fetchEvents = async () => {
     try {
       setLoading(true);
-      const data = await getEventsWithImages(showDeleted);
+      const data = await getEventsWithImages(showDeleted, searchTerm);
       setEvents(Array.isArray(data) ? data : []);
       console.log("Fetched events data:", data);
     } catch (error) {
@@ -429,10 +435,21 @@ const EventManagement = () => {
           }}
         >
           <Input
-            placeholder="Search for Events"
+            placeholder="Search event"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchEvents()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",

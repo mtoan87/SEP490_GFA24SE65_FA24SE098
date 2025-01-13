@@ -47,11 +47,13 @@ const UserManagement = () => {
   const fetchUserAccounts = async () => {
     try {
       setLoading(true);
-      const data = await getAccount(showDeleted, searchTerm);
-      setAccounts(data);
+      const data = await getAccount(showDeleted, searchTerm); // Thêm searchTerm vào hàm gọi API
+      setAccounts(Array.isArray(data) ? data : []);
+      console.log("Fetched Accounts:", data); // Xem toàn bộ dữ liệu trả về
     } catch (error) {
       console.error("Error fetching user accounts:", error);
       message.error("Cannot fetch user accounts.");
+      setAccounts([]);
     } finally {
       setLoading(false);
     }
@@ -59,9 +61,7 @@ const UserManagement = () => {
 
   const handleSearch = (value) => {
     setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
-    if (!value) {
-      fetchUserAccounts(); // Nếu ô tìm kiếm trống thì gọi lại danh sách đầy đủ
-    }
+    fetchUserAccounts(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
   };
 
   const showModal = (account = null) => {
@@ -163,47 +163,58 @@ const UserManagement = () => {
       }
     });
   };
-
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this user?",
-      content: "This action cannot be undone.",
-      okText: "Yes, delete it",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/UserAccount/DeleteUser?id=${id}`;
-          console.log("Deleting user with ID:", id);
+      // centered: true,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Button
+            type="primary"
+            danger
+            style={{ width: "120px" }} // Nút Yes
+            onClick={async () => {
+              try {
+                const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/UserAccount/DeleteUser?id=${id}`;
+                console.log("Deleting user with ID:", id);
 
-          const response = await axios.delete(deleteUrl);
-          console.log("Delete response:", response.data);
+                const response = await axios.delete(deleteUrl);
+                console.log("Delete response:", response.data);
 
-          message.success("user deleted successfully");
-          fetchUserAccounts();
-        } catch (error) {
-          console.error("Delete error details:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
-          
-          message.error(
-            error.response?.data?.message ||
-            "Unable to delete user. Please try again."
-          );
-        }
-      },
-      onCancel: () => {
-        console.log("Deletion canceled");
-      },
+                message.success("User deleted successfully");
+                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                fetchUserAccounts();
+              } catch (error) {
+                console.error("Delete error details:", {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                });
+
+                message.error(
+                  error.response?.data?.message ||
+                  "Unable to delete user. Please try again."
+                );
+              }
+            }}
+          >
+            Yes, delete it
+          </Button>
+          <Button
+            onClick={() => Modal.destroyAll()}
+            style={{ width: "120px" }} // Nút Cancel
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
   };
 
   const handleRestore = async (id) => {
     try {
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser/id=${id}`
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/RestoreUser?id=${id}`
       );
       message.success("User Restored Successfully");
       fetchUserAccounts(showDeleted);
@@ -271,17 +282,21 @@ const UserManagement = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
-          <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
+          {!showDeleted && (
+            <>
+              <Button
+                key={`edit-${record.id}`}
+                onClick={() => showModal(record)}
+                icon={<EditOutlined />}
+              />
+              <Button
+                key={`delete-${record.id}`}
+                onClick={() => handleDelete(record.id)}
+                icon={<DeleteOutlined />}
+                danger
+              />
+            </>
+          )}
 
           {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
@@ -322,10 +337,11 @@ const UserManagement = () => {
             type="primary"
             style={{ width: 100, marginRight: 8 }}
             icon={<SearchOutlined />}
-            onClick={() => fetchUserAccounts()} // Gọi hàm tìm kiếm
+            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
           >
             Search
           </Button>
+
           <div
             style={{
               display: "flex",

@@ -45,6 +45,7 @@ const HouseManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const [detailHouse, setDetailHouse] = useState(null);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -63,12 +64,12 @@ const HouseManagement = () => {
     } else {
       fetchHouses();
     }
-  }, [navigate, redirecting]);
+  }, [navigate, redirecting, showDeleted, searchTerm]);
 
-  const fetchHouses = async (showDeleted = false) => {
+  const fetchHouses = async () => {
     try {
       setLoading(true);
-      const data = await getHouseWithImages(showDeleted);
+      const data = await getHouseWithImages(showDeleted, searchTerm);
       setHouses(Array.isArray(data) ? data : []);
       console.log("Fetched house data with images:", data);
     } catch (error) {
@@ -78,6 +79,11 @@ const HouseManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
+    fetchHouses(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
   };
 
   const fetchHouseDetail = async (houseId) => {
@@ -225,9 +231,8 @@ const HouseManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              `Unable to ${
-                editingHouse ? "update" : "create"
-              } house. Please try again.`
+            `Unable to ${editingHouse ? "update" : "create"
+            } house. Please try again.`
           );
         }
       })
@@ -240,36 +245,48 @@ const HouseManagement = () => {
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this house?",
-      content: "This action cannot be undone.",
-      okText: "Yes, delete it",
-      okType: "danger",
-      cancelText: "Cancel",
-      onOk: async () => {
-        try {
-          const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/DeleteHouse?id=${id}`;
-          console.log("Deleting house with ID:", id);
+      // centered: true,
+      footer: (
+        <div style={{ display: "flex", justifyContent: "center", gap: "16px" }}>
+          <Button
+            type="primary"
+            danger
+            style={{ width: "120px" }} // Nút Yes
+            onClick={async () => {
+              try {
+                const deleteUrl = `https://soschildrenvillage.azurewebsites.net/api/Houses/DeleteHouse?id=${id}`;
+                console.log("Deleting house with ID:", id);
 
-          const response = await axios.delete(deleteUrl);
-          console.log("Delete response:", response.data);
+                const response = await axios.delete(deleteUrl);
+                console.log("Delete response:", response.data);
 
-          message.success("House deleted successfully");
-          fetchHouses();
-        } catch (error) {
-          console.error("Delete error details:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
+                message.success("House deleted successfully");
+                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                fetchHouses();
+              } catch (error) {
+                console.error("Delete error details:", {
+                  message: error.message,
+                  response: error.response?.data,
+                  status: error.response?.status,
+                });
 
-          message.error(
-            error.response?.data?.message ||
-              "Unable to delete house. Please try again."
-          );
-        }
-      },
-      onCancel: () => {
-        console.log("Deletion canceled");
-      },
+                message.error(
+                  error.response?.data?.message ||
+                  "Unable to delete user. Please try again."
+                );
+              }
+            }}
+          >
+            Yes, delete it
+          </Button>
+          <Button
+            onClick={() => Modal.destroyAll()}
+            style={{ width: "120px" }} // Nút Cancel
+          >
+            Cancel
+          </Button>
+        </div>
+      ),
     });
   };
 
@@ -305,11 +322,11 @@ const HouseManagement = () => {
       dataIndex: "location",
       key: "location",
     },
-    {
-      title: "Capacity",
-      dataIndex: "houseMember",
-      key: "houseMember",
-    },
+    // {
+    //   title: "Capacity",
+    //   dataIndex: "houseMember",
+    //   key: "houseMember",
+    // },
     {
       title: "Current Members",
       dataIndex: "currentMembers",
@@ -320,30 +337,30 @@ const HouseManagement = () => {
       dataIndex: "houseOwner",
       key: "houseOwner",
     },
-    {
-      title: "User Account Id",
-      dataIndex: "userAccountId",
-      key: "userAccountId",
-    },
-    {
-      title: "Village Id",
-      dataIndex: "villageId",
-      key: "villageId",
-    },
-    {
-      title: "Foundation Date",
-      dataIndex: "foundationDate",
-      key: "foundationDate",
-      render: (date) =>
-        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
-    },
-    {
-      title: "Last Inspection Date",
-      dataIndex: "lastInspectionDate",
-      key: "lastInspectionDate",
-      render: (date) =>
-        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
-    },
+    // {
+    //   title: "User Account Id",
+    //   dataIndex: "userAccountId",
+    //   key: "userAccountId",
+    // },
+    // {
+    //   title: "Village Id",
+    //   dataIndex: "villageId",
+    //   key: "villageId",
+    // },
+    // {
+    //   title: "Foundation Date",
+    //   dataIndex: "foundationDate",
+    //   key: "foundationDate",
+    //   render: (date) =>
+    //     moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    // },
+    // {
+    //   title: "Last Inspection Date",
+    //   dataIndex: "lastInspectionDate",
+    //   key: "lastInspectionDate",
+    //   render: (date) =>
+    //     moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+    // },
     {
       title: "Maintenance Status",
       dataIndex: "maintenanceStatus",
@@ -381,24 +398,28 @@ const HouseManagement = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button
-            key={`edit-${record.id}`}
-            onClick={() => showModal(record)}
-            icon={<EditOutlined />}
-          />
+          {!showDeleted && (
+            <>
+              <Button
+                key={`edit-${record.id}`}
+                onClick={() => showModal(record)}
+                icon={<EditOutlined />}
+              />
 
-          <Button
-            key={`view-${record.id}`}
-            onClick={() => fetchHouseDetail(record.id)}
-            icon={<EyeOutlined />}
-          />
+              <Button
+                key={`view-${record.id}`}
+                onClick={() => fetchHouseDetail(record.id)}
+                icon={<EyeOutlined />}
+              />
 
-          <Button
-            key={`delete-${record.id}`}
-            onClick={() => handleDelete(record.id)}
-            icon={<DeleteOutlined />}
-            danger
-          />
+              <Button
+                key={`delete-${record.id}`}
+                onClick={() => handleDelete(record.id)}
+                icon={<DeleteOutlined />}
+                danger
+              />
+            </>
+          )}
 
           {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
@@ -409,6 +430,7 @@ const HouseManagement = () => {
       ),
     },
   ];
+  const sortedHouses = houses.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
   return (
     <div>
@@ -422,10 +444,21 @@ const HouseManagement = () => {
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <Input
-            placeholder="Search for houses"
+            placeholder="Search user"
             prefix={<SearchOutlined />}
-            style={{ width: 500, marginRight: 8 }}
+            style={{ width: 400, marginRight: 8 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
+            onPressEnter={() => fetchHouses()} // Tìm kiếm khi nhấn Enter
           />
+          <Button
+            type="primary"
+            style={{ width: 100, marginRight: 8 }}
+            icon={<SearchOutlined />}
+            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
+          >
+            Search
+          </Button>
           <div
             style={{
               display: "flex",
@@ -464,7 +497,7 @@ const HouseManagement = () => {
       >
         <Table
           columns={columns}
-          dataSource={houses}
+          dataSource={sortedHouses}
           loading={loading}
           rowKey={(record) => record.id}
           rowSelection={{
