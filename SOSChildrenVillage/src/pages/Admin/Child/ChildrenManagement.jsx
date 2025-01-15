@@ -20,6 +20,8 @@ import {
   InboxOutlined,
   EyeOutlined,
   SwapOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
@@ -62,7 +64,7 @@ const ChildrenManagement = () => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("roleId");
 
-    if (!token || !["1", "3", "4", "6"].includes(userRole)) {
+    if (!token || !["1", "3", "6"].includes(userRole)) {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");
@@ -111,7 +113,7 @@ const ChildrenManagement = () => {
 
   const fetchTransferRequests = async () => {
     try {
-      const data = getTransferRequest();
+      const data = await getTransferRequest(); //them await de cho khi co data
       setTransferRequests(data?.$values || []);
     } catch (error) {
       console.error("Error fetching transfer requests:", error);
@@ -120,12 +122,77 @@ const ChildrenManagement = () => {
 
   // Gọi fetchTransferRequests trong useEffect
   useEffect(() => {
-    fetchTransferRequests();
+    const loadTransferRequests = async () => {
+      await fetchTransferRequests();
+    };
+    loadTransferRequests();
   }, []);
 
   const isChildInTransfer = (childId) => {
     return transferRequests.some(
-      (request) => request.childId === childId && request.status === "Pending"
+      (request) =>
+        request.childId === childId &&
+        ["Pending", "InProcess", "ReadyToTransfer", "DeclinedToTransfer"].includes(request.status)
+    );
+  };
+
+  const getTransferStatus = (childId) => {
+    const request = transferRequests.find(
+      (req) =>
+        req.childId === childId &&
+        ["Pending", "InProcess", "ReadyToTransfer", "DeclinedToTransfer"].includes(req.status)
+    );
+
+    if (!request) return null;
+
+    const statusDisplay = {
+      Pending: "Pending",
+      InProcess: "In Process",
+      ReadyToTransfer: "Ready",
+      DeclinedToTransfer: "Declined",
+    };
+
+    return statusDisplay[request.status];
+  };
+
+  const renderTransferButton = (record) => {
+    const userRole = localStorage.getItem("roleId");
+    const transferStatus = getTransferStatus(record.id);
+
+    if (userRole === "3" && transferStatus === "In Process") {
+      return (
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleAccept(record.id)}
+            icon={<CheckOutlined />}
+          >
+            Accept
+          </Button>
+          <Button
+            danger
+            onClick={() => handleDecline(record.id)}
+            icon={<CloseOutlined />}
+          >
+            Decline
+          </Button>
+        </Space>
+      );
+    }
+
+    return (
+      <Button
+        onClick={() => showTransferModal(record)}
+        icon={<SwapOutlined />}
+        disabled={isChildInTransfer(record.id)}
+        style={
+          isChildInTransfer(record.id)
+            ? { backgroundColor: "#f0f0f0" }
+            : {}
+        }
+      >
+        {getTransferStatus(record.id) || "Transfer"}
+      </Button>
     );
   };
 
@@ -191,7 +258,10 @@ const ChildrenManagement = () => {
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
           formData.append("schoolId", values.schoolId || "");
-          formData.append("facilitiesWalletId", values.facilitiesWalletId || "");
+          formData.append(
+            "facilitiesWalletId",
+            values.facilitiesWalletId || ""
+          );
           formData.append("systemWalletId", values.systemWalletId || "");
           formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
           formData.append("healthWalletId", values.healthWalletId || "");
@@ -274,8 +344,9 @@ const ChildrenManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-            `Unable to ${editingChild ? "update" : "create"
-            } child. Please try again.`
+              `Unable to ${
+                editingChild ? "update" : "create"
+              } child. Please try again.`
           );
         }
       })
@@ -284,7 +355,6 @@ const ChildrenManagement = () => {
         message.error("Please check all required fields");
       });
   };
-
 
   const handleDelete = async (id) => {
     Modal.confirm({
@@ -305,7 +375,7 @@ const ChildrenManagement = () => {
                 console.log("Delete response:", response.data);
 
                 message.success("Children deleted successfully");
-                Modal.destroyAll(); // Đóng Modal sau khi xóa thành công
+                Modal.destroyAll();
                 fetchChildren();
               } catch (error) {
                 console.error("Delete error details:", {
@@ -316,7 +386,7 @@ const ChildrenManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                  "Unable to delete user. Please try again."
+                    "Unable to delete user. Please try again."
                 );
               }
             }}
@@ -342,6 +412,86 @@ const ChildrenManagement = () => {
     } catch (error) {
       console.error("Error occurred when restoring child:", error);
       message.error("Unable to restore child");
+    }
+  };
+
+  const handleAccept = async (childId) => {
+    try {
+      const transferRequest = transferRequests.find(
+        (req) => req.childId === childId && req.status === "InProcess"
+      );
+
+      if (!transferRequest) {
+        message.error("Transfer request not found");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("id", transferRequest.id);
+      formData.append("childId", transferRequest.childId);
+      formData.append("fromHouseId", transferRequest.fromHouseId);
+      formData.append("toHouseId", transferRequest.toHouseId);
+      formData.append("requestReason", transferRequest.requestReason);
+      formData.append("status", "ReadyToTransfer");
+      formData.append("modifiedBy", localStorage.getItem("userId"));
+      formData.append("directorNote", "Accepted by House Mother");
+
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      message.success("Transfer request accepted successfully");
+      await fetchTransferRequests();
+      await fetchChildren();
+    } catch (error) {
+      console.error("Error accepting transfer request:", error);
+      message.error(
+        error.response?.data?.message || "Failed to accept transfer request"
+      );
+    }
+  };
+
+  const handleDecline = async (childId) => {
+    try {
+      const transferRequest = transferRequests.find(
+        (req) => req.childId === childId && req.status === "InProcess"
+      );
+
+      if (!transferRequest) {
+        message.error("Transfer request not found");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("id", transferRequest.id);
+      formData.append("childId", transferRequest.childId);
+      formData.append("fromHouseId", transferRequest.fromHouseId);
+      formData.append("toHouseId", transferRequest.toHouseId);
+      formData.append("requestReason", transferRequest.requestReason);
+      formData.append("status", "DeclinedToTransfer");
+      formData.append("modifiedBy", localStorage.getItem("userId"));
+      formData.append("directorNote", "Declined by House Mother");
+
+      await axios.put(
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      message.success("Transfer request declined successfully");
+      await fetchTransferRequests();
+      await fetchChildren();
+    } catch (error) {
+      console.error("Error declining transfer request:", error);
+      message.error(
+        error.response?.data?.message || "Failed to decline transfer request"
+      );
     }
   };
 
@@ -415,8 +565,6 @@ const ChildrenManagement = () => {
       title: "Actions",
       key: "action",
       render: (_, record) => {
-        const inTransfer = isChildInTransfer(record.id);
-
         return (
           <Space size="middle">
             {!showDeleted && (
@@ -440,15 +588,7 @@ const ChildrenManagement = () => {
                   danger
                 />
 
-                <Button
-                  key={`transfer-${record.id}`}
-                  onClick={() => showTransferModal(record)}
-                  icon={<SwapOutlined />}
-                  disabled={inTransfer}
-                  style={inTransfer ? { backgroundColor: '#f0f0f0' } : {}}
-                >
-                  {inTransfer ? 'In Process' : 'Transfer'}
-                </Button>
+                {renderTransferButton(record)}
               </>
             )}
 
@@ -462,7 +602,10 @@ const ChildrenManagement = () => {
       },
     },
   ];
-  const sortedchildren = children.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+
+  const sortedchildren = children.sort(
+    (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+  );
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -488,13 +631,13 @@ const ChildrenManagement = () => {
             style={{ width: 400, marginRight: 8 }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)} // Gán giá trị cho searchTerm
-            onPressEnter={() => fetchChildren()} // Tìm kiếm khi nhấn Enter
+            onPressEnter={() => fetchChildren()}
           />
           <Button
             type="primary"
             style={{ width: 100, marginRight: 8 }}
             icon={<SearchOutlined />}
-            onClick={() => handleSearch(searchTerm)} // Tìm kiếm khi nhấn nút
+            onClick={() => handleSearch(searchTerm)}
           >
             Search
           </Button>
@@ -788,19 +931,13 @@ const ChildrenManagement = () => {
         onClose={() => setIsDetailModalVisible(false)}
       />
 
-      {/* <ChildrenTransfer
-        isVisible={isTransferModalVisible}
-        onClose={() => setIsTransferModalVisible(false)}
-        child={selectedChild}
-      /> */}
-
       <ChildrenTransfer
         isVisible={isTransferModalVisible}
         onClose={() => setIsTransferModalVisible(false)}
         child={selectedChild}
-        onTransferSuccess={() => {
-          fetchTransferRequests();
-          fetchChildren();
+        onTransferSuccess={async () => {
+          await fetchTransferRequests(); // Ensure this completes first
+          await fetchChildren(); // Then fetch children
         }}
       />
     </div>

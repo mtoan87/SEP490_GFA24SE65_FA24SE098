@@ -46,6 +46,8 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
         </Col>
         <Col xs={24} md={16}>
           <Tabs defaultActiveKey="health" type="card">
+
+            {/* Health Tab */}
             <TabPane tab={<span><HeartOutlined /> Health</span>} key="health">
               {child.healthReports && child.healthReports.$values && child.healthReports.$values.length > 0 ? (
                 child.healthReports.$values.map((report, index) => (
@@ -67,6 +69,7 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
               )}
             </TabPane>
 
+            {/* Education Tab */}
             <TabPane tab={<span><BookOutlined /> Education</span>} key="education">
               {child.academicReports && child.academicReports.$values && child.academicReports.$values.length > 0 ? (
                 child.academicReports.$values.map((report, index) => (
@@ -97,7 +100,8 @@ const ViewDetailsChildren = ({ isVisible, child, onClose }) => {
                 <p>No academic reports available.</p>
               )}
             </TabPane>
-
+           
+            {/* Progress Tab */}
             <TabPane tab={<span><SmileOutlined /> Progress</span>} key="childProgress">
               {child.childProgresses && child.childProgresses.$values && child.childProgresses.$values.length > 0 ? (
                 <Card>
