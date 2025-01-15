@@ -8,8 +8,8 @@ import {
   Input,
   message,
   Upload,
-  Checkbox,
   DatePicker,
+  Select
 } from "antd";
 import {
   PlusOutlined,
@@ -26,6 +26,7 @@ import ViewDetailsHouse from "./ViewDetailsHouse";
 import axios from "axios";
 import moment from "moment";
 
+const { Option } = Select;
 const { Dragger } = Upload;
 
 const HouseManagement = () => {
@@ -46,6 +47,8 @@ const HouseManagement = () => {
   const [detailHouse, setDetailHouse] = useState(null);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [houseMothers, setHouseMothers] = useState([]);
+  const [villages, setVillages] = useState([]);
 
   const navigate = useNavigate(); // Khởi tạo useNavigate
   const messageShown = useRef(false); // Use a ref to track message display
@@ -81,6 +84,24 @@ const HouseManagement = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchVillages = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Village");
+        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        setVillages(villageData);
+      } catch (error) {
+        message.error("Failed to fetch villages");
+        console.error("Error fetching villages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVillages();
+  }, []);
+
   const handleSearch = (value) => {
     setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
     fetchHouses(); // Gọi lại danh sách tài khoản mỗi khi thay đổi từ khóa tìm kiếm
@@ -100,6 +121,29 @@ const HouseManagement = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchHouseMothers = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "https://soschildrenvillage.azurewebsites.net/api/UserAccount"
+        );
+        const users = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
+        const filteredDirectors = users.filter((user) => user.roleId === 3);
+        setHouseMothers(filteredDirectors);
+      } catch (error) {
+        message.error("Failed to fetch directors");
+        console.error("Error fetching directors:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHouseMothers();
+  }, []);
 
   const showModal = (house = null) => {
     setEditingHouse(house);
@@ -162,7 +206,7 @@ const HouseManagement = () => {
           formData.append("HouseNumber", values.houseNumber || 0);
           formData.append("Location", values.location);
           formData.append("Description", values.description || "");
-          formData.append("HouseMember", values.houseMember || 0);
+          formData.append("HouseMember", values.houseMember || 10);
           formData.append("HouseOwner", values.houseOwner || "");
           formData.append("Status", values.status || "Inactive");
           formData.append("UserAccountId", values.userAccountId);
@@ -332,21 +376,21 @@ const HouseManagement = () => {
       dataIndex: "currentMembers",
       key: "currentMembers",
     },
+    // {
+    //   title: "House Owner",
+    //   dataIndex: "houseOwner",
+    //   key: "houseOwner",
+    // },
     {
-      title: "House Owner",
-      dataIndex: "houseOwner",
-      key: "houseOwner",
+      title: "User Account Id",
+      dataIndex: "userAccountId",
+      key: "userAccountId",
     },
-    // {
-    //   title: "User Account Id",
-    //   dataIndex: "userAccountId",
-    //   key: "userAccountId",
-    // },
-    // {
-    //   title: "Village Id",
-    //   dataIndex: "villageId",
-    //   key: "villageId",
-    // },
+    {
+      title: "Village Id",
+      dataIndex: "villageId",
+      key: "villageId",
+    },
     // {
     //   title: "Foundation Date",
     //   dataIndex: "foundationDate",
@@ -589,20 +633,44 @@ const HouseManagement = () => {
             <Input.TextArea />
           </Form.Item>
 
-          <Form.Item name="houseMember" label="House Members">
+          {/* <Form.Item name="houseOwner" label="House Owner">
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="userAccountId"
+            label="House Owners"
+            rules={[{ required: true, message: "Please select a House Mother" }]}
+          >
+            <Select
+              placeholder="Select a House Mother Staff"
+              allowClear
+              loading={loading}
+            >
+              {houseMothers.map((houseMother) => (
+                <Option key={houseMother.id} value={houseMother.id}>
+                   {houseMother.userName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
-          <Form.Item name="houseOwner" label="House Owner">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="userAccountId" label="User Account Id">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="villageId" label="Village Id">
-            <Input />
+          <Form.Item
+            name="villageId"
+            label="Village ID"
+            rules={[{ required: true, message: "Please select a Village" }]}
+          >
+            <Select
+              placeholder="Select a Village"
+              allowClear
+              loading={loading}
+            >
+              {villages.map((village) => (
+                <Option key={village.id} value={village.id}>
+                  {village.villageName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           {/* <Form.Item name="roleName" label="Role Name">
@@ -684,14 +752,6 @@ const HouseManagement = () => {
                 uploading company data or other banned files.
               </p>
             </Dragger>
-          </Form.Item>
-
-          <Form.Item name="status" label="Status">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="isDeleted" valuePropName="checked">
-            <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
       </Modal>

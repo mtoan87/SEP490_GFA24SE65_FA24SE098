@@ -8,8 +8,8 @@ import {
   Input,
   message,
   Upload,
-  Checkbox,
   DatePicker,
+  Select,
 } from "antd";
 import {
   PlusOutlined,
@@ -26,6 +26,7 @@ import ViewDetailsVillage from "./ViewDetailsVillage";
 import axios from "axios";
 import moment from "moment";
 
+const { Option } = Select;
 const { Dragger } = Upload;
 
 const VillageManagement = () => {
@@ -48,6 +49,7 @@ const VillageManagement = () => {
   const [detailVillage, setDetailVillage] = useState(null);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [directors, setDirectors] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -100,6 +102,29 @@ const VillageManagement = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchDirectors = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "https://soschildrenvillage.azurewebsites.net/api/UserAccount"
+        );
+        const users = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
+        const filteredDirectors = users.filter((user) => user.roleId === 6);
+        setDirectors(filteredDirectors);
+      } catch (error) {
+        message.error("Failed to fetch directors");
+        console.error("Error fetching directors:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDirectors();
+  }, []);
 
   const showModal = (village = null) => {
     setEditingVillage(village);
@@ -165,6 +190,7 @@ const VillageManagement = () => {
           formData.append("TotalHouses", values.totalHouses || 0);
           formData.append("TotalChildren", values.totalChildren || 0);
           formData.append("ContactNumber", values.contactNumber || "");
+          formData.append("Status", values.status || "Active");
 
           // Append các hình ảnh
           if (uploadFiles && uploadFiles.length > 0) {
@@ -213,8 +239,9 @@ const VillageManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-            `Unable to ${editingVillage ? "update" : "create"
-            } village. Please try again.`
+              `Unable to ${
+                editingVillage ? "update" : "create"
+              } village. Please try again.`
           );
         }
       })
@@ -254,7 +281,7 @@ const VillageManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                  "Unable to delete village. Please try again."
+                    "Unable to delete village. Please try again."
                 );
               }
             }}
@@ -559,8 +586,22 @@ const VillageManagement = () => {
             <Input.TextArea />
           </Form.Item>
 
-          <Form.Item name="userAccountId" label="User Account Id">
-            <Input />
+          <Form.Item
+            name="userAccountId"
+            label="Directors"
+            rules={[{ required: true, message: "Please select a director" }]}
+          >
+            <Select
+              placeholder="Select a director"
+              allowClear
+              loading={loading}
+            >
+              {directors.map((director) => (
+                <Option key={director.id} value={director.id}>
+                  {director.userName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           {/* <Form.Item name="roleName" label="Role Name">
@@ -624,13 +665,13 @@ const VillageManagement = () => {
             </Dragger>
           </Form.Item>
 
-          <Form.Item name="status" label="Status">
+          {/* <Form.Item name="status" label="Status">
             <Input />
           </Form.Item>
 
           <Form.Item name="isDeleted" valuePropName="checked">
             <Checkbox>Deleted</Checkbox>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
 
