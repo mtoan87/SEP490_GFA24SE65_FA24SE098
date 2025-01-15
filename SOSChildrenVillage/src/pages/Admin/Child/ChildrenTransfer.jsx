@@ -9,7 +9,7 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
 
   // Get user information from localStorage
   const userId = localStorage.getItem("userId");
-  const userName = localStorage.getItem("userName");
+  //const userName = localStorage.getItem("userName");
 
   const handleOk = async () => {
     try {
@@ -93,9 +93,9 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
           <Descriptions.Item label="Current House">
             {child?.houseId || "N/A"}
           </Descriptions.Item>
-          <Descriptions.Item label="Requested By">
+          {/* <Descriptions.Item label="Requested By">
             {userName || "N/A"}
-          </Descriptions.Item>
+          </Descriptions.Item> */}
         </Descriptions>
       </div>
 

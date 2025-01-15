@@ -109,9 +109,15 @@ const TransferRequestManagement = () => {
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
       formData.append("toHouseId", selectedRequestForAction.toHouseId);
       formData.append("requestReason", selectedRequestForAction.requestReason);
-      formData.append("status", "Approved");
+
+      // Kiểm tra nếu là approve lần 2
+      if (selectedRequestForAction.status === "ReadyToTransfer") {
+        formData.append("status", "Completed");
+      } else {
+        formData.append("status", "InProcess");
+      }
+
       formData.append("modifiedBy", userId);
-      formData.append("approvedBy", userId);
       formData.append("directorNote", values.notes);
 
       await axios.put(
@@ -122,12 +128,18 @@ const TransferRequestManagement = () => {
         }
       );
 
-      message.success("Request approved successfully");
+      message.success(
+        selectedRequestForAction.status === "ReadyToTransfer"
+          ? "Transfer completed successfully"
+          : "Request approved and moved to InProcess"
+      );
       setIsApproveModalVisible(false);
-      fetchTransferRequests();
+      await fetchTransferRequests();
     } catch (error) {
       console.error("Error approving request:", error);
-      message.error(error.response?.data || "Failed to approve request");
+      message.error(
+        error.response?.data?.message || "Failed to approve request"
+      );
     }
   };
 
@@ -155,10 +167,12 @@ const TransferRequestManagement = () => {
 
       message.success("Request rejected successfully");
       setIsRejectModalVisible(false);
-      fetchTransferRequests();
+      await fetchTransferRequests();
     } catch (error) {
       console.error("Error rejecting request:", error);
-      message.error(error.response?.data || "Failed to reject request");
+      message.error(
+        error.response?.data?.message || "Failed to reject request"
+      );
     }
   };
 
@@ -300,7 +314,10 @@ const TransferRequestManagement = () => {
         render: (status) => {
           const statusColors = {
             Pending: "orange",
-            Approved: "green",
+            InProcess: "blue",
+            ReadyToTransfer: "cyan",
+            DeclinedToTransfer: "volcano",
+            Completed: "green",
             Rejected: "red",
           };
           return <span style={{ color: statusColors[status] }}>{status}</span>;
@@ -309,7 +326,7 @@ const TransferRequestManagement = () => {
       {
         title: "Actions",
         key: "action",
-        width: 120,
+        width: 200,
         render: (_, record) => {
           if (userRole === "3") {
             // HouseMother
@@ -318,15 +335,15 @@ const TransferRequestManagement = () => {
                 {record.status === "Pending" && record.createdBy === userId && (
                   <>
                     <Button
+                      key={`edit-${record.id}`}
                       onClick={() => showModal(record)}
                       icon={<EditOutlined />}
-                      title="Edit Request"
                     />
                     <Button
+                      key={`delete-${record.id}`}
                       onClick={() => handleDelete(record.id)}
                       icon={<DeleteOutlined />}
                       danger
-                      title="Delete Request"
                     />
                   </>
                 )}
@@ -334,17 +351,20 @@ const TransferRequestManagement = () => {
             );
           }
 
+          // Admin hoặc Director
           if (["1", "6"].includes(userRole)) {
-            // Admin or Director
             return (
-              <Space size="small" direction="vertical" style={{ width: '100%' }}>
+              <Space
+                size="small"
+                direction="vertical"
+                style={{ width: "100%" }}
+              >
                 {record.status === "Pending" && (
                   <>
                     <Button
                       type="primary"
                       icon={<CheckCircleOutlined />}
                       onClick={() => showApproveModal(record)}
-                      title="Approve Request"
                     >
                       Approve
                     </Button>
@@ -352,11 +372,23 @@ const TransferRequestManagement = () => {
                       danger
                       icon={<CloseCircleOutlined />}
                       onClick={() => showRejectModal(record)}
-                      title="Reject Request"
                     >
                       Reject
                     </Button>
                   </>
+                )}
+                {record.status === "ReadyToTransfer" && (
+                  <Button
+                    type="primary"
+                    onClick={() => showApproveModal(record)}
+                  >
+                    Complete Transfer
+                  </Button>
+                )}
+                {record.status === "DeclinedToTransfer" && (
+                  <Button danger onClick={() => showRejectModal(record)}>
+                    Confirm Rejection
+                  </Button>
                 )}
               </Space>
             );
@@ -440,6 +472,19 @@ const TransferRequestManagement = () => {
           form.resetFields();
         }}
         width={600}
+        footer={[
+          <div
+            key="footer"
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>
+            <Button key="ok" type="primary" onClick={handleOk}>
+              OK
+            </Button>
+          </div>,
+        ]}
       >
         <Form
           form={form}
@@ -483,6 +528,10 @@ const TransferRequestManagement = () => {
               <Option value="Pending">Pending</Option>
               <Option value="Approved">Approved</Option>
               <Option value="Rejected">Rejected</Option>
+              <Option value="InProcess">InProcess</Option>
+              <Option value="ReadyToTransfer">ReadyToTransfer</Option>
+              <Option value="DeclinedToTransfer">DeclinedToTransfer</Option>
+              <Option value="Completed">Completed</Option>
             </Select>
           </Form.Item>
         </Form>
