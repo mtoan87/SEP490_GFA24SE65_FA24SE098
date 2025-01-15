@@ -9,7 +9,6 @@ import {
   Select,
   DatePicker,
   message,
-  Checkbox,
   Upload,
 } from "antd";
 import {
@@ -56,6 +55,7 @@ const ChildrenManagement = () => {
   const [selectedChild, setSelectedChild] = useState(null);
   const [transferRequests, setTransferRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [healthStatus, setHealthStatus] = useState('Good');
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -252,6 +252,9 @@ const ChildrenManagement = () => {
       .validateFields()
       .then(async (values) => {
         try {
+          if (!editingChild && !values.status) {
+            values.status = "Active";
+          }
           const formData = new FormData();
 
           formData.append("childName", values.childName);
@@ -269,13 +272,21 @@ const ChildrenManagement = () => {
             "necessitiesWalletId",
             values.necessitiesWalletId || ""
           );
+
+          if (values.healthStatus === 'Bad' && values.walletType) {
+            // Set the selected wallet type to "1", leave others as empty string
+            formData.set(values.walletType, "1");
+            
+            formData.append("amount", values.amount || 0);
+            //formData.append("amountLimit", values.amountLimit || 0);
+          }
+
           formData.append("amount", values.amount || 0);
           formData.append("currentAmount", values.currentAmount || 0);
           formData.append("amountLimit", values.amountLimit || 0);
           formData.append("gender", values.gender);
           formData.append("dob", values.dob.format("YYYY-MM-DD"));
-          formData.append("status", values.status || "");
-          formData.append("isDeleted", values.isDeleted ? "true" : "false");
+          formData.append("status", values.status || "Active");
 
           console.log("Form Values:", values);
 
@@ -737,7 +748,19 @@ const ChildrenManagement = () => {
           </div>,
         ]}
       >
-        <Form form={form} layout="vertical">
+        <Form 
+          form={form} 
+          layout="vertical"
+          onValuesChange={(changedValues) => {
+            if ('healthStatus' in changedValues) {
+              setHealthStatus(changedValues.healthStatus);
+              // Reset wallet selection when health status changes
+              if (changedValues.healthStatus !== 'Bad') {
+                form.setFieldsValue({ walletType: undefined });
+              }
+            }
+          }}
+        >
           <Form.Item
             name="childName"
             label="Child Name"
@@ -746,8 +769,15 @@ const ChildrenManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item name="healthStatus" label="Health Status">
-            <Input />
+          <Form.Item 
+            name="healthStatus" 
+            label="Health Status"
+            rules={[{ required: true, message: "Please select health status" }]}
+          >
+            <Select>
+              <Option value="Good">Good</Option>
+              <Option value="Bad">Bad</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item name="houseId" label="House Id">
@@ -777,33 +807,34 @@ const ChildrenManagement = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          <Form.Item name="facilitiesWalletId" label="Facilities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
+          {healthStatus === 'Bad' && (
+            <>
+              <Form.Item 
+                name="walletType" 
+                label="Wallet" 
+                rules={[{ required: true, message: 'Please select a wallet type' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  placeholder="Select wallet type"
+                >
+                  <Option value="systemWalletId">System Wallet</Option>
+                  <Option value="facilitiesWalletId">Facilities Wallet</Option>
+                  <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
+                  <Option value="healthWalletId">Health Wallet</Option>
+                  <Option value="necessitiesWalletId">Necessities Wallet</Option>
+                </Select>
+              </Form.Item>
 
-          <Form.Item name="systemWalletId" label="System Wallet Id">
-            <Input type="number" />
-          </Form.Item>
+              <Form.Item name="amount" label="Amount">
+                <Input type="number" />
+              </Form.Item>
 
-          <Form.Item name="foodStuffWalletId" label="Food Stuff Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="healthWalletId" label="Health Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="necessitiesWalletId" label="Necessities Wallet Id">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item name="amountLimit" label="Amount Limit">
-            <Input type="number" />
-          </Form.Item>
+              {/* <Form.Item name="amountLimit" label="Amount Limit">
+                <Input type="number" />
+              </Form.Item> */}
+            </>
+          )}
 
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">
@@ -818,7 +849,7 @@ const ChildrenManagement = () => {
                 {currentImages.map((image, index) => (
                   <div key={index} style={{ position: "relative" }}>
                     <img
-                      src={image.url}
+                      src={image.url || "/placeholder.svg"}
                       alt={`Current ${index + 1}`}
                       style={{
                         width: "100px",
@@ -860,17 +891,6 @@ const ChildrenManagement = () => {
                 uploading company data or other banned files.
               </p>
             </Dragger>
-          </Form.Item>
-
-          <Form.Item name="status" label="Status">
-            <Select>
-              <Option value="Active">Active</Option>
-              <Option value="Inactive">Inactive</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="isDeleted" valuePropName="checked">
-            <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
       </Modal>
