@@ -56,6 +56,8 @@ const ChildrenManagement = () => {
   const [transferRequests, setTransferRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [healthStatus, setHealthStatus] = useState('Good');
+  const [schools, setSchools] = useState([]);
+  const [houses, setHouses] = useState([]);
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -90,6 +92,39 @@ const ChildrenManagement = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchSchools = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/School");
+        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        setSchools(villageData);
+      } catch (error) {
+        message.error("Failed to fetch villages");
+        console.error("Error fetching villages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchHouses = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses");
+        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        setHouses(villageData);
+      } catch (error) {
+        message.error("Failed to fetch villages");
+        console.error("Error fetching villages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchools();
+    fetchHouses();
+  }, []);
 
   const handleSearch = (value) => {
     setSearchTerm(value); // Cập nhật từ khóa tìm kiếm
@@ -272,14 +307,6 @@ const ChildrenManagement = () => {
             "necessitiesWalletId",
             values.necessitiesWalletId || ""
           );
-
-          if (values.healthStatus === 'Bad' && values.walletType) {
-            // Set the selected wallet type to "1", leave others as empty string
-            formData.set(values.walletType, "1");
-            
-            formData.append("amount", values.amount || 0);
-            //formData.append("amountLimit", values.amountLimit || 0);
-          }
 
           formData.append("amount", values.amount || 0);
           formData.append("currentAmount", values.currentAmount || 0);
@@ -523,15 +550,25 @@ const ChildrenManagement = () => {
       dataIndex: "healthStatus",
       key: "healthStatus",
     },
+    // {
+    //   title: "House Id",
+    //   dataIndex: "houseId",
+    //   key: "houseId",
+    // },
     {
-      title: "House Id",
-      dataIndex: "houseId",
-      key: "houseId",
+      title: "House",
+      dataIndex: "houseName",
+      key: "houseName",
     },
+    // {
+    //   title: "School Id",
+    //   dataIndex: "schoolId",
+    //   key: "schoolId",
+    // },
     {
-      title: "School Id",
-      dataIndex: "schoolId",
-      key: "schoolId",
+      title: "School",
+      dataIndex: "schoolName",
+      key: "schoolName",
     },
     {
       title: "Gender",
@@ -780,12 +817,40 @@ const ChildrenManagement = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item name="houseId" label="House Id">
-            <Input />
+          <Form.Item
+            name="houseId"
+            label="House"
+            rules={[{ required: true, message: "Please select a House" }]}
+          >
+            <Select
+              placeholder="Select a director"
+              allowClear
+              loading={loading}
+            >
+              {houses.map((house) => (
+                <Option key={house.id} value={house.id}>
+                  {house.houseName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
-          <Form.Item name="schoolId" label="School Id">
-            <Input />
+          <Form.Item
+            name="schoolId"
+            label="School"
+            rules={[{ required: true, message: "Please select a director" }]}
+          >
+            <Select
+              placeholder="Select a director"
+              allowClear
+              loading={loading}
+            >
+              {schools.map((school) => (
+                <Option key={school.id} value={school.id}>
+                  {school.schoolName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -808,33 +873,29 @@ const ChildrenManagement = () => {
           </Form.Item>
 
           {healthStatus === 'Bad' && (
-            <>
-              <Form.Item 
-                name="walletType" 
-                label="Wallet" 
-                rules={[{ required: true, message: 'Please select a wallet type' }]}
-              >
-                <Select
-                  style={{ width: '100%' }}
-                  placeholder="Select wallet type"
-                >
-                  <Option value="systemWalletId">System Wallet</Option>
-                  <Option value="facilitiesWalletId">Facilities Wallet</Option>
-                  <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
-                  <Option value="healthWalletId">Health Wallet</Option>
-                  <Option value="necessitiesWalletId">Necessities Wallet</Option>
-                </Select>
-              </Form.Item>
+        <>
+          <Form.Item 
+            name="walletType" 
+            label="Wallet" 
+            rules={[{ required: true, message: 'Please select a wallet type' }]}
+          >
+            <Select
+              style={{ width: '100%' }}
+              placeholder="Select wallet type"
+            >
+              <Option value="systemWalletId">System Wallet</Option>
+              <Option value="facilitiesWalletId">Facilities Wallet</Option>
+              <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
+              <Option value="healthWalletId">Health Wallet</Option>
+              <Option value="necessitiesWalletId">Necessities Wallet</Option>
+            </Select>
+          </Form.Item>
 
-              <Form.Item name="amount" label="Amount">
-                <Input type="number" />
-              </Form.Item>
-
-              {/* <Form.Item name="amountLimit" label="Amount Limit">
-                <Input type="number" />
-              </Form.Item> */}
-            </>
-          )}
+          <Form.Item name="amount" label="Amount">
+            <Input type="number" />
+          </Form.Item>
+        </>
+      )}
 
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">

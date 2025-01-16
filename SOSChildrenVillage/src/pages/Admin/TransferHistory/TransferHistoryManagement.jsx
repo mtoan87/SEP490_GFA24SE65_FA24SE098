@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Table, Input, message, Tooltip } from "antd";
+import { Table, Input, message, Tooltip, Modal } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -13,6 +13,8 @@ const TransferHistoryManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedHistory, setSelectedHistory] = useState(null);
 
   const userRole = localStorage.getItem("roleId");
   const userId = localStorage.getItem("userId");
@@ -56,23 +58,14 @@ const TransferHistoryManagement = () => {
     }
   }, [navigate, redirecting, userRole, fetchTransferHistories]);
 
-  // useEffect(() => {
-  //   fetchTransferHistories();
-  // }, []);
+  const showModal = (record) => {
+    setSelectedHistory(record);
+    setIsModalVisible(true);
+  };
 
-  // const fetchTransferHistories = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const data = await getTransferHistory();
-  //     setTransferHistories(data?.$values || []);
-  //     console.log("Fetched transfer histories data:", data);
-  //   } catch (error) {
-  //     console.error("Error fetching transfer histories:", error);
-  //     message.error("Failed to load transfer histories");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const columns = [
     {
@@ -143,6 +136,13 @@ const TransferHistoryManagement = () => {
       dataIndex: "handledBy",
       key: "handledBy",
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <a onClick={() => showModal(record)}>View Details</a>
+      ),
+    },
   ];
 
   return (
@@ -167,6 +167,9 @@ const TransferHistoryManagement = () => {
         dataSource={transferHistories}
         loading={loading}
         rowKey={(record) => record.id}
+        onRow={(record) => ({
+          onClick: () => showModal(record),
+        })}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
@@ -178,6 +181,54 @@ const TransferHistoryManagement = () => {
           showTotal: (total) => `Total ${total} items`,
         }}
       />
+
+      <Modal
+        title="Transfer History Details"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {selectedHistory && (
+          <div>
+            <p>
+              <strong>History ID:</strong> {selectedHistory.id}
+            </p>
+            <p>
+              <strong>Child ID:</strong> {selectedHistory.childId}
+            </p>
+            <p>
+              <strong>From House:</strong> {selectedHistory.fromHouseId}
+            </p>
+            <p>
+              <strong>To House:</strong> {selectedHistory.toHouseId}
+            </p>
+            <p>
+              <strong>Transfer Date:</strong>{" "}
+              {moment(selectedHistory.transferDate).format("DD/MM/YYYY")}
+            </p>
+            <p>
+              <strong>Status:</strong>{" "}
+              <span
+                style={{
+                  color:
+                    selectedHistory.status === "Completed" ? "green" : "red",
+                }}
+              >
+                {selectedHistory.status}
+              </span>
+            </p>
+            <p>
+              <strong>Notes/Reason:</strong>{" "}
+              {selectedHistory.status === "Completed"
+                ? selectedHistory.notes
+                : selectedHistory.rejectionReason}
+            </p>
+            <p>
+              <strong>Handled By:</strong> {selectedHistory.handledBy}
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

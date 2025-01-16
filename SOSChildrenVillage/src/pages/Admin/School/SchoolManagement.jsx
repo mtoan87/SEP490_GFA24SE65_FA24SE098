@@ -15,12 +15,12 @@ import {
   DeleteOutlined,
   SearchOutlined,
   InboxOutlined,
-  EyeOutlined,
+  //EyeOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getSchoolWithImages } from "../../../services/api";
-import { getSchoolDetail } from "../../../services/api";
-import ViewDetailsSchool from "./ViewDetailsSchool";
+//import { getSchoolDetail } from "../../../services/api";
+//import ViewDetailsSchool from "./ViewDetailsSchool";
 import axios from "axios";
 
 const { Dragger } = Upload;
@@ -38,8 +38,10 @@ const SchoolManagement = () => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [currentImages, setCurrentImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
-  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-  const [detailSchool, setDetailSchool] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  //const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  //const [detailSchool, setDetailSchool] = useState(null);
 
   const navigate = useNavigate();
   const messageShown = useRef(false);
@@ -75,20 +77,20 @@ const SchoolManagement = () => {
     }
   };
 
-  const fetchSchoolDetail = async (schoolId) => {
-    try {
-      setLoading(true);
-      const schoolDetail = await getSchoolDetail(schoolId);
-      console.log("School Detail before setting:", schoolDetail);
-      setDetailSchool(schoolDetail);
-      setIsDetailModalVisible(true);
-    } catch (error) {
-      console.error("Error fetching school details:", error);
-      message.error("Failed to fetch school details.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchSchoolDetail = async (schoolId) => {
+  //   try {
+  //     setLoading(true);
+  //     const schoolDetail = await getSchoolDetail(schoolId);
+  //     console.log("School Detail before setting:", schoolDetail);
+  //     setDetailSchool(schoolDetail);
+  //     setIsDetailModalVisible(true);
+  //   } catch (error) {
+  //     console.error("Error fetching school details:", error);
+  //     message.error("Failed to fetch school details.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const showModal = (school = null) => {
     setEditingSchool(school);
@@ -282,6 +284,28 @@ const SchoolManagement = () => {
       key: "email",
     },
     {
+      title: "Image",
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <Button
+          type="link"
+          onClick={() => {
+            setSelectedImages(imageUrls || []);
+            setIsImageModalVisible(true);
+          }}
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "block",
+            width: "100%",
+          }}
+        >
+          View
+        </Button>
+      ),
+    },
+    {
       title: "Actions",
       key: "action",
       render: (_, record) => (
@@ -292,11 +316,11 @@ const SchoolManagement = () => {
             icon={<EditOutlined />}
           />
 
-          <Button
+          {/* <Button
             key={`view-${record.id}`}
             onClick={() => fetchSchoolDetail(record.id)}
             icon={<EyeOutlined />}
-          ></Button>
+          ></Button> */}
 
           <Button
             key={`delete-${record.id}`}
@@ -535,12 +559,61 @@ const SchoolManagement = () => {
         </Form>
       </Modal>
 
+      {/* Modal for View Images */}
+      <Modal
+        title="Images"
+        open={isImageModalVisible}
+        onCancel={() => setIsImageModalVisible(false)}
+        footer={null}
+        width={800}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: "16px",
+            padding: "16px",
+          }}
+        >
+          {selectedImages.map((url, index) => (
+            <div
+              key={index}
+              style={{
+                border: "1px solid #d9d9d9",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                src={url}
+                alt={`Image ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                }}
+                onClick={() => window.open(url, "_blank")}
+              />
+              <div
+                style={{
+                  padding: "8px",
+                  textAlign: "center",
+                  borderTop: "1px solid #d9d9d9",
+                }}
+              >
+                {`Image ${index + 1}`}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
+
       {/* View Details */}
-      <ViewDetailsSchool
+      {/* <ViewDetailsSchool
         isVisible={isDetailModalVisible}
         village={detailSchool}
         onClose={() => setIsDetailModalVisible(false)}
-      />
+      /> */}
     </div>
   );
 };
