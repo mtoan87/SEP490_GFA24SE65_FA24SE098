@@ -105,17 +105,19 @@ const HouseDetails = () => {
                         <Table
                             dataSource={children}
                             columns={[
-                                { title: 'Child Name', dataIndex: 'childName' },
-                                { title: 'Health Status', dataIndex: 'healthStatus' },
-                                { title: 'Gender', dataIndex: 'gender' },
+                                { title: 'Child Name', dataIndex: 'childName', align:"center" },
+                                { title: 'Health Status', dataIndex: 'healthStatus', align:"center" },
+                                { title: 'Gender', dataIndex: 'gender', align:"center" },
                                 {
                                     title: 'Dob',
                                     dataIndex: 'dob',
+                                    align:"center",
                                     render: (dob) => formatDate(dob),
                                 },
                                 {
                                     title: 'Child Image',
                                     key: 'childImage',
+                                    align:"center",
                                     render: (_, record) => (
                                         <img
                                             src={record.imageUrls[0] || '/default-placeholder.png'}
@@ -124,6 +126,21 @@ const HouseDetails = () => {
                                         />
                                     ),
                                 },
+                                {
+                                    title: 'Action',
+                                    key: 'action',
+                                    align: 'center',
+                                    render: (_, record) => (
+                                      <Button
+                                        type="link"
+                                        onClick={() => {
+                                          window.open(`/childinfo/${record.id}`, '_blank');  // Open in a new tab
+                                        }}
+                                      >
+                                        View
+                                      </Button>
+                                    ),
+                                  },
                             ]}
                             rowKey="id"
                             pagination={{

@@ -51,6 +51,7 @@ import {
     HouseDetailPage,
     GoogleAuth,
     ChildrenBadManagement,
+    ChildInfoPage,
 } from './imports';
 
 const router = createBrowserRouter([
@@ -260,6 +261,10 @@ const router = createBrowserRouter([
   {
     path: '/housedetail/:id',
     element: <HouseDetailPage />,
+  },
+  {
+    path: '/childinfo/:id',
+    element: <ChildInfoPage />,
   },
 
   // Financial routes

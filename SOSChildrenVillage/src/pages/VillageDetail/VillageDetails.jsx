@@ -17,24 +17,43 @@ const VillageDetails = () => {
   useEffect(() => {
     const fetchVillageInfo = async () => {
       try {
-        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByEventId?eventId=${eventId}`);
-        console.log('Village Info Response:', response.data);
-        const villageData = response.data[0];
-        setVillageInfo({
-          villageName: villageData.villageName,
-          totalHouses: villageData.totalHouses,
-          description: villageData.description,
-          totalChildren: villageData.totalChildren,
-          location: villageData.location,
-          imageUrls: villageData.imageUrls || [],
-          villageId: villageData.id, // Include villageId for dynamic house fetching
-        });
-        setSelectedImage(villageData.imageUrls[0] || '/default-placeholder.png');
+        let response;
+        if (eventId && eventId.startsWith('V')) {
+          // Fetch from the new API if the ID starts with 'V'
+          response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByIdWithImg?id=${eventId}`);
+        } else {
+          // Otherwise, fetch from the original API
+          response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Village/GetVillageByEventId?eventId=${eventId}`);
+        }
+    
+        // Log the API response to debug
+        console.log("API Response:", response);
+    
+        // Check if the response is valid and contains the expected data
+        if (response && response.data) {
+          const villageData = response.data;
+          if (villageData && villageData.id) {
+            setVillageInfo({
+              villageName: villageData.villageName || 'N/A',
+              totalHouses: villageData.totalHouses || 'N/A',
+              description: villageData.description || 'No description available',
+              totalChildren: villageData.totalChildren || 'N/A',
+              location: villageData.location || 'N/A',
+              imageUrls: villageData.imageUrls || [],
+              villageId: villageData.id, // Include villageId for dynamic house fetching
+            });
+            setSelectedImage(villageData.imageUrls[0] || '/default-placeholder.png');
+          } else {
+            console.error("Village data is incomplete or malformed:", villageData);
+          }
+        } else {
+          console.error("No village data returned:", response.data);
+        }
       } catch (error) {
-        console.error('Error fetching village info:', error);
+        console.error("Error fetching village info:", error);
       }
-    };
-
+    };    
+    
     fetchVillageInfo();
   }, [eventId]);
 
@@ -123,13 +142,14 @@ const VillageDetails = () => {
           <Table
             dataSource={houses}
             columns={[
-              { title: 'House Name', dataIndex: 'houseName' },
-              { title: 'House Number', dataIndex: 'houseNumber' },
-              { title: 'Members', dataIndex: 'houseMember' },
-              { title: 'Owner', dataIndex: 'houseOwner' },
+              { title: 'House Name', dataIndex: 'houseName', align:"center" },
+              { title: 'House Number', dataIndex: 'houseNumber', align:"center" },
+              { title: 'Members', dataIndex: 'houseMember', align:"center" },
+              { title: 'Owner', dataIndex: 'houseOwner', align:"center" },
               {
                 title: 'Action',
                 key: 'action',
+                align: 'center',
                 render: (_, record) => (
                   <Button
                     type="link"

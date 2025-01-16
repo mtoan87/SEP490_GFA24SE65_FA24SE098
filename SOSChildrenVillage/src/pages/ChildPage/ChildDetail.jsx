@@ -23,7 +23,7 @@ const ChildDetail = () => {
 
     const fetchChildDetails = async () => {
       try {
-        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg/${childId}`);
+        const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg?id=${childId}`);
         setChild(response.data);
       } catch (error) {
         console.error('Error fetching child details:', error);

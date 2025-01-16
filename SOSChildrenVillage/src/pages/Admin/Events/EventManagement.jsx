@@ -232,6 +232,7 @@ const EventManagement = () => {
         wallets.forEach((wallet) => {
           formData.append(wallet, wallet === values.wallet ? 1 : "");
         });
+        console.log(values.wallet);
         console.log("Form Values:", values);
 
         if (uploadFiles && uploadFiles.length > 0) {

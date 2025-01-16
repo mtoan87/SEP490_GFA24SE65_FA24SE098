@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spin, Typography, Result, Button } from 'antd';
+import { Table, Spin, Typography, Result, Button, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
@@ -8,6 +8,8 @@ const VillageHistory = () => {
   const [loading, setLoading] = useState(true);
   const [villages, setVillages] = useState([]);
   const [error, setError] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [fullDescription, setFullDescription] = useState(''); // Store the full description to show in the modal
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,26 +45,59 @@ const VillageHistory = () => {
     navigate(`/list-house/${villageId}`);
   };
 
+  // Hàm xử lý khi nhấn vào tên làng, mở tab mới
+  const handleVillageClick = (villageId) => {
+    window.open(`/villagedetail/${villageId}`, "_blank");
+  };
+
+  // Hàm xử lý khi nhấn "Read More"
+  const handleReadMore = (description) => {
+    setFullDescription(description); // Set the full description to display in the modal
+    setIsModalVisible(true); // Show the modal
+  };
+
   const columns = [
     {
       title: 'Village Name',
       dataIndex: 'villageName',
       key: 'villageName',
+      align: 'center',
+      render: (villageName, record) => (
+        <Button type="link" onClick={() => handleVillageClick(record.id)}>
+          {villageName}
+        </Button>
+      ),
     },
     {
       title: 'Location',
       dataIndex: 'location',
       key: 'location',
+      align: 'center',
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      align: 'center',
+      render: (description) => (
+        <p>
+          {description?.length > 100
+            ? `${description.slice(0, 100)}...`
+            : description || 'No description'}
+
+          {description?.length > 100 && (
+            <Button type="link" onClick={() => handleReadMore(description)}>
+              Read More
+            </Button>
+          )}
+        </p>
+      ),
     },
     {
       title: 'Action',
       key: 'action',
-      width: 120,  // Đặt độ rộng cho cột Action
+      align: 'center',
+      width: 120, // Đặt độ rộng cho cột Action
       render: (text, record) => (
         <Button type="primary" onClick={() => handleViewHouse(record.id)}>
           View House
@@ -70,7 +105,6 @@ const VillageHistory = () => {
       ),
     },
   ];
-  
 
   return (
     <div style={{ padding: '20px' }}>
@@ -95,6 +129,20 @@ const VillageHistory = () => {
           style={{ boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}
         />
       )}
+
+      {/* Modal for displaying full description */}
+      <Modal
+        title="Full Description"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        <p>{fullDescription}</p>
+      </Modal>
     </div>
   );
 };
