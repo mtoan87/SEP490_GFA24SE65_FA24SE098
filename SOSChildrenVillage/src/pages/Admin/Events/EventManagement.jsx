@@ -351,20 +351,24 @@ const EventManagement = () => {
       title: "Event Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Event Code",
       dataIndex: "eventCode",
       key: "eventCode",
+      align: "center",
     },
     {
       title: "Event Name",
       dataIndex: "name",
       key: "name",
+      align: "center",
     },
     {
       title: "Wallet",
       key: "wallet",
+      align: "center",
       render: (text, record) => {
         const walletNames = [];
         if (record.facilitiesWalletId) walletNames.push("Facilities Wallet");
@@ -379,10 +383,12 @@ const EventManagement = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           {!showDeleted && (

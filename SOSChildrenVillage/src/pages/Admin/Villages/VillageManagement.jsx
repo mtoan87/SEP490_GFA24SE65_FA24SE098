@@ -317,16 +317,19 @@ const VillageManagement = () => {
       title: "Village Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Village Name",
       dataIndex: "villageName",
       key: "villageName",
+      align: "center",
     },
     {
       title: "Established Date",
       dataIndex: "establishedDate",
       key: "establishedDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -334,21 +337,25 @@ const VillageManagement = () => {
       title: "Location",
       dataIndex: "location",
       key: "location",
+      align: "center",
     },
     {
       title: "Contact Number",
       dataIndex: "contactNumber",
       key: "contactNumber",
+      align: "center",
     },
     {
       title: "Total Houses",
       dataIndex: "totalHouses",
       key: "totalHouses",
+      align: "center",
     },
     {
       title: "Total Children",
       dataIndex: "totalChildren",
       key: "totalChildren",
+      align: "center",
     },
     // {
     //   title: "User account Id",
@@ -359,16 +366,19 @@ const VillageManagement = () => {
       title: "Director",
       dataIndex: "userName",
       key: "userName",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -390,6 +400,7 @@ const VillageManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           {!showDeleted && (

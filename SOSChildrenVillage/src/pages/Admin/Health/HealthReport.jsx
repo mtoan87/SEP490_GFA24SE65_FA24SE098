@@ -280,41 +280,49 @@ const HealthReport = () => {
       title: "Health Report Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Child Id",
       dataIndex: "childId",
       key: "childId",
+      align: "center",
     },
     {
       title: "Nutritional Status",
       dataIndex: "nutritionalStatus",
       key: "nutritionalStatus",
+      align: "center",
     },
     {
       title: "Medical History",
       dataIndex: "medicalHistory",
       key: "medicalHistory",
+      align: "center",
     },
     {
       title: "Vaccination Status",
       dataIndex: "vaccinationStatus",
       key: "vaccinationStatus",
+      align: "center",
     },
     {
       title: "Weight",
       dataIndex: "weight",
       key: "weight",
+      align: "center",
     },
     {
       title: "Height",
       dataIndex: "height",
       key: "height",
+      align: "center",
     },
     {
       title: "Checkup Date",
       dataIndex: "checkupDate",
       key: "checkupDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -332,11 +340,13 @@ const HealthReport = () => {
       title: "Health Status",
       dataIndex: "healthStatus",
       key: "healthStatus",
+      align: "center",
     },
     {
       title: "Follow-Up Date",
       dataIndex: "followUpDate",
       key: "followUpDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -344,21 +354,25 @@ const HealthReport = () => {
       title: "Illnesses",
       dataIndex: "illnesses",
       key: "illnesses",
+      align: "center",
     },
     {
       title: "Allergies",
       dataIndex: "allergies",
       key: "allergies",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -380,6 +394,7 @@ const HealthReport = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button

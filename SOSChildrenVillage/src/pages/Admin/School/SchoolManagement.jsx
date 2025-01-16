@@ -257,31 +257,37 @@ const SchoolManagement = () => {
       title: "School ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "School Name",
       dataIndex: "schoolName",
       key: "schoolName",
+      align: "center",
     },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      align: "center",
     },
     {
       title: "School Type",
       dataIndex: "schoolType",
       key: "schoolType",
+      align: "center",
     },
     {
       title: "Phone Number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
+      align: "center",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      align: "center",
     },
     {
       title: "Image",
@@ -308,6 +314,7 @@ const SchoolManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button

@@ -50,6 +50,7 @@ import {
     VillageDetailPage,
     HouseDetailPage,
     GoogleAuth,
+    ChildrenBadManagement,
 } from './imports';
 
 const router = createBrowserRouter([
@@ -118,6 +119,10 @@ const router = createBrowserRouter([
           {
             path: 'expense-management',
             element: <ExpenseManagement />,
+          },
+          {
+            path: 'children-bad-management',
+            element: <ChildrenBadManagement />,
           },
           {
             path: 'facilities-wallet',

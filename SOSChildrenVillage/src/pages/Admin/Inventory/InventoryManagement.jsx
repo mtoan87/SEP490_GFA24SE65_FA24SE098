@@ -266,11 +266,13 @@ const InventoryManagement = () => {
       title: "Item Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Item Name",
       dataIndex: "itemName",
       key: "itemName",
+      align: "center",
     },
     // {
     //   title: "Description",
@@ -281,26 +283,31 @@ const InventoryManagement = () => {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+      align: "center",
     },
     {
       title: "Purpose",
       dataIndex: "purpose",
       key: "purpose",
+      align: "center",
     },
     {
       title: "Belongs To",
       dataIndex: "belongsTo",
       key: "belongsTo",
+      align: "center",
     },
     {
       title: "Belongs To Id",
       dataIndex: "belongsToId",
       key: "belongsToId",
+      align: "center",
     },
     {
       title: "Purchase Date",
       dataIndex: "purchaseDate",
       key: "purchaseDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -308,6 +315,7 @@ const InventoryManagement = () => {
       title: "Last Inspection Date",
       dataIndex: "lastInspectionDate",
       key: "lastInspectionDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -315,11 +323,13 @@ const InventoryManagement = () => {
       title: "Maintenance Status",
       dataIndex: "maintenanceStatus",
       key: "maintenanceStatus",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -341,6 +351,7 @@ const InventoryManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button

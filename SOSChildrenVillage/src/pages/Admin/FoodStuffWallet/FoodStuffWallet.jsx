@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { message, Button, Spin, Divider } from 'antd';
+import { message, Button, Table, Spin } from 'antd';
+import { useNavigate } from "react-router-dom";
 import './FoodStuffWallet.css'; // Import file CSS
 
 const FoodStuffWallet = () => {
@@ -10,34 +11,62 @@ const FoodStuffWallet = () => {
   const [incomeData, setIncomeData] = useState([]);
   const [showExpense, setShowExpense] = useState(false);
   const [showIncome, setShowIncome] = useState(false);
+  const navigate = useNavigate();
+  const [redirecting, setRedirecting] = useState(false);
+  const userRole = localStorage.getItem("roleId");
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    // Fetch data when component mounts
-    fetchFoodStuffWalletData();
-  }, []);
+    const fetchFoodStuffWalletData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/FoodStuffWallet/FormatFoodWallet');
+        setFoodStuffWalletData(response.data);
+      } catch (error) {
+        console.error(error);
+        message.error('Failed to fetch foodstuff wallet data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    const token = localStorage.getItem("token");
 
-  const fetchFoodStuffWalletData = async () => {
+    if (!token || !["1", "4"].includes(userRole)) {
+        if (!redirecting && !messageShown.current) {
+            setRedirecting(true);
+            message.error("You do not have permission to access this page");
+            navigate("/admin");
+            messageShown.current = true;
+        }
+    } else {
+      fetchFoodStuffWalletData();
+    }
+  }, [navigate, redirecting, userRole]);
+
+  const fetchHouseName = async (houseId) => {
     try {
-      setLoading(true);
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/FoodStuffWallet/FormatFoodWallet');
-      setFoodStuffWalletData(response.data);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseByIdWithImg/${houseId}`);
+      return response.data.houseName || 'Unknown House';
     } catch (error) {
-      console.error(error);
-      message.error('Failed to fetch foodstuff wallet data');
-    } finally {
-      setLoading(false);
+      console.error(`Failed to fetch house name for ID ${houseId}`, error);
+      return 'Unknown House';
     }
   };
 
   const fetchExpenseData = async (id) => {
     try {
       const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Expenses/GetExpenseByFoodWalletId?Id=${id}`);
-      const filteredExpenseData = response.data.map(expense => ({
-        expenseAmount: expense.expenseAmount,
-        description: expense.description,
-        expenseday: expense.expenseday,
-        houseId: expense.houseId
-      }));
+      const expensePromises = response.data.map(async (expense) => {
+        const houseName = await fetchHouseName(expense.houseId);
+        return {
+          expenseAmount: formatCurrency(expense.expenseAmount),
+          description: expense.description,
+          expenseday: formatDateTime(expense.expenseday),
+          houseName,
+        };
+      });
+
+      const filteredExpenseData = await Promise.all(expensePromises);
       setExpenseData(filteredExpenseData);
       setShowExpense(true);
       setShowIncome(false);
@@ -50,10 +79,10 @@ const FoodStuffWallet = () => {
   const fetchIncomeData = async (id) => {
     try {
       const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Incomes/GetIncomeByFoodWallet?Id=${id}`);
-      const filteredIncomeData = response.data.map(income => ({
-        amount: income.amount ? income.amount : 'N/A',
-        receiveday: income.receiveday,
-        userAccountId: income.userAccountId
+      const filteredIncomeData = response.data.map((income) => ({
+        amount: formatCurrency(income.amount || 0),
+        receiveday: formatDateTime(income.receiveday),
+        userAccountId: income.userAccountId,
       }));
       setIncomeData(filteredIncomeData);
       setShowIncome(true);
@@ -63,26 +92,38 @@ const FoodStuffWallet = () => {
       message.error('Failed to fetch income data');
     }
   };
-  const formatCurrency = (amount) => {
-    if (amount === undefined || amount === null) {
-      return 'N/A'; // Prevent error in case of null/undefined value
-    }
-    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+  const formatCurrency = (amount) => `${amount.toLocaleString()} VND`;
+
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
-  if (!event) {
-    return <div className="loading">Loading...</div>;
-  }
+  // Define columns for Expense and Income tables
+  const expenseColumns = [
+    { title: 'Expense Amount', dataIndex: 'expenseAmount', key: 'expenseAmount' },
+    { title: 'Description', dataIndex: 'description', key: 'description' },
+    { title: 'Expense Day', dataIndex: 'expenseday', key: 'expenseday' },
+    { title: 'House Name', dataIndex: 'houseName', key: 'houseName' },
+  ];
+
+  const incomeColumns = [
+    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+    { title: 'Receive Day', dataIndex: 'receiveday', key: 'receiveday' },
+    { title: 'User Account ID', dataIndex: 'userAccountId', key: 'userAccountId' },
+  ];
+
   return (
     <div className="food-wallet-container">
       <h1 className="food-wallet-title">FoodStuff Wallet</h1>
 
       {loading ? (
-        <Spin size="large" className="loading-spinner" />
+        <p className="loading-spinner">Loading...</p>
       ) : (
         <div className="wallet-list">
           {foodStuffWalletData.length > 0 ? (
-            <div className="wallet-items">
+            <ul className="wallet-items">
               {foodStuffWalletData.map((item) => (
                 <div key={item.id} className="wallet-item">
                   <div><strong>Budget:</strong> {formatCurrency(item.budget)}</div>
@@ -92,7 +133,7 @@ const FoodStuffWallet = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </ul>
           ) : (
             <p>No data available</p>
           )}
@@ -103,20 +144,11 @@ const FoodStuffWallet = () => {
       {showExpense && (
         <div className="data-section">
           <h2 className="data-title">Expense Data</h2>
-          {expenseData.length > 0 ? (
-            <div className="data-items">
-              {expenseData.map((expense, index) => (
-                <div key={index} className="data-item">
-                  <div><strong>Expense Amount:</strong> {formatCurrency(expense.expenseAmount)}</div>
-                  <div><strong>Description:</strong> {expense.description}</div>
-                  <div><strong>Expense Day:</strong> {expense.expenseday}</div>
-                  <div><strong>House ID:</strong> {expense.houseId}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No expense data available</p>
-          )}
+          <Table
+            dataSource={expenseData}
+            columns={expenseColumns}
+            pagination={{ pageSize: 5 }}
+          />
         </div>
       )}
 
@@ -124,19 +156,11 @@ const FoodStuffWallet = () => {
       {showIncome && (
         <div className="data-section">
           <h2 className="data-title">Income Data</h2>
-          {incomeData.length > 0 ? (
-            <div className="data-items">
-              {incomeData.map((income, index) => (
-                <div key={index} className="data-item">
-                  <div><strong>Amount:</strong> {formatCurrency(income.amount)}</div>
-                  <div><strong>Receive Day:</strong> {income.receiveday}</div>
-                  <div><strong>User Account ID:</strong> {income.userAccountId}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No income data available</p>
-          )}
+          <Table
+            dataSource={incomeData}
+            columns={incomeColumns}
+            pagination={{ pageSize: 5 }}
+          />
         </div>
       )}
     </div>

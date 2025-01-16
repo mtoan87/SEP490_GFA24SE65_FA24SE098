@@ -350,21 +350,25 @@ const HouseManagement = () => {
       title: "House Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "House Name",
       dataIndex: "houseName",
       key: "houseName",
+      align: "center",
     },
     {
       title: "House Number",
       dataIndex: "houseNumber",
       key: "houseNumber",
+      align: "center",
     },
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
+      align: "center",
     },
     // {
     //   title: "Capacity",
@@ -375,11 +379,13 @@ const HouseManagement = () => {
       title: "Current Members",
       dataIndex: "currentMembers",
       key: "currentMembers",
+      align: "center",
     },
     {
       title: "House Owner",
       dataIndex: "userName",
       key: "userName",
+      align: "center",
     },
     // {
     //   title: "User Account Id",
@@ -414,16 +420,19 @@ const HouseManagement = () => {
       title: "Maintenance Status",
       dataIndex: "maintenanceStatus",
       key: "maintenanceStatus",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -445,6 +454,7 @@ const HouseManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           {!showDeleted && (

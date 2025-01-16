@@ -14,6 +14,7 @@ const IncomeManagement = () => {
   const [incomes, setIncomes] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingIncome, setEditingIncome] = useState(null);
+  const [donationDetails, setDonationDetails] = useState(null); // To store donation details
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +36,17 @@ const IncomeManagement = () => {
     }
   };
 
+  const fetchDonationDetails = async (donationId) => {
+    try {
+      const response = await axios.get(
+        `https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationDetails/${donationId}`
+      );
+      setDonationDetails(response.data);
+    } catch (error) {
+      message.error("Failed to fetch donation details", error);
+    }
+  };
+
   const handleAddIncome = () => {
     form.resetFields();
     setEditingIncome(null);
@@ -42,7 +54,7 @@ const IncomeManagement = () => {
   };
 
   const handleEditIncome = (income) => {
-    form.setFieldsValue({ amount: income.amount }); // Chỉ thiết lập amount
+    form.setFieldsValue({ amount: income.amount });
     setEditingIncome(income);
     setIsModalVisible(true);
   };
@@ -61,27 +73,23 @@ const IncomeManagement = () => {
 
   const handleSubmit = async () => {
     try {
-      const values = await form.validateFields(); // Lấy giá trị từ form
+      const values = await form.validateFields();
 
       if (editingIncome) {
-        // Edit chỉ cập nhật amount
         const logDetails = {
           oldAmount: editingIncome.amount,
           newAmount: values.amount,
           incomeId: editingIncome.id,
         };
 
-        console.log("Edit Log:", logDetails); // Ghi log ra console
-        // Nếu cần ghi log vào backend:
-        // await axios.post('https://your-backend-api/log', logDetails);
+        console.log("Edit Log:", logDetails);
 
         await axios.put(
           `https://soschildrenvillage.azurewebsites.net/api/Incomes/UpdateIncome?id=${editingIncome.id}`,
-          { amount: values.amount } // Payload chỉ chứa amount
+          { amount: values.amount }
         );
         message.success("Income amount updated successfully");
       } else {
-        // Create mới
         const requestPayload = {
           donationId: values.donationId,
           facilitiesWalletId: values.facilitiesWalletId,
@@ -99,25 +107,25 @@ const IncomeManagement = () => {
       }
 
       setIsModalVisible(false);
-      fetchIncomes(); // Refresh danh sách income
+      fetchIncomes();
     } catch (error) {
       console.error("Error submitting income:", error.response || error);
       message.error("Failed to submit");
     }
   };
+
   const handleDownloadReport = async () => {
     try {
       const response = await axios.get(
         "https://soschildrenvillage.azurewebsites.net/api/Incomes/ExportExcel",
         {
-          responseType: "blob", // Đảm bảo dữ liệu trả về là file
+          responseType: "blob",
         }
       );
-      // Tạo file từ blob và lưu xuống
       const blob = new Blob([response.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      saveAs(blob, `Income_Report_${new Date().toISOString()}.xlsx`); // Đặt tên file với timestamp
+      saveAs(blob, `Income_Report_${new Date().toISOString()}.xlsx`);
       message.success("Report downloaded successfully!");
     } catch (error) {
       console.error("Error downloading report:", error);
@@ -127,30 +135,42 @@ const IncomeManagement = () => {
 
   const columns = [
     {
-      title: "Donation ID",
-      dataIndex: "donationId",
-      key: "donationId",
+      title: "View Donation",
+      key: "viewDonation",
+      align: "center",
+      render: (_, income) => (
+        <Button
+          onClick={() => fetchDonationDetails(income.donationId)}
+          type="link"
+        >
+          View Donation
+        </Button>
+      ),
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      align: "center",
       render: (text) => (text != null ? `${text.toLocaleString()} VND` : "N/A"),
     },
     {
       title: "Receive Day",
       dataIndex: "receiveDay",
       key: "receiveDay",
+      align: "center",
       render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Wallet",
       key: "wallet",
+      align: "center",
       render: (text, income) => {
         const wallets = [];
         if (income.facilitiesWalletId) wallets.push("Facilities Wallet");
@@ -165,6 +185,7 @@ const IncomeManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, income) => (
         <Space size="middle">
           <Button
@@ -295,6 +316,25 @@ const IncomeManagement = () => {
           )}
         </Form>
       </Modal>
+
+      {/* Modal for Donation Details */}
+      {donationDetails && (
+        <Modal
+          title="Donation Details"
+          visible={!!donationDetails}
+          onCancel={() => setDonationDetails(null)}
+          footer={null}
+        >
+          <p><strong>User Name:</strong> {donationDetails.userName}</p>
+          <p><strong>Email:</strong> {donationDetails.userEmail}</p>
+          <p><strong>Phone:</strong> {donationDetails.phone || "N/A"}</p>
+          <p><strong>Address:</strong> {donationDetails.address || "N/A"}</p>
+          <p><strong>Donation Type:</strong> {donationDetails.donationType}</p>
+          <p><strong>Target Name:</strong> {donationDetails.targetName}</p>
+          <p><strong>Event Code:</strong> {donationDetails.eventCode}</p>
+          <p><strong>Description:</strong> {donationDetails.description}</p>
+        </Modal>
+      )}
     </div>
   );
 };

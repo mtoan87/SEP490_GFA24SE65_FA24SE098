@@ -79,7 +79,7 @@ const TransferRequestManagement = () => {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");
-        navigate("/home");
+        navigate("/admin");
         messageShown.current = true;
       }
     } else {
@@ -271,26 +271,31 @@ const TransferRequestManagement = () => {
         title: "Request ID",
         dataIndex: "id",
         key: "id",
+        align: "center",
       },
       {
         title: "Child ID",
         dataIndex: "childId",
         key: "childId",
+        align: "center",
       },
       {
         title: "From House",
         dataIndex: "fromHouseId",
         key: "fromHouseId",
+        align: "center",
       },
       {
         title: "To House",
         dataIndex: "toHouseId",
         key: "toHouseId",
+        align: "center",
       },
       {
         title: "Request Date",
         dataIndex: "requestDate",
         key: "requestDate",
+        align: "center",
         render: (date) =>
           moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
       },
@@ -298,6 +303,7 @@ const TransferRequestManagement = () => {
         title: "Request Reason",
         dataIndex: "requestReason",
         key: "requestReason",
+        align: "center",
         ellipsis: {
           showTitle: false,
         },
@@ -311,6 +317,7 @@ const TransferRequestManagement = () => {
         title: "Status",
         dataIndex: "status",
         key: "status",
+        align: "center",
         render: (status) => {
           const statusColors = {
             Pending: "orange",
@@ -327,6 +334,8 @@ const TransferRequestManagement = () => {
         title: "Actions",
         key: "action",
         width: 200,
+        align: "center",
+
         render: (_, record) => {
           if (userRole === "3") {
             // HouseMother

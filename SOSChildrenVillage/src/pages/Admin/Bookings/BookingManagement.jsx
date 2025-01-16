@@ -64,37 +64,44 @@ const BookingManagement = () => {
       title: "Booking ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "House ID",
       dataIndex: "houseId",
       key: "houseId",
+      align: "center",
     },
     {
       title: "House Name",
       dataIndex: "houseName",
       key: "houseName",
+      align: "center",
     },
     {
       title: "Visit Day",
       dataIndex: "visitday",
       key: "visitday",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
     {
       title: "Slot Time",
       key: "slotTime",
+      align: "center",
       render: (_, record) => `${record.slotStartTime} - ${record.slotEndTime}`,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button

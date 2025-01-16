@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { message, Button, Table } from 'antd';
+import { useNavigate } from "react-router-dom";
+import './SystemWallet.css';
 
 const SystemWallet = () => {
   const [systemWalletData, setSystemWalletData] = useState([]);
@@ -9,23 +11,37 @@ const SystemWallet = () => {
   const [incomeData, setIncomeData] = useState([]);
   const [showExpense, setShowExpense] = useState(false);
   const [showIncome, setShowIncome] = useState(false);
+  const navigate = useNavigate();
+  const [redirecting, setRedirecting] = useState(false);
+  const userRole = localStorage.getItem("roleId");
+  const messageShown = useRef(false);
 
   useEffect(() => {
-    fetchSystemWalletData();
-  }, []);
+    const fetchSystemWalletData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/SystemWallet/FormatSystemWallet');
+        setSystemWalletData(Array.isArray(response.data) ? response.data : []); // Ensure response data is an array
+      } catch (error) {
+        console.error(error);
+        message.error('Failed to fetch system wallet data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    const token = localStorage.getItem("token");
 
-  const fetchSystemWalletData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/SystemWallet/FormatSystemWallet');
-      setSystemWalletData(Array.isArray(response.data) ? response.data : []); // Ensure response data is an array
-    } catch (error) {
-      console.error(error);
-      message.error('Failed to fetch system wallet data');
-    } finally {
-      setLoading(false);
+    if (!token || !["1", "4"].includes(userRole)) {
+      if (!redirecting && !messageShown.current) {
+        setRedirecting(true);
+        message.error("You do not have permission to access this page");
+        navigate("/admin");
+        messageShown.current = true;
+      }
+    } else {
+      fetchSystemWalletData();
     }
-  };
+  }, [navigate, redirecting, userRole]);
 
   const formatCurrency = (amount) => `${amount.toLocaleString()} VND`;
 
@@ -87,28 +103,24 @@ const SystemWallet = () => {
   ];
 
   return (
-    <div>
-      <h1>System Wallet</h1>
+    <div className="system-wallet-container">
+      <h1 className="system-wallet-title">System Wallet</h1>
       {loading ? (
-        <p>Loading...</p>
+        <p className="loading-spinner">Loading...</p>
       ) : (
-        <div>
+        <div className="wallet-list">
           {systemWalletData.length > 0 ? (
-            <ul>
+            <ul className="wallet-items">
               {systemWalletData.map((item) => (
-                <li key={item.id} style={{ marginBottom: '16px' }}>
+                <div className="wallet-item" key={item.id}>
                   <div>
                     <strong>Budget:</strong> {formatCurrency(item.budget)}
                   </div>
-                  <div>
-                    <strong>User Account ID:</strong> {item.userAccountId}
+                  <div className="wallet-actions">
+                    <Button className="action-btn expense-btn" onClick={() => fetchExpenseData(item.id)}>Show Expense</Button>
+                    <Button className="action-btn income-btn" onClick={() => fetchIncomeData(item.id)}>Show Income</Button>
                   </div>
-                  {/* Group buttons in a row */}
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                    <Button onClick={() => fetchExpenseData(item.id)}>Show Expense</Button>
-                    <Button onClick={() => fetchIncomeData(item.id)}>Show Income</Button>
-                  </div>
-                </li>
+                </div>
               ))}
             </ul>
           ) : (
@@ -118,8 +130,8 @@ const SystemWallet = () => {
       )}
 
       {showExpense && (
-        <div>
-          <h2>Expense Data</h2>
+        <div className="data-section">
+          <h2 className="data-title">Expense Data</h2>
           <Table
             dataSource={expenseData}
             columns={expenseColumns}
@@ -129,8 +141,8 @@ const SystemWallet = () => {
       )}
 
       {showIncome && (
-        <div>
-          <h2>Income Data</h2>
+        <div className="data-section">
+          <h2 className="data-title">Income Data</h2>
           <Table
             dataSource={incomeData}
             columns={incomeColumns}
