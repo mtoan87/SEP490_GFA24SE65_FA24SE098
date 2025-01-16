@@ -137,30 +137,36 @@ const SubjectsManagement = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Academic Report ID",
       dataIndex: "academicReportId",
       key: "academicReportId",
+      align: "center",
     },
     {
       title: "Subject Name",
       dataIndex: "subjectName",
       key: "subjectName",
+      align: "center",
     },
     {
       title: "Score",
       dataIndex: "score",
       key: "score",
+      align: "center",
     },
     {
       title: "Remarks",
       dataIndex: "remarks",
       key: "remarks",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button onClick={() => showModal(record)} icon={<EditOutlined />} />

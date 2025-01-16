@@ -13,6 +13,7 @@ import BookingSlotManagement from '../pages/Admin/BookingSlots/BookingSlotManage
 import DonationManagement from '../pages/Admin/Donations/DonationManagement';
 import EventManagement from '../pages/Admin/Events/EventManagement';
 import ExpenseManagement from '../pages/Admin/Expense/ExpenseManagement';
+import ChildrenBadManagement from '../pages/Admin/Child/ChildrenBadManagement';
 import FacilitiesWallet from '../pages/Admin/FacilitiesWallet/FacilitiesWallet';
 import FoodStuffWallet from '../pages/Admin/FoodStuffWallet/FoodStuffWallet';
 import HealthReport from '../pages/Admin/Health/HealthReport';
@@ -74,6 +75,7 @@ export {
     DonationManagement,
     EventManagement,
     ExpenseManagement,
+    ChildrenBadManagement,
     FacilitiesWallet,
     FoodStuffWallet,
     HealthReport,

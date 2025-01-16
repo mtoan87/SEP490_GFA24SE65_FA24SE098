@@ -150,21 +150,25 @@ const ChildProgressManagement = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Child ID",
       dataIndex: "childId",
       key: "childId",
+      align: "center",
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      align: "center",
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -172,20 +176,24 @@ const ChildProgressManagement = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
+      align: "center",
     },
     {
       title: "Event ID",
       dataIndex: "eventId",
       key: "eventId",
+      align: "center",
     },
     {
       title: "Activity ID",
       dataIndex: "activityId",
       key: "activityId",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button onClick={() => showModal(record)} icon={<EditOutlined />} />

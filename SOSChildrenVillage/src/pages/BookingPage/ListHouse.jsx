@@ -125,31 +125,37 @@ const ListHouse = () => {
       title: 'House Name',
       dataIndex: 'houseName',
       key: 'houseName',
+      align: "center",
     },
     {
       title: 'House Number',
       dataIndex: 'houseNumber',
       key: 'houseNumber',
+      align: "center",
     },
     {
       title: 'Location',
       dataIndex: 'location',
       key: 'location',
+      align: "center",
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      align: "center",
     },
     {
       title: 'House Owner',
       dataIndex: 'houseOwner',
       key: 'houseOwner',
+      align: "center",
     },
     {
       title: 'Image',
       dataIndex: 'imageUrls',
       key: 'imageUrls',
+      align: "center",
       render: (imageUrls) => (
         <div>
           {imageUrls?.map((url, index) => (
@@ -167,6 +173,7 @@ const ListHouse = () => {
     {
       title: 'Actions',
       key: 'action',
+      align: "center",
       width: 120,
       render: (_, record) => (
         <Button

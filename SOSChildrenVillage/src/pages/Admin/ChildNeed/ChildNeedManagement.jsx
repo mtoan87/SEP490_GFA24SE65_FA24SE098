@@ -168,31 +168,37 @@ const ChildNeedManagement = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Child ID",
       dataIndex: "childId",
       key: "childId",
+      align: "center",
     },
     {
       title: "Need Description",
       dataIndex: "needDescription",
       key: "needDescription",
+      align: "center",
     },
     {
       title: "Need Type",
       dataIndex: "needType",
       key: "needType",
+      align: "center",
     },
     {
       title: "Priority",
       dataIndex: "priority",
       key: "priority",
+      align: "center",
     },
     {
       title: "Fulfilled Date",
       dataIndex: "fulfilledDate",
       key: "fulfilledDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -200,15 +206,18 @@ const ChildNeedManagement = () => {
       title: "Remarks",
       dataIndex: "remarks",
       key: "remarks",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button onClick={() => showModal(record)} icon={<EditOutlined />} />

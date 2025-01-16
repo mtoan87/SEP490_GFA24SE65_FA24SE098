@@ -1,15 +1,14 @@
-/* Container for the entire component */
-.food-wallet-container {
+.system-wallet-container {
     padding: 30px;
     font-family: 'Arial', sans-serif;
-    background-color: #fafafa;
+    background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
     margin: 0 auto;
   }
   
-  .food-wallet-title {
+  .system-wallet-title {
     text-align: center;
     color: #333;
     font-size: 32px;
@@ -46,25 +45,30 @@
     margin-top: 15px;
     display: flex;
     justify-content: flex-start;
+    gap: 8px;
   }
   
   .action-btn {
     font-size: 16px;
     padding: 10px 20px;
-    margin-right: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-btn:hover {
+    opacity: 0.8;
   }
   
   .expense-btn {
     background-color: #f4a261;
     color: white;
-    border: none;
     font-weight: 600;
   }
   
   .income-btn {
     background-color: #2a9d8f;
     color: white;
-    border: none;
     font-weight: 600;
   }
   
@@ -105,6 +109,28 @@
     font-weight: 700;
   }
   
+  /* Ant Design Table Customizations */
+  .ant-table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-table-thead > tr > th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .ant-table-tbody > tr > td {
+    text-align: center;
+  }
+  
+  .ant-pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
   /* Responsive layout */
   @media (max-width: 768px) {
     .wallet-item,
@@ -112,3 +138,4 @@
       width: 100%;
     }
   }
+  

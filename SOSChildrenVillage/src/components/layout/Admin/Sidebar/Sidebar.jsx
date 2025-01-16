@@ -26,6 +26,7 @@ import {
   ScheduleOutlined,
   //TransactionOutlined,
   DollarOutlined,
+  CheckCircleOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import logo from "../../../../assets/images/logo3.png";
@@ -186,6 +187,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
           label: <Link to="/admin/expense-management">Expense</Link>,
         },
         {
+          key: "childrenbad",
+          icon: <CheckCircleOutlined />,
+          label: <Link to="/admin/children-bad-management">Expense Children</Link>,
+        },
+        {
           key: "donations",
           icon: <DollarOutlined />,
           label: <Link to="/admin/donation-management">Donations</Link>,
@@ -223,13 +229,13 @@ const Sidebar = ({ collapsed, onToggle }) => {
             {
               key: "system-wallet",
               icon: <WalletOutlined />,
-              label: <Link to="/admin/system-wallet">System wallet</Link>,
+              label: <Link to="/admin/system-wallet">System</Link>,
             },
             {
               key: "necessities-wallet",
               icon: <WalletOutlined />,
               label: (
-                <Link to="/admin/necessities-wallet">Necessities wallet</Link>
+                <Link to="/admin/necessities-wallet">Necessities</Link>
               ),
             },
           ],

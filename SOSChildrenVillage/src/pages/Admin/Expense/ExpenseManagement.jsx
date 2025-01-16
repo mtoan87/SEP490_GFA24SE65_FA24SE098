@@ -124,37 +124,44 @@ const ExpenseManagement = () => {
       title: "Expense ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Amount",
       dataIndex: "expenseAmount",
       key: "expenseAmount",
+      align: "center",
       render: (amount) => `${amount.toLocaleString()} VND`,
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      align: "center",
     },
     {
       title: "Expense Day",
       dataIndex: "expenseday",
       key: "expenseday",
+      align: "center",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "House ID",
       dataIndex: "houseId",
       key: "houseId",
+      align: "center",
     },
     {
       title: "Wallet",
       key: "wallet",
+      align: "center",
       render: (text, record) => {
         const wallets = [];
         if (record.facilitiesWalletId) wallets.push("Facilities Wallet");
@@ -169,6 +176,7 @@ const ExpenseManagement = () => {
       title: "Created Date",
       dataIndex: "createdDate",
       key: "createdDate",
+      align: "center",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     ...(roleId === 1
@@ -176,6 +184,7 @@ const ExpenseManagement = () => {
           {
             title: "Active",
             key: "active",
+            align: "center",
             render: (text, record) => (
               <Button
                 type="primary"

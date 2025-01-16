@@ -50,7 +50,7 @@ const TransferHistoryManagement = () => {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");
-        navigate("/home");
+        navigate("/admin");
         messageShown.current = true;
       }
     } else {
@@ -72,26 +72,31 @@ const TransferHistoryManagement = () => {
       title: "History ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Child ID",
       dataIndex: "childId",
       key: "childId",
+      align: "center",
     },
     {
       title: "From House",
       dataIndex: "fromHouseId",
       key: "fromHouseId",
+      align: "center",
     },
     {
       title: "To House",
       dataIndex: "toHouseId",
       key: "toHouseId",
+      align: "center",
     },
     {
       title: "Transfer Date",
       dataIndex: "transferDate",
       key: "transferDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -99,6 +104,7 @@ const TransferHistoryManagement = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
       render: (status) => {
         const statusColors = {
           Completed: "green",
@@ -110,6 +116,7 @@ const TransferHistoryManagement = () => {
     {
       title: "Notes",
       key: "notesReason",
+      align: "center",
       render: (_, record) => {
         if (record.status === "Completed") {
           return (
@@ -135,6 +142,7 @@ const TransferHistoryManagement = () => {
       title: "Handled By",
       dataIndex: "handledBy",
       key: "handledBy",
+      align: "center",
     },
     {
       title: "Action",

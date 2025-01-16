@@ -229,31 +229,37 @@ const UserManagement = () => {
       title: "User ID",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Username",
       dataIndex: "userName",
       key: "userName",
+      align: "center",
     },
     {
       title: "Email",
       dataIndex: "userEmail",
       key: "userEmail",
+      align: "center",
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      align: "center",
     },
     {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      align: "center",
     },
     {
       title: "Date of Birth",
       dataIndex: "dob",
       key: "dob",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -261,25 +267,30 @@ const UserManagement = () => {
       title: "Gender",
       dataIndex: "gender",
       key: "gender",
+      align: "center",
     },
     {
       title: "Country",
       dataIndex: "country",
       key: "country",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Role ID",
       dataIndex: "roleId",
       key: "roleId",
+      align: "center",
     },
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           {!showDeleted && (
@@ -518,9 +529,10 @@ const UserManagement = () => {
           >
             <Select>
               <Option value={1}>Admin</Option>
-              <Option value={2}>Staff</Option>
-              <Option value={3}>Sponsor</Option>
-              <Option value={4}>Donor</Option>
+              <Option value={5}>Donor Staff</Option>
+              <Option value={2}>Sponsor</Option>
+              <Option value={4}>Accountant</Option>
+              <Option value={3}>HouseMother</Option>
             </Select>
           </Form.Item>
 

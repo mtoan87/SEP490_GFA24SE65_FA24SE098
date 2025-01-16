@@ -539,16 +539,19 @@ const ChildrenManagement = () => {
       title: "Child Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Child Name",
       dataIndex: "childName",
       key: "childName",
+      align: "center",
     },
     {
       title: "Health Status",
       dataIndex: "healthStatus",
       key: "healthStatus",
+      align: "center",
     },
     // {
     //   title: "House Id",
@@ -559,6 +562,7 @@ const ChildrenManagement = () => {
       title: "House",
       dataIndex: "houseName",
       key: "houseName",
+      align: "center",
     },
     // {
     //   title: "School Id",
@@ -569,16 +573,19 @@ const ChildrenManagement = () => {
       title: "School",
       dataIndex: "schoolName",
       key: "schoolName",
+      align: "center",
     },
     {
       title: "Gender",
       dataIndex: "gender",
       key: "gender",
+      align: "center",
     },
     {
       title: "Date of Birth",
       dataIndex: "dob",
       key: "dob",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -586,11 +593,13 @@ const ChildrenManagement = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -612,6 +621,7 @@ const ChildrenManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => {
         return (
           <Space size="middle">

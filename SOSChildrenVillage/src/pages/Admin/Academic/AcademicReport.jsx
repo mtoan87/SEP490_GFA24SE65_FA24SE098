@@ -271,61 +271,73 @@ const AcademicReport = () => {
       title: "Academic Report Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Diploma",
       dataIndex: "diploma",
       key: "diploma",
+      align: "center",
     },
     {
       title: "Child Id",
       dataIndex: "childId",
       key: "childId",
+      align: "center",
     },
     {
       title: "GPA",
       dataIndex: "gpa",
       key: "gpa",
+      align: "center",
     },
     {
       title: "School Report",
       dataIndex: "schoolReport",
       key: "schoolReport",
+      align: "center",
     },
     {
       title: "School Level",
       dataIndex: "schoolLevel",
       key: "schoolLevel",
+      align: "center",
     },
     {
       title: "School Id",
       dataIndex: "schoolId",
       key: "schoolId",
+      align: "center",
     },
     {
       title: "Semester",
       dataIndex: "semester",
       key: "semester",
+      align: "center",
     },
     {
       title: "Academic Year",
       dataIndex: "academicYear",
       key: "academicYear",
+      align: "center",
     },
     {
       title: "Remarks",
       dataIndex: "remarks",
       key: "remarks",
+      align: "center",
     },
     {
       title: "Achievement",
       dataIndex: "achievement",
       key: "achievement",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     // {
     //   title: "Class",
@@ -341,6 +353,7 @@ const AcademicReport = () => {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -362,6 +375,7 @@ const AcademicReport = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button

@@ -303,6 +303,7 @@ const DonationManagement = () => {
           });
         }}
         type="default"
+        style={{maxWidth: '300px'}}
       >
         {showDeleted ? "Show Active Donations" : "Show Deleted Donations"}
       </Button>

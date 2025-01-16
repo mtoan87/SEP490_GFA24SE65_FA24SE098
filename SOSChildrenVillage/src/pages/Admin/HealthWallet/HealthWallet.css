@@ -1,15 +1,14 @@
-/* Container for the entire component */
-.food-wallet-container {
+.health-wallet-container {
     padding: 30px;
     font-family: 'Arial', sans-serif;
-    background-color: #fafafa;
+    background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 1200px;
     margin: 0 auto;
   }
   
-  .food-wallet-title {
+  .health-wallet-title {
     text-align: center;
     color: #333;
     font-size: 32px;

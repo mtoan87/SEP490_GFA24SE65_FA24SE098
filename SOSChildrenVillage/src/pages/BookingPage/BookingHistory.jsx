@@ -77,36 +77,43 @@ const BookingHistory = () => {
       title: 'House Name',
       dataIndex: 'houseName',
       key: 'houseName',
+      align: "center",
     },
     {
       title: 'Visit Day',
       dataIndex: 'visitday',
       key: 'visitday',
+      align: "center",
       render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: 'Booking Slot',
       dataIndex: 'bookingSlotId',
       key: 'bookingSlotId',
+      align: "center",
     },
     {
       title: 'Slot Start Time',
       dataIndex: 'slotStartTime',
       key: 'slotStartTime',
+      align: "center",
     },
     {
       title: 'Slot End Time',
       dataIndex: 'slotEndTime',
       key: 'slotEndTime',
+      align: "center",
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      align: "center",
     },
     {
       title: 'Actions',
       key: 'actions',
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Popconfirm

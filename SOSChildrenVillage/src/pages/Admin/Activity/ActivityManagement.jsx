@@ -247,11 +247,13 @@ const ActivityManagement = () => {
       title: "Activity Id",
       dataIndex: "id",
       key: "id",
+      align: "center",
     },
     {
       title: "Activity Name",
       dataIndex: "activityName",
       key: "activityName",
+      align: "center",
     },
     // {
     //   title: "Description",
@@ -262,6 +264,7 @@ const ActivityManagement = () => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -269,6 +272,7 @@ const ActivityManagement = () => {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
+      align: "center",
       render: (date) =>
         moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
     },
@@ -276,52 +280,62 @@ const ActivityManagement = () => {
       title: "Address",
       dataIndex: "address",
       key: "address",
+      align: "center",
     },
     {
       title: "Village Id",
       dataIndex: "villageId",
       key: "villageId",
+      align: "center",
     },
     {
       title: "Activity Type",
       dataIndex: "activityType",
       key: "activityType",
+      align: "center",
     },
     {
       title: "Target Audience",
       dataIndex: "targetAudience",
       key: "targetAudience",
+      align: "center",
     },
     {
       title: "Organizer",
       dataIndex: "organizer",
       key: "organizer",
+      align: "center",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      align: "center",
     },
     {
       title: "Event Id",
       dataIndex: "eventId",
       key: "eventId",
+      align: "center",
     },
     {
       title: "Budget",
       dataIndex: "budget",
       key: "budget",
+      align: "center",
       render: (value) => (value !== null ? `$${value.toFixed(2)}` : "N/A"),
     },
     {
       title: "Feedback",
       dataIndex: "feedback",
       key: "feedback",
+      align: "center",
     },
     {
       title: "Image",
       dataIndex: "imageUrls",
       key: "imageUrls",
+      align: "center",
       render: (imageUrls) => (
         <Button
           type="link"
@@ -343,6 +357,7 @@ const ActivityManagement = () => {
     {
       title: "Actions",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Button
