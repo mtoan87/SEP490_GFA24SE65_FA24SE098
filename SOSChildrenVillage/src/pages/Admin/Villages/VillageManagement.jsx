@@ -350,10 +350,15 @@ const VillageManagement = () => {
       dataIndex: "totalChildren",
       key: "totalChildren",
     },
+    // {
+    //   title: "User account Id",
+    //   dataIndex: "userAccountId",
+    //   key: "userAccountId",
+    // },
     {
-      title: "User account Id",
-      dataIndex: "userAccountId",
-      key: "userAccountId",
+      title: "Director",
+      dataIndex: "userName",
+      key: "userName",
     },
     {
       title: "Status",
