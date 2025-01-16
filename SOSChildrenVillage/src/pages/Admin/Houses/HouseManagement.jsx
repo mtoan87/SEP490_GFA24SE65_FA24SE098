@@ -376,20 +376,25 @@ const HouseManagement = () => {
       dataIndex: "currentMembers",
       key: "currentMembers",
     },
+    {
+      title: "House Owner",
+      dataIndex: "userName",
+      key: "userName",
+    },
     // {
-    //   title: "House Owner",
-    //   dataIndex: "houseOwner",
-    //   key: "houseOwner",
+    //   title: "User Account Id",
+    //   dataIndex: "userAccountId",
+    //   key: "userAccountId",
+    // },
+    // {
+    //   title: "Village Id",
+    //   dataIndex: "villageId",
+    //   key: "villageId",
     // },
     {
-      title: "User Account Id",
-      dataIndex: "userAccountId",
-      key: "userAccountId",
-    },
-    {
-      title: "Village Id",
-      dataIndex: "villageId",
-      key: "villageId",
+      title: "Village Name",
+      dataIndex: "villageName",
+      key: "villageName",
     },
     // {
     //   title: "Foundation Date",
