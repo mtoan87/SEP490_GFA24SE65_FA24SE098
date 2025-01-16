@@ -21,6 +21,10 @@ const EventDetail = () => {
   const [donors, setDonors] = useState([]); // State to store donors data
   const [isDonorsVisible, setIsDonorsVisible] = useState(false); // Control visibility of donors modal
 
+  // New state for Amount Limit Detail modal
+  const [isAmountLimitVisible, setIsAmountLimitVisible] = useState(false);
+  const [amountLimitDetails, setAmountLimitDetails] = useState({ totalHouseExpense: 0, houses: [] });
+
   useEffect(() => {
     const storedUserId = localStorage.getItem('userId');
     setUserId(storedUserId);
@@ -50,6 +54,23 @@ const EventDetail = () => {
     fetchEventDetails();
   }, [eventId]);
 
+  const fetchDonors = async () => {
+    try {
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationByEventId?eventId=${eventId}`);
+      const donorsData = response.data.map(donor => ({
+        userName: donor.userName,
+        dateTime: donor.dateTime,
+        amount: donor.amount,
+        description: donor.description,
+        status: donor.status,
+      }));
+      setDonors(donorsData);
+      setIsDonorsVisible(true); // Show donors modal
+    } catch (error) {
+      console.error('Error fetching donor details:', error);
+    }
+  };
+
   const fetchDonationHistory = async () => {
     if (!userId) {
       alert('Please log in to view donation history.');
@@ -77,22 +98,29 @@ const EventDetail = () => {
     }
   };
 
-  const fetchDonors = async () => {
+  const fetchAmountLimitDetails = async () => {
     try {
-      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationByEventId?eventId=${eventId}`);
-      const donorsData = response.data.map(donor => ({
-        userName: donor.userName,
-        dateTime: donor.dateTime,
-        amount: donor.amount,
-        description: donor.description,
-        status: donor.status,
-      }));
-      setDonors(donorsData);
-      setIsDonorsVisible(true); // Show donors modal
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Event/amount-limit-detail?eventId=${eventId}`);
+
+      // Kiểm tra dữ liệu trả về và sử dụng đúng cấu trúc
+      if (response.data && response.data.village && Array.isArray(response.data.village.houses.$values)) {
+        setAmountLimitDetails({
+          totalHouseExpense: response.data.village.totalHouseExpense,
+          houses: response.data.village.houses.$values,  // Sử dụng houses.$values thay vì houses trực tiếp
+        });
+        setIsAmountLimitVisible(true); // Mở modal Amount Limit
+      } else {
+        console.error("Houses data is missing or not in the expected format.");
+        setAmountLimitDetails({ totalHouseExpense: 0, houses: [] });
+        setIsAmountLimitVisible(false); // Ẩn modal nếu không có dữ liệu
+        alert("No house expense data available.");
+      }
     } catch (error) {
-      console.error('Error fetching donor details:', error);
+      console.error('Error fetching amount limit details:', error);
+      alert('Failed to fetch amount limit details.');
     }
   };
+
 
   const handleDonate = async () => {
     if (!amount || isNaN(amount) || amount <= 0) {
@@ -118,7 +146,7 @@ const EventDetail = () => {
       }
     } catch (error) {
       console.error('Error making donation:', error);
-      alert('Failed to make a donation. Please try again.');
+      alert('Donations not allow for close event');
     }
   };
 
@@ -175,7 +203,14 @@ const EventDetail = () => {
             <p><strong>Start Time:</strong> {formatDate(event.startTime)}</p>
             <p><strong>End Time:</strong> {formatDate(event.endTime)}</p>
             <p><strong>Current Amount:</strong> {formatCurrency(event.currentAmount)}</p>
-            <p><strong>Amount Limit:</strong> {formatCurrency(event.amountLimit)}</p>
+            <p><strong>Amount Limit:</strong>
+              <span
+                style={{ color: 'blue', cursor: 'pointer' }}
+                onClick={fetchAmountLimitDetails}
+              >
+                {formatCurrency(event.amountLimit)}
+              </span>
+            </p>
             <p><strong>Status:</strong> {event.status}</p>
           </div>
 
@@ -290,11 +325,7 @@ const EventDetail = () => {
         title="Donation History"
         visible={isHistoryVisible}
         onCancel={() => setIsHistoryVisible(false)}
-        footer={[
-          <Button key="close" onClick={() => setIsHistoryVisible(false)}>
-            Close
-          </Button>,
-        ]}
+        footer={[<Button key="close" onClick={() => setIsHistoryVisible(false)}>Close</Button>]}
       >
         <p><strong>Total Amount Donated:</strong> {formatCurrency(donationHistory.totalAmount)}</p>
         {donationHistory.details.length > 0 ? (
@@ -324,11 +355,7 @@ const EventDetail = () => {
         title="Donors History"
         visible={isDonorsVisible}
         onCancel={() => setIsDonorsVisible(false)}
-        footer={[
-          <Button key="close" onClick={() => setIsDonorsVisible(false)}>
-            Close
-          </Button>,
-        ]}
+        footer={[<Button key="close" onClick={() => setIsDonorsVisible(false)}>Close</Button>]}
       >
         {donors.length > 0 ? (
           <table className="donors-table">
@@ -358,6 +385,33 @@ const EventDetail = () => {
         )}
       </Modal>
 
+      <Modal
+        title="Amount Limit Details"
+        visible={isAmountLimitVisible}
+        onCancel={() => setIsAmountLimitVisible(false)}
+        footer={[<Button key="close" onClick={() => setIsAmountLimitVisible(false)}>Close</Button>]}>
+        <p><strong>Total House Expense:</strong> {formatCurrency(amountLimitDetails.totalHouseExpense)}</p>
+        {amountLimitDetails.houses && amountLimitDetails.houses.length > 0 ? (
+          <table className="house-expense-table">
+            <thead>
+              <tr>
+                <th>House Name</th>
+                <th>House Expense</th>
+              </tr>
+            </thead>
+            <tbody>
+              {amountLimitDetails.houses.map((house, index) => (
+                <tr key={index}>
+                  <td>{house.houseName}</td>
+                  <td>{formatCurrency(house.houseExpense)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No house expenses available.</p>
+        )}
+      </Modal>
     </div>
   );
 };

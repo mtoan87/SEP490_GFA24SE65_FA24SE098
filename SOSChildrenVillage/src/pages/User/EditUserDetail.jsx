@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, message, Select, DatePicker, Upload, Typography, Space } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
@@ -12,6 +12,8 @@ const EditUserDetail = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
   const [imageList, setImageList] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const userRole = localStorage.getItem("roleId");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -31,20 +33,19 @@ const EditUserDetail = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
         if (response.data) {
           setUserInfo(response.data);
-          
-          // Ensure that 'images' is an array before mapping
-          const images = Array.isArray(response.data.images) ? response.data.images : [];
-          
-          setImageList(
-            images.map((img, idx) => ({
-              uid: idx, // Unique identifier
-              name: `Image-${idx}`,
-              status: 'done', // Already uploaded
-              url: img.urlPath,
-            }))
-          );
+
+          // Kiểm tra và định dạng danh sách ảnh
+          const images = response.data.images?.$values || response.data.images || [];
+          const formattedImages = images.map((img, idx) => ({
+            uid: idx.toString(),
+            name: `Image-${idx}`,
+            status: 'done',
+            url: img.urlPath, // Sử dụng URL từ API
+          }));
+          setImageList(formattedImages);
         } else {
           message.error('No user information found.');
         }
@@ -57,11 +58,28 @@ const EditUserDetail = () => {
     fetchUserDetails();
   }, [navigate]);
 
+  const uploadProps = {
+    name: "images",
+    multiple: true,
+    fileList: imageList,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith("image/");
+      if (!isImage) {
+        message.error(`${file.name} is not an image file`);
+        return Upload.LIST_IGNORE;
+      }
+      return false;
+    },
+    onChange: (info) => {
+      setImageList(info.fileList);
+    },
+  };
+
   const onFinish = async (values) => {
     try {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
-  
+
       const formData = new FormData();
       formData.append('Id', userId);
       formData.append('UserName', values.userName);
@@ -71,21 +89,23 @@ const EditUserDetail = () => {
       formData.append('Dob', values.dob ? values.dob.format('YYYY-MM-DD') : null);
       formData.append('Gender', values.gender);
       formData.append('Country', values.country);
-      formData.append('RoleId', 2);
+      formData.append('RoleId', userRole);
       formData.append('Status', 'Active');
-  
-      // Chỉ thêm mật khẩu nếu userInfo đã có hoặc muốn giữ lại
-      if (userInfo.password) {
-        formData.append('Password', userInfo.password);
+
+      if (imageList && imageList.length > 0) {
+        imageList.forEach((file) => {
+          if (file.originFileObj) {
+            formData.append("Img", file.originFileObj);
+          }
+        });
       }
-  
-      // Xử lý ảnh
-      imageList.forEach((file) => {
-        if (file.originFileObj) {
-          formData.append('Img', file.originFileObj);
-        }
-      });
-  
+
+      if (imagesToDelete.length > 0) {
+        imagesToDelete.forEach((imageId) => {
+          formData.append("ImgToDelete", imageId);
+        });
+      }
+
       const response = await axios.put(
         `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UpdateUser?id=${userId}`,
         formData,
@@ -96,7 +116,7 @@ const EditUserDetail = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         message.success('Profile updated successfully!');
         navigate('/userdetail');
@@ -188,15 +208,75 @@ const EditUserDetail = () => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Profile Picture" valuePropName="fileList">
-          <Upload
-            listType="picture-card"
-            fileList={imageList}
-            beforeUpload={() => false}
-            onChange={({ fileList }) => setImageList(fileList)}
+        <Form.Item label="Current Images">
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "8px",
+              marginBottom: "16px",
+            }}
           >
-            {imageList.length < 5 ? <UploadOutlined /> : null}
-          </Upload>
+            {imageList.map((image, index) => (
+              <div key={index} style={{ position: "relative" }}>
+                <img
+                  src={image.url || URL.createObjectURL(image.originFileObj)}
+                  alt={`Current ${index + 1}`}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                  }}
+                />
+                <Button
+                  type="primary"
+                  danger
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                  }}
+                  onClick={() => {
+                    if (image.url) {
+                      setImagesToDelete((prev) => [...prev, image.url]);
+                    }
+                    setImageList((prev) => prev.filter((_, i) => i !== index));
+                    console.log("Images to delete: ", imagesToDelete);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Form.Item>
+
+        <Form.Item label="Upload New Images">
+          <Upload.Dragger
+            multiple
+            beforeUpload={(file) => {
+              setImageList((prev) => [
+                ...prev,
+                {
+                  uid: file.uid,
+                  name: file.name,
+                  status: "done",
+                  originFileObj: file, // Dùng khi gửi lên server
+                },
+              ]);
+              return false; // Ngăn không tải lên ngay lập tức
+            }}
+            fileList={[]} // Không hiển thị file list trong Dragger
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Click or drag files to upload</p>
+            <p className="ant-upload-hint">
+              Support for single or bulk upload. Strictly prohibited from uploading
+              company data or other banned files.
+            </p>
+          </Upload.Dragger>
         </Form.Item>
 
         <Form.Item>

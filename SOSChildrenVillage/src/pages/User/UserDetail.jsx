@@ -88,27 +88,24 @@ const UserDetail = () => {
               },
             }}
           >
-            {/* Display User Images */}
-            {userInfo?.images?.$values?.length > 0 ? (
-              <div style={{ marginTop: '20px' }}>
-                <Row gutter={[16, 16]} justify="center">
-                  {userInfo.images.$values.map((image) => (
-                    <Col key={image.id} style={{ textAlign: 'center', marginBottom: '20px' }}>
-                      <Image
-                        width={100}
-                        height={100}
-                        src={image.urlPath || 'https://via.placeholder.com/100'}
-                        alt={`User image ${image.id}`}
-                        style={{
-                          borderRadius: '50%',
-                          objectFit: 'cover',
-                          border: '2px solid #ddd',
-                        }}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </div>
+            {(userInfo?.images?.$values || userInfo?.images || []).length > 0 ? (
+              <Row gutter={[16, 16]} justify="center">
+                {(userInfo.images.$values || userInfo.images).map((image) => (
+                  <Col key={image.id} style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <Image
+                      width={100}
+                      height={100}
+                      src={image.urlPath || 'https://via.placeholder.com/100'}
+                      alt={`User image ${image.id}`}
+                      style={{
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '2px solid #ddd',
+                      }}
+                    />
+                  </Col>
+                ))}
+              </Row>
             ) : (
               <div style={{ marginTop: '20px' }}>
                 <Image
@@ -124,6 +121,7 @@ const UserDetail = () => {
                 />
               </div>
             )}
+
 
             <div style={{ marginTop: '20px', textAlign: 'Center' }}>
               <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>

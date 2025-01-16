@@ -1,0 +1,98 @@
+/* Container for the entire child details page */
+.child-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Roboto', 'Arial', sans-serif;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Child Content Section */
+.child-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Child Image Gallery Section */
+.child-gallery {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.gallery-main-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.thumbnail-images {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.gallery-thumbnail {
+    width: 100px;
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    object-fit: cover;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+}
+
+.gallery-thumbnail:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-thumbnail.selected {
+    border: 2px solid #007aff;
+    box-shadow: 0 0 5px #007aff;
+}
+
+/* Child Information Section */
+.child-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.child-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.child-info-text {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+/* Spinner and Loading State */
+.child-loading {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.child-loading .ant-spin {
+    margin: 20px;
+}

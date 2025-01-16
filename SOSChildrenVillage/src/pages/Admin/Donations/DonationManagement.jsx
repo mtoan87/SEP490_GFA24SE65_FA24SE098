@@ -81,7 +81,7 @@ const DonationManagement = () => {
   };
   const showChildModal = async (childId) => {
     try {
-      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg/${childId}`);
+      const response = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/Children/GetChildWithImg?id=${childId}`);
       setSelectedChild(response.data);
       setIsChildModalVisible(true);
     } catch (error) {
