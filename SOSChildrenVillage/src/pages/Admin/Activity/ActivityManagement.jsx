@@ -8,7 +8,6 @@ import {
   Input,
   message,
   Upload,
-  Checkbox,
   DatePicker,
 } from "antd";
 import {
@@ -608,14 +607,6 @@ const ActivityManagement = () => {
                 uploading company data or other banned files.
               </p>
             </Dragger>
-          </Form.Item>
-
-          <Form.Item name="status" label="Status">
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="isDeleted" valuePropName="checked">
-            <Checkbox>Deleted</Checkbox>
           </Form.Item>
         </Form>
       </Modal>

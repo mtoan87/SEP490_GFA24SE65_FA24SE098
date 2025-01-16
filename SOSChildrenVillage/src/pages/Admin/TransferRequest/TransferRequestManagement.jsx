@@ -7,7 +7,7 @@ import {
   Form,
   Input,
   message,
-  Select,
+  //Select,
   Tooltip,
 } from "antd";
 import {
@@ -23,7 +23,7 @@ import moment from "moment";
 import axios from "axios";
 import { getTransferRequest } from "../../../services/api";
 
-const { Option } = Select;
+//const { Option } = Select;
 const { TextArea } = Input;
 
 const TransferRequestManagement = () => {
@@ -523,7 +523,7 @@ const TransferRequestManagement = () => {
             <TextArea rows={4} />
           </Form.Item>
 
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+          {/* <Form.Item name="status" label="Status" rules={[{ required: true }]}>
             <Select disabled={userRole === "3"}>
               <Option value="Pending">Pending</Option>
               <Option value="Approved">Approved</Option>
@@ -533,7 +533,7 @@ const TransferRequestManagement = () => {
               <Option value="DeclinedToTransfer">DeclinedToTransfer</Option>
               <Option value="Completed">Completed</Option>
             </Select>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
 
