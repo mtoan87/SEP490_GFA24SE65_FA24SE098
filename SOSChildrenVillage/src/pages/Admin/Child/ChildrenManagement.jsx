@@ -290,13 +290,37 @@ const ChildrenManagement = () => {
           if (!editingChild && !values.status) {
             values.status = "Active";
           }
+
           const formData = new FormData();
 
           formData.append("childName", values.childName);
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
           formData.append("schoolId", values.schoolId || "");
-          // formData.append(
+          
+          // Nếu healthStatus là "Bad", thêm walletType và amount
+          if (values.healthStatus === "Bad") {
+            if (values.walletType) {
+              formData.append("walletType", values.walletType);
+            } else {
+              console.warn("WalletType is required when healthStatus is 'Bad'");
+            }
+          
+            formData.append("amount", values.amount || 0);
+          } else {
+            console.log("No walletType or amount needed as healthStatus is 'Good'");
+          }
+          
+          // Các giá trị khác
+          formData.append("currentAmount", values.currentAmount || 0);
+          formData.append("amountLimit", values.amountLimit || 0);
+          formData.append("gender", values.gender);
+          formData.append("dob", values.dob.format("YYYY-MM-DD"));
+          formData.append("status", values.status || "Active");
+          
+          console.log("Form Values:", values);
+
+// formData.append(
           //   "facilitiesWalletId",
           //   values.facilitiesWalletId || ""
           // );
@@ -307,20 +331,6 @@ const ChildrenManagement = () => {
           //   "necessitiesWalletId",
           //   values.necessitiesWalletId || ""
           // );
-
-          if (values.healthStatus === 'Bad' && values.walletType) {
-            formData.append("walletType", values.walletType);
-            formData.append("amount", values.amount || 0);
-          }
-
-          formData.append("amount", values.amount || 0);
-          formData.append("currentAmount", values.currentAmount || 0);
-          formData.append("amountLimit", values.amountLimit || 0);
-          formData.append("gender", values.gender);
-          formData.append("dob", values.dob.format("YYYY-MM-DD"));
-          formData.append("status", values.status || "Active");
-
-          console.log("Form Values:", values);
 
           //Add Images
           if (uploadFiles && uploadFiles.length > 0) {
