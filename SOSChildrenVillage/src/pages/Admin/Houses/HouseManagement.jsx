@@ -208,7 +208,7 @@ const HouseManagement = () => {
           formData.append("Description", values.description || "");
           formData.append("HouseMember", values.houseMember || 10);
           //formData.append("HouseOwner", values.houseOwner || "");
-          formData.append("Status", values.status || "Inactive");
+          formData.append("Status", values.status || "Active");
           formData.append("UserAccountId", values.userAccountId);
           formData.append("VillageId", values.villageId);
           formData.append(
@@ -422,12 +422,12 @@ const HouseManagement = () => {
       key: "maintenanceStatus",
       align: "center",
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      align: "center",
-    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   align: "center",
+    // },
     {
       title: "Image",
       dataIndex: "imageUrls",

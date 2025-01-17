@@ -27,7 +27,7 @@ import {
   //TransactionOutlined,
   DollarOutlined,
   CheckCircleOutlined,
-  ShoppingCartOutlined,
+  //ShoppingCartOutlined,
 } from "@ant-design/icons";
 import logo from "../../../../assets/images/logo3.png";
 
@@ -242,17 +242,17 @@ const Sidebar = ({ collapsed, onToggle }) => {
         },
       ],
     },
-    {
-      type: "group",
-      label: <span className="font-bold">Inventory</span>,
-      children: [
-        {
-          key: "inventory",
-          icon: <ShoppingCartOutlined />,
-          label: <Link to="/admin/inventory-management">Inventory</Link>,
-        },
-      ],
-    },
+    // {
+    //   type: "group",
+    //   label: <span className="font-bold">Inventory</span>,
+    //   children: [
+    //     {
+    //       key: "inventory",
+    //       icon: <ShoppingCartOutlined />,
+    //       label: <Link to="/admin/inventory-management">Inventory</Link>,
+    //     },
+    //   ],
+    // },
   ];
 
   return (
