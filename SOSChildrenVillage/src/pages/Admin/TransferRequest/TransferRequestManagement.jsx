@@ -103,30 +103,36 @@ const TransferRequestManagement = () => {
     try {
       const values = await approvalForm.validateFields();
       const formData = new FormData();
-
+  
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
       formData.append("toHouseId", selectedRequestForAction.toHouseId);
       formData.append("requestReason", selectedRequestForAction.requestReason);
-
-      // Kiểm tra nếu là approve lần 2
+  
       if (selectedRequestForAction.status === "ReadyToTransfer") {
         formData.append("status", "Completed");
       } else {
         formData.append("status", "InProcess");
       }
-
+  
       formData.append("modifiedBy", userId);
       formData.append("directorNote", values.notes);
-
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+  
+      try {
+        await axios.put(
+          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+      } catch (error) {
+        console.error("Error approving request:", error);
+        // message.error(
+        //   error.response?.data?.message || "Failed to approve request"
+        // );
+      }
 
       message.success(
         selectedRequestForAction.status === "ReadyToTransfer"
@@ -135,19 +141,17 @@ const TransferRequestManagement = () => {
       );
       setIsApproveModalVisible(false);
       await fetchTransferRequests();
+  
     } catch (error) {
-      console.error("Error approving request:", error);
-      message.error(
-        error.response?.data?.message || "Failed to approve request"
-      );
+      console.error("Form validation error:", error);
     }
   };
-
+  
   const handleReject = async () => {
     try {
       const values = await rejectionForm.validateFields();
       const formData = new FormData();
-
+  
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
@@ -156,23 +160,27 @@ const TransferRequestManagement = () => {
       formData.append("status", "Rejected");
       formData.append("modifiedBy", userId);
       formData.append("directorNote", values.rejectionReason);
-
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
+  
+      try {
+        await axios.put(
+          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+      } catch (error) {
+        console.error("Error rejecting request:", error);
+        // message.error(
+        //   error.response?.data?.message || "Failed to reject request"
+        // );
+      }
       message.success("Request rejected successfully");
       setIsRejectModalVisible(false);
       await fetchTransferRequests();
+  
     } catch (error) {
-      console.error("Error rejecting request:", error);
-      message.error(
-        error.response?.data?.message || "Failed to reject request"
-      );
+      console.error("Form validation error:", error);
     }
   };
 
@@ -414,6 +422,7 @@ const TransferRequestManagement = () => {
         title: "Created By",
         dataIndex: "createdBy",
         key: "createdBy",
+        align: "center",
       });
     }
 

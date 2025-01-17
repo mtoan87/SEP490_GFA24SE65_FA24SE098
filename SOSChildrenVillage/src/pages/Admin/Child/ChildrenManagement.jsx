@@ -296,17 +296,22 @@ const ChildrenManagement = () => {
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
           formData.append("schoolId", values.schoolId || "");
-          formData.append(
-            "facilitiesWalletId",
-            values.facilitiesWalletId || ""
-          );
-          formData.append("systemWalletId", values.systemWalletId || "");
-          formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
-          formData.append("healthWalletId", values.healthWalletId || "");
-          formData.append(
-            "necessitiesWalletId",
-            values.necessitiesWalletId || ""
-          );
+          // formData.append(
+          //   "facilitiesWalletId",
+          //   values.facilitiesWalletId || ""
+          // );
+          // formData.append("systemWalletId", values.systemWalletId || "");
+          // formData.append("foodStuffWalletId", values.foodStuffWalletId || "");
+          // formData.append("healthWalletId", values.healthWalletId || "");
+          // formData.append(
+          //   "necessitiesWalletId",
+          //   values.necessitiesWalletId || ""
+          // );
+
+          if (values.healthStatus === 'Bad' && values.walletType) {
+            formData.append("walletType", values.walletType);
+            formData.append("amount", values.amount || 0);
+          }
 
           formData.append("amount", values.amount || 0);
           formData.append("currentAmount", values.currentAmount || 0);
@@ -472,7 +477,7 @@ const ChildrenManagement = () => {
       formData.append("requestReason", transferRequest.requestReason);
       formData.append("status", "ReadyToTransfer");
       formData.append("modifiedBy", localStorage.getItem("userId"));
-      formData.append("directorNote", "Accepted by House Mother");
+      //formData.append("directorNote", "Accepted by House Mother");
 
       await axios.put(
         `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
@@ -512,7 +517,7 @@ const ChildrenManagement = () => {
       formData.append("requestReason", transferRequest.requestReason);
       formData.append("status", "DeclinedToTransfer");
       formData.append("modifiedBy", localStorage.getItem("userId"));
-      formData.append("directorNote", "Declined by House Mother");
+      //formData.append("directorNote", "Declined by House Mother");
 
       await axios.put(
         `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
@@ -886,7 +891,7 @@ const ChildrenManagement = () => {
         <>
           <Form.Item 
             name="walletType" 
-            label="Wallet" 
+            label="Wallets" 
             rules={[{ required: true, message: 'Please select a wallet type' }]}
           >
             <Select

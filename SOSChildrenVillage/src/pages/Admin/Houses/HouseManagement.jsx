@@ -207,7 +207,7 @@ const HouseManagement = () => {
           formData.append("Location", values.location);
           formData.append("Description", values.description || "");
           formData.append("HouseMember", values.houseMember || 10);
-          formData.append("HouseOwner", values.houseOwner || "");
+          //formData.append("HouseOwner", values.houseOwner || "");
           formData.append("Status", values.status || "Inactive");
           formData.append("UserAccountId", values.userAccountId);
           formData.append("VillageId", values.villageId);
@@ -672,7 +672,7 @@ const HouseManagement = () => {
 
           <Form.Item
             name="villageId"
-            label="Village ID"
+            label="Village"
             rules={[{ required: true, message: "Please select a Village" }]}
           >
             <Select
