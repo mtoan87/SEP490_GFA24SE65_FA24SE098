@@ -21,6 +21,7 @@ import {
   SearchOutlined,
   InboxOutlined,
   SwapOutlined,
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import { getEventsWithImages } from "../../../services/api";
 import { getVillagesWithImages } from "../../../services/api";
@@ -49,6 +50,8 @@ const EventManagement = () => {
   const [villageName, setVillageName] = useState([]);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [donors, setDonors] = useState([]);
+  const [isDonorsVisible, setIsDonorsVisible] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -84,6 +87,26 @@ const EventManagement = () => {
       window.open(`/villagedetail/${eventDetails.id}`, "_blank");
     }
   };
+
+  const fetchDonors = async (eventId) => {
+    try {
+      const response = await axios.get(
+        `https://soschildrenvillage.azurewebsites.net/api/Donation/GetDonationByEventId?eventId=${eventId}`
+      );
+      const donorsData = response.data.map((donor) => ({
+        userName: donor.userName,
+        dateTime: donor.dateTime,
+        amount: donor.amount,
+        description: donor.description,
+        status: donor.status,
+      }));
+      setDonors(donorsData);
+      setIsDonorsVisible(true); // Show donors modal
+    } catch (error) {
+      console.error("Error fetching donor details:", error);
+    }
+  };
+
   const formatCurrency = (amount) => {
     if (amount === undefined || amount === null) {
       return 'N/A'; // Prevent error in case of null/undefined value
@@ -347,6 +370,18 @@ const EventManagement = () => {
       message.error("Unable to restore event");
     }
   };
+
+  const handleClose = async (id) => {
+    try {
+      await axios.put(`https://soschildrenvillage.azurewebsites.net/api/Event/CloseEvent?id=${id}`);
+      message.success("Event Close Successfully");
+      fetchEvents(); // Không thay đổi state showDeleted sau khi khôi phục
+    } catch (error) {
+      console.error("Error occurred when closing event:", error);
+      message.error("Unable to restore event");
+    }
+  };
+
   const columns = [
     {
       title: "Event Id",
@@ -405,11 +440,22 @@ const EventManagement = () => {
                 icon={<EditOutlined />}
               />
               <Button
+                key={`edit-${record.id}`}
+                onClick={() => handleClose(record.id)}
+                icon={<CloseCircleOutlined />}
+              />
+              <Button
                 key={`delete-${record.id}`}
                 onClick={() => handleDelete(record.id)}
                 icon={<DeleteOutlined />}
                 danger
               />
+              <Button
+                type="link"
+                onClick={() => fetchDonors(record.id)} // Gọi hàm fetchDonors với eventId
+              >
+                History
+              </Button>
             </>
           )}
 
@@ -803,6 +849,56 @@ const EventManagement = () => {
         footer={null}
       >
         <p>{eventDetails?.description}</p>
+      </Modal>
+      <Modal
+        title="Donation History"
+        visible={isDonorsVisible}
+        onCancel={() => setIsDonorsVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsDonorsVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {donors.length > 0 ? (
+          <Table
+            dataSource={donors}
+            columns={[
+              {
+                title: "Donor Name",
+                dataIndex: "userName",
+                key: "userName",
+                align: "center",
+              },
+              {
+                title: "Date",
+                dataIndex: "dateTime",
+                key: "dateTime",
+                render: (date) => <span>{formatDate(date)}</span>,
+                align: "center",
+              },
+              {
+                title: "Amount",
+                dataIndex: "amount",
+                key: "amount",
+                align: "center",
+                render: (amount) => formatCurrency(amount), // Nếu có formatCurrency
+              },
+              {
+                title: "Status",
+                dataIndex: "status",
+                key: "status",
+                align: "center",
+              },
+            ]}
+            rowKey={(record) => record.userName}
+            pagination={{
+              pageSize: 5,
+            }}
+          />
+        ) : (
+          <p>No donors found for this event.</p>
+        )}
       </Modal>
     </div>
   );

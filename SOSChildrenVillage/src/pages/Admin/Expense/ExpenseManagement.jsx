@@ -112,7 +112,7 @@ const ExpenseManagement = () => {
         `https://soschildrenvillage.azurewebsites.net/api/Expenses/ConfirmExpense?id=${id}`
       );
       message.success("Expense confirmed successfully");
-      fetchExpenses(); // Cập nhật lại danh sách chi phí
+      fetchExpenses();
     } catch (error) {
       console.error("Error confirming expense:", error);
       message.error("Failed to confirm expense");
@@ -134,6 +134,12 @@ const ExpenseManagement = () => {
       render: (amount) => `${amount.toLocaleString()} VND`,
     },
     {
+      title: "Amount Receive",
+      dataIndex: "amountReceive",
+      key: "amountReceive",
+      align: "center",
+    },
+    {
       title: "Description",
       dataIndex: "description",
       key: "description",
@@ -147,15 +153,39 @@ const ExpenseManagement = () => {
       render: (date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Expense Type",
+      dataIndex: "expenseType",
+      key: "expenseType",
+      align: "center",
+    },
+    {
+      title: "Requested By",
+      dataIndex: "requestedBy",
+      key: "requestedBy",
+      align: "center",
+    },
+    {
+      title: "Approved By",
+      dataIndex: "approvedBy",
+      key: "approvedBy",
       align: "center",
     },
     {
       title: "House ID",
       dataIndex: "houseId",
       key: "houseId",
+      align: "center",
+    },
+    {
+      title: "Event ID",
+      dataIndex: "eventId",
+      key: "eventId",
+      align: "center",
+    },
+    {
+      title: "Village ID",
+      dataIndex: "villageId",
+      key: "villageId",
       align: "center",
     },
     {
@@ -178,6 +208,12 @@ const ExpenseManagement = () => {
       key: "createdDate",
       align: "center",
       render: (date) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
     },
     ...(roleId === 1
       ? [

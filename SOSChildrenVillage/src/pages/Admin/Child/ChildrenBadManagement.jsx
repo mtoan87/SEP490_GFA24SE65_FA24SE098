@@ -271,7 +271,6 @@ const ChildrenBadManagement = () => {
         }
 
         const formData = new FormData();
-        formData.append('eventCode', eventDetails.eventCode);
         formData.append('createdBy', userName);
         formData.append('name', eventDetails.name);
         formData.append('description', eventDetails.description);
@@ -285,10 +284,15 @@ const ChildrenBadManagement = () => {
                 }
             });
         }
+        const userId = localStorage.getItem('userId');
+            if (!userId) {
+                message.error('User information not found');
+                return;
+            }
 
         axios
             .post(
-                `https://soschildrenvillage.azurewebsites.net/api/Event/ApproveEvent?villageExpenseId=${selectedExpense.id}`,
+                `https://soschildrenvillage.azurewebsites.net/api/Event/ApproveEvent?villageExpenseId=${selectedExpense.id}&userId=${userId}`,
                 formData,
                 {
                     headers: {
@@ -386,17 +390,6 @@ const ChildrenBadManagement = () => {
 
                 {roleId === 6 ? (
                     <Form layout="vertical">
-                        <Form.Item
-                            label="Event Code"
-                            name="eventCode"
-                            rules={[{ required: true, message: 'Please input the event code!' }]}
-                        >
-                            <Input
-                                placeholder="Event Code"
-                                value={eventDetails.eventCode}
-                                onChange={(e) => setEventDetails({ ...eventDetails, eventCode: e.target.value })}
-                            />
-                        </Form.Item>
 
                         <Form.Item
                             label="Event Name"
