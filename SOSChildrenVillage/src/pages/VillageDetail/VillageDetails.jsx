@@ -32,20 +32,21 @@ const VillageDetails = () => {
         // Check if the response is valid and contains the expected data
         if (response && response.data) {
           const villageData = response.data;
-          if (villageData && villageData.id) {
+          if (Array.isArray(villageData) && villageData.length > 0) {
+            const firstVillage = villageData[0]; // Lấy làng đầu tiên
             setVillageInfo({
-              villageName: villageData.villageName || 'N/A',
-              totalHouses: villageData.totalHouses || 'N/A',
-              description: villageData.description || 'No description available',
-              totalChildren: villageData.totalChildren || 'N/A',
-              location: villageData.location || 'N/A',
-              imageUrls: villageData.imageUrls || [],
-              villageId: villageData.id, // Include villageId for dynamic house fetching
+              villageName: firstVillage.villageName || 'N/A',
+              totalHouses: firstVillage.totalHouses || 'N/A',
+              description: firstVillage.description || 'No description available',
+              totalChildren: firstVillage.totalChildren || 'N/A',
+              location: firstVillage.location || 'N/A',
+              imageUrls: firstVillage.imageUrls || [],
+              villageId: firstVillage.id, // Include villageId for dynamic house fetching
             });
-            setSelectedImage(villageData.imageUrls[0] || '/default-placeholder.png');
+            setSelectedImage(firstVillage.imageUrls[0] || '/default-placeholder.png');
           } else {
-            console.error("Village data is incomplete or malformed:", villageData);
-          }
+            console.error("No valid village data returned:", response.data);
+          }          
         } else {
           console.error("No village data returned:", response.data);
         }
