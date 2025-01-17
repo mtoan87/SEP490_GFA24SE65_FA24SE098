@@ -72,7 +72,17 @@ const Header = () => {
           <Link to="/userDetail">
             <Button type="link">View Profile</Button>
           </Link>
-          <Link to="/admin">
+          <Link
+            to={
+              userRoleId === 5
+                ? "/admin/booking-management"
+                : userRoleId === 3
+                  ? "/admin/child-management"
+                  : userRoleId === 6
+                  ? "/admin/village-management"
+                  : "/admin"
+            }
+          >
             <Button type="link">Dashboard</Button>
           </Link>
         </div>

@@ -35,7 +35,7 @@ const NecessitiesWallet = () => {
       if (!redirecting && !messageShown.current) {
         setRedirecting(true);
         message.error("You do not have permission to access this page");
-        navigate("/admin");
+        navigate("/home");
         messageShown.current = true;
       }
     } else {
