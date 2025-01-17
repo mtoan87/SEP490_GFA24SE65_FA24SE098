@@ -67,7 +67,7 @@ const Header = () => {
       <Text strong className="user-name">
         {userName}
       </Text>
-      {[1, 3, 4, 6].includes(userRoleId) ? (
+      {[1, 3, 4, 6, 5].includes(userRoleId) ? (
         <div className="admin-links">
           <Link to="/userDetail">
             <Button type="link">View Profile</Button>
