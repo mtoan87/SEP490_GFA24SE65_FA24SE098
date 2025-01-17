@@ -58,6 +58,8 @@ const ChildrenManagement = () => {
   const [healthStatus, setHealthStatus] = useState('Good');
   const [schools, setSchools] = useState([]);
   const [houses, setHouses] = useState([]);
+  const [donors, setDonors] = useState([]);
+  const [isDonorsVisible, setIsDonorsVisible] = useState(false);
 
   const navigate = useNavigate();
   const messageShown = useRef(false); // Use a ref to track message display
@@ -226,7 +228,7 @@ const ChildrenManagement = () => {
             : {}
         }
       >
-        {getTransferStatus(record.id) || "Transfer"}
+        {getTransferStatus(record.id) || ""}
       </Button>
     );
   };
@@ -240,6 +242,30 @@ const ChildrenManagement = () => {
     setIsTransferModalVisible(true);
   };
 
+  const fetchDonors = async (childId) => {
+    try {
+      const response = await axios.get(
+        `https://soschildrenvillage.azurewebsites.net/api/Children/Child-donations/${childId}`
+      );
+  
+      // Kiểm tra xem $values có phải là mảng không
+      if (Array.isArray(response.data.$values)) {
+        const donorsData = response.data.$values.map((donor) => ({
+          userName: donor.userName,
+          dateTime: donor.dateTime,
+          amount: donor.amount,
+        }));
+        setDonors(donorsData);
+      } else {
+        console.error("Unexpected response format:", response.data);
+      }
+  
+      setIsDonorsVisible(true); // Hiển thị modal donors
+    } catch (error) {
+      console.error("Error fetching donor details:", error);
+    }
+  };
+  
   const showModal = (child = null) => {
     setEditingChild(child);
     if (child) {
@@ -282,6 +308,22 @@ const ChildrenManagement = () => {
     },
   };
 
+  const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null) {
+      return 'N/A'; // Prevent error in case of null/undefined value
+    }
+    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  };
+
+  if (!event) {
+    return <div className="loading">Loading...</div>;
+  }
+  const formatDate = (dateString) => {
+    const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options).replace(',', ' •');
+  };
+
   const handleOk = () => {
     form
       .validateFields()
@@ -297,7 +339,7 @@ const ChildrenManagement = () => {
           formData.append("healthStatus", values.healthStatus || "");
           formData.append("houseId", values.houseId || "");
           formData.append("schoolId", values.schoolId || "");
-          
+
           // Nếu healthStatus là "Bad", thêm walletType và amount
           if (values.healthStatus === "Bad") {
             if (values.walletType) {
@@ -305,22 +347,22 @@ const ChildrenManagement = () => {
             } else {
               console.warn("WalletType is required when healthStatus is 'Bad'");
             }
-          
+
             formData.append("amount", values.amount || 0);
           } else {
             console.log("No walletType or amount needed as healthStatus is 'Good'");
           }
-          
+
           // Các giá trị khác
           formData.append("currentAmount", values.currentAmount || 0);
           formData.append("amountLimit", values.amountLimit || 0);
           formData.append("gender", values.gender);
           formData.append("dob", values.dob.format("YYYY-MM-DD"));
           formData.append("status", values.status || "Active");
-          
+
           console.log("Form Values:", values);
 
-// formData.append(
+          // formData.append(
           //   "facilitiesWalletId",
           //   values.facilitiesWalletId || ""
           // );
@@ -397,9 +439,8 @@ const ChildrenManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              `Unable to ${
-                editingChild ? "update" : "create"
-              } child. Please try again.`
+            `Unable to ${editingChild ? "update" : "create"
+            } child. Please try again.`
           );
         }
       })
@@ -439,7 +480,7 @@ const ChildrenManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                    "Unable to delete user. Please try again."
+                  "Unable to delete user. Please try again."
                 );
               }
             }}
@@ -660,7 +701,12 @@ const ChildrenManagement = () => {
                   icon={<DeleteOutlined />}
                   danger
                 />
-
+                <Button
+                  type="link"
+                  onClick={() => fetchDonors(record.id)} // Gọi hàm fetchDonors với eventId
+                >
+                  History
+                </Button>
                 {renderTransferButton(record)}
               </>
             )}
@@ -810,8 +856,8 @@ const ChildrenManagement = () => {
           </div>,
         ]}
       >
-        <Form 
-          form={form} 
+        <Form
+          form={form}
           layout="vertical"
           onValuesChange={(changedValues) => {
             if ('healthStatus' in changedValues) {
@@ -831,8 +877,8 @@ const ChildrenManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item 
-            name="healthStatus" 
+          <Form.Item
+            name="healthStatus"
             label="Health Status"
             rules={[{ required: true, message: "Please select health status" }]}
           >
@@ -898,29 +944,29 @@ const ChildrenManagement = () => {
           </Form.Item>
 
           {healthStatus === 'Bad' && (
-        <>
-          <Form.Item 
-            name="walletType" 
-            label="Wallets" 
-            rules={[{ required: true, message: 'Please select a wallet type' }]}
-          >
-            <Select
-              style={{ width: '100%' }}
-              placeholder="Select wallet type"
-            >
-              <Option value="systemWalletId">System Wallet</Option>
-              <Option value="facilitiesWalletId">Facilities Wallet</Option>
-              <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
-              <Option value="healthWalletId">Health Wallet</Option>
-              <Option value="necessitiesWalletId">Necessities Wallet</Option>
-            </Select>
-          </Form.Item>
+            <>
+              <Form.Item
+                name="walletType"
+                label="Wallets"
+                rules={[{ required: true, message: 'Please select a wallet type' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  placeholder="Select wallet type"
+                >
+                  <Option value="systemWalletId">System Wallet</Option>
+                  <Option value="facilitiesWalletId">Facilities Wallet</Option>
+                  <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
+                  <Option value="healthWalletId">Health Wallet</Option>
+                  <Option value="necessitiesWalletId">Necessities Wallet</Option>
+                </Select>
+              </Form.Item>
 
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
-          </Form.Item>
-        </>
-      )}
+              <Form.Item name="amount" label="Amount">
+                <Input type="number" />
+              </Form.Item>
+            </>
+          )}
 
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">
@@ -1029,7 +1075,50 @@ const ChildrenManagement = () => {
           ))}
         </div>
       </Modal>
-
+      <Modal
+        title="Donation History"
+        visible={isDonorsVisible}
+        onCancel={() => setIsDonorsVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsDonorsVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {donors.length > 0 ? (
+          <Table
+            dataSource={donors}
+            columns={[
+              {
+                title: "Donor Name",
+                dataIndex: "userName",
+                key: "userName",
+                align: "center",
+              },
+              {
+                title: "Date",
+                dataIndex: "dateTime",
+                key: "dateTime",
+                render: (date) => <span>{formatDate(date)}</span>,
+                align: "center",
+              },
+              {
+                title: "Amount",
+                dataIndex: "amount",
+                key: "amount",
+                align: "center",
+                render: (amount) => formatCurrency(amount), // Nếu có formatCurrency
+              },
+            ]}
+            rowKey={(record) => record.userName}
+            pagination={{
+              pageSize: 5,
+            }}
+          />
+        ) : (
+          <p>No donors found for this event.</p>
+        )}
+      </Modal>
       {/* View details */}
       <ViewDetailsChildren
         isVisible={isDetailModalVisible}

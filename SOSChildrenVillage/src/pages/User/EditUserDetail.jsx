@@ -107,7 +107,7 @@ const EditUserDetail = () => {
       }
 
       const response = await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UpdateUser?id=${userId}`,
+        `https://soschildrenvillage.azurewebsites.net/api/UserAccount/UserUpdate?id=${userId}`,
         formData,
         {
           headers: {
