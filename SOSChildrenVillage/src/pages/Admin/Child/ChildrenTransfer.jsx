@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Form, Input, message, Descriptions } from "antd";
+import { Modal, Form, Input, message, Descriptions, Button } from "antd";
 import PropTypes from "prop-types";
 import axios from "axios";
 
@@ -79,6 +79,14 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
       confirmLoading={loading}
       width={600}
       maskClosable={false}
+      footer={
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button type="primary" onClick={handleOk} loading={loading}>
+            OK
+          </Button>
+        </div>
+      }
     >
       <div style={{ marginBottom: "24px" }}>
         <Descriptions

@@ -67,91 +67,108 @@ const TransferHistoryManagement = () => {
     setIsModalVisible(false);
   };
 
-  const columns = [
-    {
-      title: "History ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-    },
-    {
-      title: "Child ID",
-      dataIndex: "childId",
-      key: "childId",
-      align: "center",
-    },
-    {
-      title: "From House",
-      dataIndex: "fromHouseId",
-      key: "fromHouseId",
-      align: "center",
-    },
-    {
-      title: "To House",
-      dataIndex: "toHouseId",
-      key: "toHouseId",
-      align: "center",
-    },
-    {
-      title: "Transfer Date",
-      dataIndex: "transferDate",
-      key: "transferDate",
-      align: "center",
-      render: (date) =>
-        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      align: "center",
-      render: (status) => {
-        const statusColors = {
-          Completed: "green",
-          Rejected: "red",
-        };
-        return <span style={{ color: statusColors[status] }}>{status}</span>;
+  const getVisibleColumns = () => {
+    let baseColumns = [
+      {
+        title: "History ID",
+        dataIndex: "id",
+        key: "id",
+        align: "center",
       },
-    },
-    {
-      title: "Notes",
-      key: "notesReason",
-      align: "center",
-      render: (_, record) => {
-        if (record.status === "Completed") {
-          return (
-            <Tooltip placement="topLeft" title={record.notes}>
-              <span>{record.notes}</span>
-            </Tooltip>
-          );
-        }
-        if (record.status === "Rejected") {
-          return (
-            <Tooltip placement="topLeft" title={record.rejectionReason}>
-              <span>{record.rejectionReason}</span>
-            </Tooltip>
-          );
-        }
-        return null;
+      {
+        title: "Child ID",
+        dataIndex: "childId",
+        key: "childId",
+        align: "center",
       },
-      ellipsis: {
-        showTitle: false,
+      {
+        title: "From House",
+        dataIndex: "fromHouseId",
+        key: "fromHouseId",
+        align: "center",
       },
-    },
-    {
-      title: "Handled By",
-      dataIndex: "handledBy",
-      key: "handledBy",
-      align: "center",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <a onClick={() => showModal(record)}>View Details</a>
-      ),
-    },
-  ];
+      {
+        title: "To House",
+        dataIndex: "toHouseId",
+        key: "toHouseId",
+        align: "center",
+      },
+      {
+        title: "Transfer Date",
+        dataIndex: "transferDate",
+        key: "transferDate",
+        align: "center",
+        render: (date) =>
+          moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        align: "center",
+        render: (status) => {
+          const statusColors = {
+            Completed: "green",
+            Rejected: "red",
+          };
+          return <span style={{ color: statusColors[status] }}>{status}</span>;
+        },
+      },
+      {
+        title: "Notes",
+        key: "notesReason",
+        align: "center",
+        render: (_, record) => {
+          if (record.status === "Completed") {
+            return (
+              <Tooltip placement="topLeft" title={record.notes}>
+                <span>{record.notes}</span>
+              </Tooltip>
+            );
+          }
+          if (record.status === "Rejected") {
+            return (
+              <Tooltip placement="topLeft" title={record.rejectionReason}>
+                <span>{record.rejectionReason}</span>
+              </Tooltip>
+            );
+          }
+          return null;
+        },
+        ellipsis: {
+          showTitle: false,
+        },
+      },
+      {
+        title: "Handled By",
+        dataIndex: "handledBy",
+        key: "handledBy",
+        align: "center",
+      },
+      {
+        title: "Action",
+        key: "action",
+        align: "center",
+        render: (_, record) => (
+          <a onClick={() => showModal(record)}>View Details</a>
+        ),
+      },
+    ];
+  
+    // Add "Created By" column if user is Admin or Director
+    if (["1", "6"].includes(userRole)) {
+      baseColumns.splice(7, 0, {
+        title: "Created By",
+        dataIndex: "createdBy",
+        key: "createdBy",
+        align: "center",
+      });
+    }
+  
+    return baseColumns;
+  };
+
+  const columns = getVisibleColumns();
 
   return (
     <div style={{ padding: "24px" }}>
