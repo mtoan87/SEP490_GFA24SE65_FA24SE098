@@ -1,15 +1,52 @@
-import { useState } from "react";
-import { Modal, Form, Input, message, Descriptions, Button } from "antd";
+import { useState, useEffect } from "react";
+import { Modal, Form, Input, message, Descriptions, Button, Select } from "antd";
 import PropTypes from "prop-types";
 import axios from "axios";
 
 const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [houses, setHouses] = useState([]);
+  const [currentHouseName, setCurrentHouseName] = useState("");
+  const [loadingHouses, setLoadingHouses] = useState(false);
 
   // Get user information from localStorage
   const userId = localStorage.getItem("userId");
   //const userName = localStorage.getItem("userName");
+
+  useEffect(() => {
+    const fetchHouses = async () => {
+      setLoadingHouses(true);
+      try {
+        // Fetch all houses
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses/GetAllHousesWithImg");
+        const allHouses = response.data;
+        
+        // Find current house name
+        const currentHouse = allHouses.find(h => h.id === child?.houseId);
+        if (currentHouse) {
+          setCurrentHouseName(currentHouse.houseName);
+        }
+
+        // Filter houses with less than 10 members and exclude current house
+        const availableHouses = allHouses.filter(house => 
+          house.id !== child?.houseId && 
+          house.currentMembers < house.houseMember
+        );
+
+        setHouses(availableHouses);
+      } catch (error) {
+        console.error("Error fetching houses:", error);
+        message.error("Failed to fetch houses");
+      } finally {
+        setLoadingHouses(false);
+      }
+    };
+
+    if (isVisible && child?.houseId) {
+      fetchHouses();
+    }
+  }, [isVisible, child?.houseId]);
 
   const handleOk = async () => {
     try {
@@ -98,8 +135,11 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
           <Descriptions.Item label="Child ID">
             {child?.id || "N/A"}
           </Descriptions.Item>
-          <Descriptions.Item label="Current House">
+          {/* <Descriptions.Item label="Current House">
             {child?.houseId || "N/A"}
+          </Descriptions.Item> */}
+          <Descriptions.Item label="Current House">
+            {currentHouseName || "N/A"}
           </Descriptions.Item>
           {/* <Descriptions.Item label="Requested By">
             {userName || "N/A"}
@@ -117,12 +157,12 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
       >
         <Form.Item
           name="toHouseId"
-          label="To House ID"
+          label="To House"
           rules={[
-            { required: true, message: "Please enter To House ID" },
+            { required: true, message: "Please select destination house" },
             {
               validator: (_, value) => {
-                if (value && value.trim() === child?.houseId) {
+                if (value && value === child?.houseId) {
                   return Promise.reject("Cannot transfer to the same house");
                 }
                 return Promise.resolve();
@@ -130,7 +170,19 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
             },
           ]}
         >
-          <Input placeholder="Enter destination house ID" />
+          <Select
+            placeholder="Select destination house"
+            loading={loadingHouses}
+            disabled={loadingHouses}
+            showSearch
+            optionFilterProp="children"
+          >
+            {houses.map(house => (
+              <Select.Option key={house.id} value={house.id}>
+                {house.houseName} ({house.currentMembers || 0}/{house.houseMember} members)
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item
