@@ -17,12 +17,12 @@ const BookingManagement = () => {
 
   useEffect(() => {
     const roleId = localStorage.getItem("roleId");
-    if (roleId !== "1") {
+    if (roleId !== "1","6") {
       if (!isWarningShown.current) {
         message.warning("You do not have permission to access this page.");
         isWarningShown.current = true; // Set flag to true after showing the message
       }
-      navigate("/home");
+      navigate("/admin");
       return;
     }
 
