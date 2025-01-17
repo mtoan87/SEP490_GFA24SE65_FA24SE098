@@ -9,7 +9,7 @@ import {
   message,
   Upload,
   DatePicker,
-  Select
+  Select,
 } from "antd";
 import {
   PlusOutlined,
@@ -89,7 +89,9 @@ const HouseManagement = () => {
       setLoading(true);
       try {
         const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Village");
-        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
         setVillages(villageData);
       } catch (error) {
         message.error("Failed to fetch villages");
@@ -275,8 +277,9 @@ const HouseManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-            `Unable to ${editingHouse ? "update" : "create"
-            } house. Please try again.`
+              `Unable to ${
+                editingHouse ? "update" : "create"
+              } house. Please try again.`
           );
         }
       })
@@ -316,7 +319,7 @@ const HouseManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                  "Unable to delete user. Please try again."
+                    "Unable to delete user. Please try again."
                 );
               }
             }}
@@ -489,7 +492,9 @@ const HouseManagement = () => {
       ),
     },
   ];
-  const sortedHouses = houses.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+  const sortedHouses = houses.sort(
+    (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+  );
 
   return (
     <div>
@@ -655,7 +660,9 @@ const HouseManagement = () => {
           <Form.Item
             name="userAccountId"
             label="House Owners"
-            rules={[{ required: true, message: "Please select a House Mother" }]}
+            rules={[
+              { required: true, message: "Please select a House Mother" },
+            ]}
           >
             <Select
               placeholder="Select a House Mother Staff"
@@ -664,7 +671,7 @@ const HouseManagement = () => {
             >
               {houseMothers.map((houseMother) => (
                 <Option key={houseMother.id} value={houseMother.id}>
-                   {houseMother.userName}
+                  {houseMother.userName}
                 </Option>
               ))}
             </Select>
@@ -675,11 +682,7 @@ const HouseManagement = () => {
             label="Village"
             rules={[{ required: true, message: "Please select a Village" }]}
           >
-            <Select
-              placeholder="Select a Village"
-              allowClear
-              loading={loading}
-            >
+            <Select placeholder="Select a Village" allowClear loading={loading}>
               {villages.map((village) => (
                 <Option key={village.id} value={village.id}>
                   {village.villageName}
@@ -708,8 +711,17 @@ const HouseManagement = () => {
           </Form.Item>
 
           {/* Maintenance Status */}
-          <Form.Item name="maintenanceStatus" label="Maintenance Status">
-            <Input />
+          <Form.Item
+            name="maintenanceStatus"
+            label="Maintenance Status"
+          >
+            <Select>
+              <Option value="Male">Good</Option>
+              <Option value="Female">Fair</Option>
+              <Option value="Female">Poor</Option>
+              <Option value="Female">Damaged</Option>
+              <Option value="Female">Under Maintenance</Option>
+            </Select>
           </Form.Item>
 
           {editingHouse && currentImages.length > 0 && (
