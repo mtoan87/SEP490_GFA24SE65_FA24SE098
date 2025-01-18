@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Modal, Form, Input, message, Descriptions, Button, Select } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  message,
+  Descriptions,
+  Button,
+  Select,
+} from "antd";
 import PropTypes from "prop-types";
 import axios from "axios";
 
@@ -19,19 +27,22 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
       setLoadingHouses(true);
       try {
         // Fetch all houses
-        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses/GetAllHousesWithImg");
+        const response = await axios.get(
+          "https://soschildrenvillage.azurewebsites.net/api/Houses/GetAllHousesWithImg"
+        );
         const allHouses = response.data;
-        
+
         // Find current house name
-        const currentHouse = allHouses.find(h => h.id === child?.houseId);
+        const currentHouse = allHouses.find((h) => h.id === child?.houseId);
         if (currentHouse) {
           setCurrentHouseName(currentHouse.houseName);
         }
 
         // Filter houses with less than 10 members and exclude current house
-        const availableHouses = allHouses.filter(house => 
-          house.id !== child?.houseId && 
-          house.currentMembers < house.houseMember
+        const availableHouses = allHouses.filter(
+          (house) =>
+            house.id !== child?.houseId &&
+            house.currentMembers < house.houseMember
         );
 
         setHouses(availableHouses);
@@ -117,7 +128,9 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
       width={600}
       maskClosable={false}
       footer={
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+        <div
+          style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+        >
           <Button onClick={handleCancel}>Cancel</Button>
           <Button type="primary" onClick={handleOk} loading={loading}>
             OK
@@ -147,8 +160,8 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
         </Descriptions>
       </div>
 
-      <Form 
-        form={form} 
+      <Form
+        form={form}
         layout="vertical"
         initialValues={{
           childId: child?.id,
@@ -177,9 +190,10 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
             showSearch
             optionFilterProp="children"
           >
-            {houses.map(house => (
+            {houses.map((house) => (
               <Select.Option key={house.id} value={house.id}>
-                {house.houseName} ({house.currentMembers || 0}/{house.houseMember} members)
+                {house.houseName} ({house.currentMembers || 0}/
+                {house.houseMember} members)
               </Select.Option>
             ))}
           </Select>
@@ -193,8 +207,8 @@ const ChildrenTransfer = ({ isVisible, onClose, child, onTransferSuccess }) => {
             //{ min: 10, message: "Reason must be at least 10 characters long" },
           ]}
         >
-          <Input.TextArea 
-            rows={4} 
+          <Input.TextArea
+            rows={4}
             placeholder="Enter the reason for transfer request"
             maxLength={500}
             showCount
@@ -210,7 +224,8 @@ ChildrenTransfer.propTypes = {
   onClose: PropTypes.func.isRequired,
   child: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    houseId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    houseId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
   }),
   onTransferSuccess: PropTypes.func,
 };

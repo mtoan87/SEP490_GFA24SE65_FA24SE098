@@ -43,7 +43,7 @@ const TransferRequestManagement = () => {
     useState(null);
   const [approvalForm] = Form.useForm();
   const [rejectionForm] = Form.useForm();
-  const [houses, setHouses] = useState([]); 
+  const [houses, setHouses] = useState([]);
 
   // Get user role and ID from localStorage
   const userRole = localStorage.getItem("roleId");
@@ -75,12 +75,12 @@ const TransferRequestManagement = () => {
 
   const fetchHouses = useCallback(async () => {
     try {
-      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Houses');
+      const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses");
       const housesData = response.data?.$values || [];
       setHouses(housesData);
     } catch (error) {
-      console.error('Error fetching houses:', error);
-      message.error('Failed to load houses');
+      console.error("Error fetching houses:", error);
+      message.error("Failed to load houses");
     }
   }, []);
 
@@ -134,7 +134,7 @@ const TransferRequestManagement = () => {
 
       try {
         await axios.put(
-          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
+          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${selectedRequestForAction.id}`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -175,7 +175,7 @@ const TransferRequestManagement = () => {
 
       try {
         await axios.put(
-          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
+          `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${selectedRequestForAction.id}`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -228,7 +228,7 @@ const TransferRequestManagement = () => {
 
           formData.append("modifiedBy", userId);
           await axios.put(
-            `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequest.id}`,
+            `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${selectedRequest.id}`,
             formData,
             {
               headers: { "Content-Type": "multipart/form-data" },

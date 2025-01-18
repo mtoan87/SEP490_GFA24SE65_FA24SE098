@@ -22,8 +22,8 @@ const api = axios.create({
 
 // export const getChildWithImages = async (showDeleted = false, search = "") => {
 //   try {
-//     let endpoint = showDeleted 
-//       ? "/api/Children/GetAllChildIsDelete" 
+//     let endpoint = showDeleted
+//       ? "/api/Children/GetAllChildIsDelete"
 //       : "/api/Children/GetAllChildWithImg";
 
 //     // Nếu có tham số tìm kiếm, gọi API Search
@@ -57,7 +57,7 @@ export const getChildWithImages = async (search = "", showDeleted = false) => {
       headers: {
         // Đảm bảo gửi kèm JWT Token và role trong Header
         Authorization: `Bearer ${token}`,
-        "Role": role,  // Gửi role từ localStorage
+        Role: role, // Gửi role từ localStorage
       },
     });
 
@@ -72,7 +72,7 @@ export const getChildDetail = async (childId) => {
   try {
     // Ensure childId is a string
     // Extract the id if it's an object because when debug it's will show as object like this https://soschildrenvillage.azurewebsites.net/api/Children/GetChildDetails/[object%20Object]
-    if (typeof childId === 'object') {    
+    if (typeof childId === "object") {
       childId = childId.id;
     }
     const response = await api.get(`/api/Children/GetChildDetails/${childId}`);
@@ -102,11 +102,13 @@ export const getHouseWithImages = async (showDeleted = false, search = "") => {
   try {
     let endpoint = showDeleted
       ? "/api/Houses/GetAllHousesIsDelete"
-      : "/api/Houses/GetAllHousesWithImg";
+      : "/api/Houses/GetHousesByRoleWithImg";
 
     // Nếu có tham số tìm kiếm, gọi API Search
     if (search) {
-      endpoint = `/api/Houses/SearchHouse?searchTerm=${encodeURIComponent(search)}`;
+      endpoint = `/api/Houses/SearchHouse?searchTerm=${encodeURIComponent(
+        search
+      )}`;
     }
 
     const token = localStorage.getItem("token"); // Lấy token từ localStorage
@@ -148,28 +150,60 @@ export const getHouseDetail = async (houseId) => {
 //     throw error;
 //   }
 // };
-export const getVillagesWithImages = async (showDeleted = false, search = "") => {
+
+// export const getVillagesWithImages = async (showDeleted = false, search = "") => {
+//   try {
+//     let endpoint = showDeleted
+//       ? "/api/Village/GetAllVillageIsDelete"
+//       : "/api/Village/GetAllVillageWithImg";
+
+//     // Nếu có tham số tìm kiếm, gọi API Search
+//     if (search) {
+//       endpoint = `/api/Village/SearchVillage?searchTerm=${encodeURIComponent(search)}`;
+//     }
+
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching User Account:", error);
+//     throw error;
+//   }
+// };
+
+export const getVillagesWithImages = async (search = "", showDeleted = false) => {
   try {
-    let endpoint = showDeleted 
-      ? "/api/Village/GetAllVillageIsDelete" 
+    let endpoint = showDeleted
+      ? "/api/Village/GetAllVillageIsDelete"
       : "/api/Village/GetAllVillageWithImg";
 
-    // Nếu có tham số tìm kiếm, gọi API Search
+    // Nếu có tham số tìm kiếm, thêm nó vào endpoint
     if (search) {
-      endpoint = `/api/Village/SearchVillage?searchTerm=${encodeURIComponent(search)}`;
+      endpoint = `${endpoint}?searchTerm=${encodeURIComponent(search)}`;
     }
 
-    const response = await api.get(endpoint);
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    const response = await api.get(endpoint, {
+      headers: {
+        // Gửi kèm JWT Token và Role trong Header
+        Authorization: `Bearer ${token}`,
+        Role: role,
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching User Account:", error);
+    console.error("Error fetching villages with images:", error);
     throw error;
   }
 };
 
 export const getVillageDetail = async (villageId) => {
   try {
-    const response = await api.get(`/api/Village/GetVillageDetails/${villageId}`);
+    const response = await api.get(
+      `/api/Village/GetVillageDetails/${villageId}`
+    );
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -193,13 +227,15 @@ export const getVillageDetail = async (villageId) => {
 // };
 export const getEventsWithImages = async (showDeleted = false, search = "") => {
   try {
-    let endpoint = showDeleted 
-      ? "/api/Event/GetAllEventsIsDelete" 
+    let endpoint = showDeleted
+      ? "/api/Event/GetAllEventsIsDelete"
       : "/api/Event/GetAllEventsArray";
 
     // Nếu có tham số tìm kiếm, gọi API Search
     if (search) {
-      endpoint = `/api/Event/SearchArrayEvent?searchTerm=${encodeURIComponent(search)}`;
+      endpoint = `/api/Event/SearchArrayEvent?searchTerm=${encodeURIComponent(
+        search
+      )}`;
     }
 
     const response = await api.get(endpoint);
@@ -251,13 +287,15 @@ export const getHealthReportWithImages = async (showDeleted = false) => {
 //User Accounts
 export const getAccount = async (showDeleted = false, search = "") => {
   try {
-    let endpoint = showDeleted 
-      ? "/api/UserAccount/GetAllUserIsDelete" 
+    let endpoint = showDeleted
+      ? "/api/UserAccount/GetAllUserIsDelete"
       : "/api/UserAccount/GetAllUserArray";
 
     // Nếu có tham số tìm kiếm, gọi API Search
     if (search) {
-      endpoint = `/api/UserAccount/SearchArray?searchTerm=${encodeURIComponent(search)}`;
+      endpoint = `/api/UserAccount/SearchArray?searchTerm=${encodeURIComponent(
+        search
+      )}`;
     }
 
     const response = await api.get(endpoint);
@@ -331,7 +369,7 @@ export const getSchoolDetail = async (schoolId) => {
   try {
     // Ensure childId is a string
     // Extract the id if it's an object because when debug it's will show as object like this https://soschildrenvillage.azurewebsites.net/api/Children/GetChildDetails/[object%20Object]
-    // if (typeof schoolId === 'object') {    
+    // if (typeof schoolId === 'object') {
     //   schoolId = schoolId.id;
     // }
     const response = await api.get(`/api/School/GetSchoolDetails/${schoolId}`);
