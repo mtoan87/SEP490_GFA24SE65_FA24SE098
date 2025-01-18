@@ -43,6 +43,7 @@ const TransferRequestManagement = () => {
     useState(null);
   const [approvalForm] = Form.useForm();
   const [rejectionForm] = Form.useForm();
+  const [houses, setHouses] = useState([]); 
 
   // Get user role and ID from localStorage
   const userRole = localStorage.getItem("roleId");
@@ -72,6 +73,17 @@ const TransferRequestManagement = () => {
     }
   }, [userRole, userId]);
 
+  const fetchHouses = useCallback(async () => {
+    try {
+      const response = await axios.get('https://soschildrenvillage.azurewebsites.net/api/Houses');
+      const housesData = response.data?.$values || [];
+      setHouses(housesData);
+    } catch (error) {
+      console.error('Error fetching houses:', error);
+      message.error('Failed to load houses');
+    }
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -84,8 +96,9 @@ const TransferRequestManagement = () => {
       }
     } else {
       fetchTransferRequests();
+      fetchHouses();
     }
-  }, [navigate, redirecting, userRole, fetchTransferRequests]);
+  }, [navigate, redirecting, userRole, fetchTransferRequests, fetchHouses]);
 
   const showApproveModal = (request) => {
     setSelectedRequestForAction(request);
@@ -103,22 +116,22 @@ const TransferRequestManagement = () => {
     try {
       const values = await approvalForm.validateFields();
       const formData = new FormData();
-  
+
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
       formData.append("toHouseId", selectedRequestForAction.toHouseId);
       formData.append("requestReason", selectedRequestForAction.requestReason);
-  
+
       if (selectedRequestForAction.status === "ReadyToTransfer") {
         formData.append("status", "Completed");
       } else {
         formData.append("status", "InProcess");
       }
-  
+
       formData.append("modifiedBy", userId);
       formData.append("directorNote", values.notes);
-  
+
       try {
         await axios.put(
           `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
@@ -141,17 +154,16 @@ const TransferRequestManagement = () => {
       );
       setIsApproveModalVisible(false);
       await fetchTransferRequests();
-  
     } catch (error) {
       console.error("Form validation error:", error);
     }
   };
-  
+
   const handleReject = async () => {
     try {
       const values = await rejectionForm.validateFields();
       const formData = new FormData();
-  
+
       formData.append("id", selectedRequestForAction.id);
       formData.append("childId", selectedRequestForAction.childId);
       formData.append("fromHouseId", selectedRequestForAction.fromHouseId);
@@ -160,7 +172,7 @@ const TransferRequestManagement = () => {
       formData.append("status", "Rejected");
       formData.append("modifiedBy", userId);
       formData.append("directorNote", values.rejectionReason);
-  
+
       try {
         await axios.put(
           `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${selectedRequestForAction.id}`,
@@ -178,7 +190,6 @@ const TransferRequestManagement = () => {
       message.success("Request rejected successfully");
       setIsRejectModalVisible(false);
       await fetchTransferRequests();
-  
     } catch (error) {
       console.error("Form validation error:", error);
     }
@@ -292,12 +303,20 @@ const TransferRequestManagement = () => {
         dataIndex: "fromHouseId",
         key: "fromHouseId",
         align: "center",
+        render: (houseId) => {
+          const house = houses.find((h) => h.id === houseId);
+          return house ? house.houseName : houseId;
+        },
       },
       {
         title: "To House",
         dataIndex: "toHouseId",
         key: "toHouseId",
         align: "center",
+        render: (houseId) => {
+          const house = houses.find((h) => h.id === houseId);
+          return house ? house.houseName : houseId;
+        },
       },
       {
         title: "Request Date",
