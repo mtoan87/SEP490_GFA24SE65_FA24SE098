@@ -376,6 +376,7 @@ const ExpenseManagement = () => {
               title: "Expense Amount",
               dataIndex: "expenseAmount",
               key: "expenseAmount",
+              align: "center",
               render: (amount) =>
                 amount != null ? `${amount.toLocaleString()} VND` : "N/A",
             },
@@ -383,6 +384,7 @@ const ExpenseManagement = () => {
               title: "Amount Receive",
               dataIndex: "amountReceive",
               key: "amountReceive",
+              align: "center",
               render: (amount) =>
                 amount != null ? `${amount.toLocaleString()} VND` : "N/A",
             },
@@ -390,36 +392,43 @@ const ExpenseManagement = () => {
               title: "Description",
               dataIndex: "description",
               key: "description",
+              align: "center",
             },
             {
               title: "Expense Day",
               dataIndex: "expenseday",
               key: "expenseday",
+              align: "center",
               render: (date) => new Date(date).toLocaleDateString(),
             },
             {
               title: "Expense Type",
               dataIndex: "expenseType",
               key: "expenseType",
+              align: "center",
             },
             {
               title: "Status",
               dataIndex: "status",
               key: "status",
+              align: "center",
             },
             {
               title: "Requested By",
               dataIndex: "requestedBy",
               key: "requestedBy",
+              align: "center",
             },
             {
               title: "Approved By",
               dataIndex: "approvedBy",
               key: "approvedBy",
+              align: "center",
             },
             {
               title: "Wallet",
               key: "wallet",
+              align: "center",
               render: (text, record) => renderWallets(record),
             },
           ]}
