@@ -43,7 +43,7 @@ export const getChildWithImages = async (search = "", showDeleted = false) => {
   try {
     let endpoint = showDeleted
       ? "/api/Children/GetAllChildIsDelete"
-      : "/api/Children/GetAllChildWithImg";
+      : "/api/Children/GetChildrenByUser";
 
     // Nếu có tham số tìm kiếm, thêm nó vào endpoint
     if (search) {
@@ -257,29 +257,85 @@ export const getEventsWithImages = async (showDeleted = false, search = "") => {
 //   }
 // };
 
-export const getAcademicReportWithImages = async (showDeleted = false) => {
+// export const getAcademicReportWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/AcademicReport/GetAllAcademicReportIsDelete"
+//       : "/api/AcademicReport/GetAllAcademicReportWithImg";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching Academic Report with image:", error);
+//     throw error;
+//   }
+// };
+
+export const getAcademicReportWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
+    let endpoint = showDeleted
       ? "/api/AcademicReport/GetAllAcademicReportIsDelete"
       : "/api/AcademicReport/GetAllAcademicReportWithImg";
-    const response = await api.get(endpoint);
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/AcademicReport/SearchAcademicReport?searchTerm=${encodeURIComponent(
+        search
+      )}`;
+    }
+
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
+
+    const response = await api.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi JWT token kèm theo header
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching Academic Report with image:", error);
+    console.error("Error fetching Academic Report with images:", error);
     throw error;
   }
 };
 
 //Health Report
-export const getHealthReportWithImages = async (showDeleted = false) => {
+// export const getHealthReportWithImages = async (showDeleted = false) => {
+//   try {
+//     const endpoint = showDeleted
+//       ? "/api/HealthReport/GetAllHealthReportIsDelete"
+//       : "/api/HealthReport/GetAllHealthReportWithImg";
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching Academic Report with image:", error);
+//     throw error;
+//   }
+// };
+
+export const getHealthReportWithImages = async (showDeleted = false, search = "") => {
   try {
-    const endpoint = showDeleted
+    let endpoint = showDeleted
       ? "/api/HealthReport/GetAllHealthReportIsDelete"
       : "/api/HealthReport/GetAllHealthReportWithImg";
-    const response = await api.get(endpoint);
+
+    // Nếu có tham số tìm kiếm, gọi API Search
+    if (search) {
+      endpoint = `/api/HealthReport/SearchHealthReport?searchTerm=${encodeURIComponent(
+        search
+      )}`;
+    }
+
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
+
+    const response = await api.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi JWT token kèm theo header
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching Academic Report with image:", error);
+    console.error("Error fetching Health Report with images:", error);
     throw error;
   }
 };

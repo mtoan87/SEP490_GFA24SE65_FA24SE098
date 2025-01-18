@@ -14,14 +14,14 @@ import {
   PlusCircleOutlined,
   MinusCircleOutlined,
   ReadOutlined,
-  ToolOutlined,
+  //ToolOutlined,
   LineChartOutlined,
-  SwapOutlined,
-  HistoryOutlined,
+  //SwapOutlined,
+  //HistoryOutlined,
   //PayCircleOutlined,
   //FileImageOutlined,
   //SettingOutlined,
-  HeartOutlined,
+  //HeartOutlined,
   BankOutlined,
   ScheduleOutlined,
   //TransactionOutlined,
@@ -77,31 +77,31 @@ const Sidebar = ({ collapsed, onToggle }) => {
         },
       ],
     },
-    {
-      type: "group",
-      key: "child-transfers",
-      label: <span className="font-bold">Child Transfers</span>,
-      children: [
-        {
-          key: "transfer-requests",
-          icon: <SwapOutlined />,
-          label: (
-            <Link to="/admin/transfer-request-management">
-              Transfer Requests
-            </Link>
-          ),
-        },
-        {
-          key: "transfer-history",
-          icon: <HistoryOutlined />,
-          label: (
-            <Link to="/admin/transfer-history-management">
-              Transfer History
-            </Link>
-          ),
-        },
-      ],
-    },
+    // {
+    //   type: "group",
+    //   key: "child-transfers",
+    //   label: <span className="font-bold">Child Transfers</span>,
+    //   children: [
+    //     {
+    //       key: "transfer-requests",
+    //       icon: <SwapOutlined />,
+    //       label: (
+    //         <Link to="/admin/transfer-request-management">
+    //           Transfer Requests
+    //         </Link>
+    //       ),
+    //     },
+    //     {
+    //       key: "transfer-history",
+    //       icon: <HistoryOutlined />,
+    //       label: (
+    //         <Link to="/admin/transfer-history-management">
+    //           Transfer History
+    //         </Link>
+    //       ),
+    //     },
+    //   ],
+    // },
     {
       type: "group",
       label: <span className="font-bold">Academic Management</span>,
@@ -116,11 +116,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
           icon: <BookOutlined />,
           label: <Link to="/admin/subjects-management">Subjects</Link>,
         },
-        {
-          key: "activities",
-          icon: <ToolOutlined />,
-          label: <Link to="/admin/activity-management">Activities</Link>,
-        },
+        // {
+        //   key: "activities",
+        //   icon: <ToolOutlined />,
+        //   label: <Link to="/admin/activity-management">Activities</Link>,
+        // },
         {
           key: "child-progress",
           icon: <LineChartOutlined />,
@@ -132,13 +132,13 @@ const Sidebar = ({ collapsed, onToggle }) => {
     },
     {
       type: "group",
-      label: <span className="font-bold">Child Care</span>,
+      label: <span className="font-bold">Health & Academic</span>,
       children: [
-        {
-          key: "child-needs",
-          icon: <HeartOutlined />,
-          label: <Link to="/admin/child-need-management">Child Needs</Link>,
-        },
+        // {
+        //   key: "child-needs",
+        //   icon: <HeartOutlined />,
+        //   label: <Link to="/admin/child-need-management">Child Needs</Link>,
+        // },
         {
           key: "academic",
           icon: <BookOutlined />,

@@ -43,6 +43,7 @@ const HealthReport = () => {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [children, setChildren] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -127,10 +128,14 @@ const HealthReport = () => {
       .validateFields()
       .then(async (values) => {
         try {
+          if (!editingReports && !values.status) {
+            values.status = "Active";
+          }
+
           const formData = new FormData();
           formData.append("childId", values.childId || "");
           formData.append("nutritionalStatus", values.nutritionalStatus || "");
-          formData.append("medicalHistory", values.medicalHistory || "");
+          formData.append("medicalHistory", values.medicalHistory || "None");
           formData.append("vaccinationStatus", values.vaccinationStatus || "");
           formData.append("weight", values.weight || "");
           formData.append("height", values.height || "");
@@ -138,15 +143,15 @@ const HealthReport = () => {
             "checkupDate",
             values.checkupDate.format("YYYY-MM-DD")
           );
-          formData.append("doctorName", values.doctorName || "");
-          formData.append("recommendations", values.recommendations || "");
+          formData.append("doctorName", values.doctorName || "None");
+          formData.append("recommendations", values.recommendations || "None");
           formData.append("healthStatus", values.healthStatus || "");
           formData.append(
             "followUpDate",
-            values.followUpDate.format("YYYY-MM-DD")
+            values.followUpDate.format("YYYY-MM-DD") || ""
           );
-          formData.append("illnesses", values.illnesses || "");
-          formData.append("allergies", values.allergies || "");
+          formData.append("illnesses", values.illnesses || "None");
+          formData.append("allergies", values.allergies || "None");
           formData.append("status", values.status || "Active");
 
           //Add Images
@@ -274,6 +279,25 @@ const HealthReport = () => {
       message.error("Unable to restore Health Reports");
     }
   };
+
+  useEffect(() => {
+    const fetchChildren = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Children");
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
+        setChildren(villageData);
+      } catch (error) {
+        message.error("Failed to fetch children");
+        console.error("Error fetching children:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChildren();
+  }, []);
 
   const columns = [
     {
@@ -530,13 +554,37 @@ const HealthReport = () => {
         ]}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
+          {/* <Form.Item
             name="childId"
             label="Child Id"
             rules={[{ required: true, message: "Please enter child ID" }]}
           >
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="childId"
+            label="Child"
+            rules={[{ required: true, message: "Please select a child" }]}
+          >
+            <Select placeholder="Select a child" allowClear loading={loading}>
+              {children.map((child) => (
+                <Option key={child.id} value={child.id}>
+                  {child.childName}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
+
+          {/* <Form.Item
+            name="nutritionalStatus"
+            label="Nutritional Status"
+            rules={[
+              { required: true, message: "Please enter nutritional status" },
+            ]}
+          >
+            <Input />
+          </Form.Item> */}
 
           <Form.Item
             name="nutritionalStatus"
@@ -545,20 +593,18 @@ const HealthReport = () => {
               { required: true, message: "Please enter nutritional status" },
             ]}
           >
+            <Select>
+              <Option value="1">Poor</Option>
+              <Option value="2">Moderate</Option>
+              <Option value="3">Good</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="medicalHistory" label="Medical History">
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="medicalHistory"
-            label="Medical History"
-            rules={[
-              { required: true, message: "Please enter medical history" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
+          {/* <Form.Item
             name="vaccinationStatus"
             label="Vaccination Status"
             rules={[
@@ -566,11 +612,25 @@ const HealthReport = () => {
             ]}
           >
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="vaccinationStatus"
+            label="Vaccination Status"
+            rules={[
+              { required: true, message: "Please enter Vaccination status" },
+            ]}
+          >
+            <Select>
+              <Option value="1">No Vaccination</Option>
+              <Option value="2">Partially completed</Option>
+              <Option value="3">Up to date</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item
             name="weight"
-            label="Weight"
+            label="Weight (KG)"
             rules={[{ required: true, message: "Please enter weight" }]}
           >
             <Input type="number" />
@@ -578,7 +638,7 @@ const HealthReport = () => {
 
           <Form.Item
             name="height"
-            label="Height"
+            label="Height (CM)"
             rules={[{ required: true, message: "Please enter height" }]}
           >
             <Input type="number" />
@@ -594,30 +654,32 @@ const HealthReport = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          <Form.Item
-            name="doctorName"
-            label="Doctor Name"
-            rules={[{ required: true, message: "Please enter doctor's name" }]}
-          >
+          <Form.Item name="doctorName" label="Doctor Name">
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="recommendations"
-            label="Recommendations"
-            rules={[
-              { required: false, message: "Please enter recommendations" },
-            ]}
-          >
+          <Form.Item name="recommendations" label="Recommendations">
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="healthStatus"
             label="Health Status"
             rules={[{ required: true, message: "Please enter health status" }]}
           >
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="healthStatus"
+            label="Health Status"
+            rules={[{ required: true, message: "Please enter Health status" }]}
+          >
+            <Select>
+              <Option value="1">Critical</Option>
+              <Option value="2">Moderate</Option>
+              <Option value="3">Healthy</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -630,23 +692,15 @@ const HealthReport = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          <Form.Item
-            name="illnesses"
-            label="Illnesses"
-            rules={[{ required: false, message: "Please enter illnesses" }]}
-          >
+          <Form.Item name="illnesses" label="Illnesses">
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item
-            name="allergies"
-            label="Allergies"
-            rules={[{ required: false, message: "Please enter allergies" }]}
-          >
+          <Form.Item name="allergies" label="Allergies">
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="status"
             label="Status"
             rules={[
@@ -657,7 +711,7 @@ const HealthReport = () => {
               <Option value="Active">Active</Option>
               <Option value="Inactive">Inactive</Option>
             </Select>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
 
         {editingReports && currentImages.length > 0 && (

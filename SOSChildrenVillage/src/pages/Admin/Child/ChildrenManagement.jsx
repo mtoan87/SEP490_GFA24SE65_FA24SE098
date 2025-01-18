@@ -18,15 +18,15 @@ import {
   SearchOutlined,
   InboxOutlined,
   EyeOutlined,
-  SwapOutlined,
-  CheckOutlined,
-  CloseOutlined,
+  //SwapOutlined,
+  //CheckOutlined,
+  //CloseOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { getChildWithImages } from "../../../services/api";
 import { getChildDetail } from "../../../services/api";
-import { getTransferRequest } from "../../../services/api";
-import ChildrenTransfer from "./ChildrenTransfer";
+//import { getTransferRequest } from "../../../services/api";
+//import ChildrenTransfer from "./ChildrenTransfer";
 import ViewDetailsChildren from "./ViewDetailsChildren";
 import axios from "axios";
 import moment from "moment";
@@ -51,9 +51,9 @@ const ChildrenManagement = () => {
   const [redirecting, setRedirecting] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [detailChild, setDetailChild] = useState(null);
-  const [isTransferModalVisible, setIsTransferModalVisible] = useState(false);
-  const [selectedChild, setSelectedChild] = useState(null);
-  const [transferRequests, setTransferRequests] = useState([]);
+  //const [isTransferModalVisible, setIsTransferModalVisible] = useState(false);
+  //const [selectedChild, setSelectedChild] = useState(null);
+  //const [transferRequests, setTransferRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [healthStatus, setHealthStatus] = useState("Good");
   const [schools, setSchools] = useState([]);
@@ -170,107 +170,107 @@ const ChildrenManagement = () => {
     }
   };
 
-  const fetchTransferRequests = async () => {
-    try {
-      const data = await getTransferRequest(); //them await de cho khi co data
-      setTransferRequests(data?.$values || []);
-    } catch (error) {
-      console.error("Error fetching transfer requests:", error);
-    }
-  };
+  // const fetchTransferRequests = async () => {
+  //   try {
+  //     const data = await getTransferRequest(); //them await de cho khi co data
+  //     setTransferRequests(data?.$values || []);
+  //   } catch (error) {
+  //     console.error("Error fetching transfer requests:", error);
+  //   }
+  // };
 
   // Gọi fetchTransferRequests trong useEffect
-  useEffect(() => {
-    const loadTransferRequests = async () => {
-      await fetchTransferRequests();
-    };
-    loadTransferRequests();
-  }, []);
+  // useEffect(() => {
+  //   const loadTransferRequests = async () => {
+  //     await fetchTransferRequests();
+  //   };
+  //   loadTransferRequests();
+  // }, []);
 
-  const isChildInTransfer = (childId) => {
-    return transferRequests.some(
-      (request) =>
-        request.childId === childId &&
-        [
-          "Pending",
-          "InProcess",
-          "ReadyToTransfer",
-          "DeclinedToTransfer",
-        ].includes(request.status)
-    );
-  };
+  // const isChildInTransfer = (childId) => {
+  //   return transferRequests.some(
+  //     (request) =>
+  //       request.childId === childId &&
+  //       [
+  //         "Pending",
+  //         "InProcess",
+  //         "ReadyToTransfer",
+  //         "DeclinedToTransfer",
+  //       ].includes(request.status)
+  //   );
+  // };
 
-  const getTransferStatus = (childId) => {
-    const request = transferRequests.find(
-      (req) =>
-        req.childId === childId &&
-        [
-          "Pending",
-          "InProcess",
-          "ReadyToTransfer",
-          "DeclinedToTransfer",
-        ].includes(req.status)
-    );
+  // const getTransferStatus = (childId) => {
+  //   const request = transferRequests.find(
+  //     (req) =>
+  //       req.childId === childId &&
+  //       [
+  //         "Pending",
+  //         "InProcess",
+  //         "ReadyToTransfer",
+  //         "DeclinedToTransfer",
+  //       ].includes(req.status)
+  //   );
 
-    if (!request) return null;
+  //   if (!request) return null;
 
-    const statusDisplay = {
-      Pending: "Pending",
-      InProcess: "In Process",
-      ReadyToTransfer: "Ready",
-      DeclinedToTransfer: "Declined",
-    };
+  //   const statusDisplay = {
+  //     Pending: "Pending",
+  //     InProcess: "In Process",
+  //     ReadyToTransfer: "Ready",
+  //     DeclinedToTransfer: "Declined",
+  //   };
 
-    return statusDisplay[request.status];
-  };
+  //   return statusDisplay[request.status];
+  // };
 
-  const renderTransferButton = (record) => {
-    const userRole = localStorage.getItem("roleId");
-    const transferStatus = getTransferStatus(record.id);
+  // const renderTransferButton = (record) => {
+  //   const userRole = localStorage.getItem("roleId");
+  //   const transferStatus = getTransferStatus(record.id);
 
-    if (userRole === "3" && transferStatus === "In Process") {
-      return (
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleAccept(record.id)}
-            icon={<CheckOutlined />}
-          >
-            Accept
-          </Button>
-          <Button
-            danger
-            onClick={() => handleDecline(record.id)}
-            icon={<CloseOutlined />}
-          >
-            Decline
-          </Button>
-        </Space>
-      );
-    }
+  //   if (userRole === "3" && transferStatus === "In Process") {
+  //     return (
+  //       <Space>
+  //         <Button
+  //           type="primary"
+  //           onClick={() => handleAccept(record.id)}
+  //           icon={<CheckOutlined />}
+  //         >
+  //           Accept
+  //         </Button>
+  //         <Button
+  //           danger
+  //           onClick={() => handleDecline(record.id)}
+  //           icon={<CloseOutlined />}
+  //         >
+  //           Decline
+  //         </Button>
+  //       </Space>
+  //     );
+  //   }
 
-    return (
-      <Button
-        onClick={() => showTransferModal(record)}
-        icon={<SwapOutlined />}
-        disabled={isChildInTransfer(record.id)}
-        style={
-          isChildInTransfer(record.id) ? { backgroundColor: "#f0f0f0" } : {}
-        }
-      >
-        {getTransferStatus(record.id) || ""}
-      </Button>
-    );
-  };
+  //   return (
+  //     <Button
+  //       onClick={() => showTransferModal(record)}
+  //       icon={<SwapOutlined />}
+  //       disabled={isChildInTransfer(record.id)}
+  //       style={
+  //         isChildInTransfer(record.id) ? { backgroundColor: "#f0f0f0" } : {}
+  //       }
+  //     >
+  //       {getTransferStatus(record.id) || ""}
+  //     </Button>
+  //   );
+  // };
 
-  const showTransferModal = (child) => {
-    if (isChildInTransfer(child.id)) {
-      message.warning("This child is already in transfer process");
-      return;
-    }
-    setSelectedChild(child);
-    setIsTransferModalVisible(true);
-  };
+  // const showTransferModal = (child) => {
+  //   if (isChildInTransfer(child.id)) {
+  //     message.warning("This child is already in transfer process");
+  //     return;
+  //   }
+  //   setSelectedChild(child);
+  //   setIsTransferModalVisible(true);
+  // };
 
   const fetchDonors = async (childId) => {
     try {
@@ -557,85 +557,85 @@ const ChildrenManagement = () => {
     }
   };
 
-  const handleAccept = async (childId) => {
-    try {
-      const transferRequest = transferRequests.find(
-        (req) => req.childId === childId && req.status === "InProcess"
-      );
+  // const handleAccept = async (childId) => {
+  //   try {
+  //     const transferRequest = transferRequests.find(
+  //       (req) => req.childId === childId && req.status === "InProcess"
+  //     );
 
-      if (!transferRequest) {
-        message.error("Transfer request not found");
-        return;
-      }
+  //     if (!transferRequest) {
+  //       message.error("Transfer request not found");
+  //       return;
+  //     }
 
-      const formData = new FormData();
-      formData.append("id", transferRequest.id);
-      formData.append("childId", transferRequest.childId);
-      formData.append("fromHouseId", transferRequest.fromHouseId);
-      formData.append("toHouseId", transferRequest.toHouseId);
-      formData.append("requestReason", transferRequest.requestReason);
-      formData.append("status", "ReadyToTransfer");
-      formData.append("modifiedBy", localStorage.getItem("userId"));
-      //formData.append("directorNote", "Accepted by House Mother");
+  //     const formData = new FormData();
+  //     formData.append("id", transferRequest.id);
+  //     formData.append("childId", transferRequest.childId);
+  //     formData.append("fromHouseId", transferRequest.fromHouseId);
+  //     formData.append("toHouseId", transferRequest.toHouseId);
+  //     formData.append("requestReason", transferRequest.requestReason);
+  //     formData.append("status", "ReadyToTransfer");
+  //     formData.append("modifiedBy", localStorage.getItem("userId"));
+  //     //formData.append("directorNote", "Accepted by House Mother");
 
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+  //     await axios.put(
+  //       `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
+  //       formData,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
 
-      message.success("Transfer request accepted successfully");
-      await fetchTransferRequests();
-      await fetchChildren();
-    } catch (error) {
-      console.error("Error accepting transfer request:", error);
-      message.error(
-        error.response?.data?.message || "Failed to accept transfer request"
-      );
-    }
-  };
+  //     message.success("Transfer request accepted successfully");
+  //     await fetchTransferRequests();
+  //     await fetchChildren();
+  //   } catch (error) {
+  //     console.error("Error accepting transfer request:", error);
+  //     message.error(
+  //       error.response?.data?.message || "Failed to accept transfer request"
+  //     );
+  //   }
+  // };
 
-  const handleDecline = async (childId) => {
-    try {
-      const transferRequest = transferRequests.find(
-        (req) => req.childId === childId && req.status === "InProcess"
-      );
+  // const handleDecline = async (childId) => {
+  //   try {
+  //     const transferRequest = transferRequests.find(
+  //       (req) => req.childId === childId && req.status === "InProcess"
+  //     );
 
-      if (!transferRequest) {
-        message.error("Transfer request not found");
-        return;
-      }
+  //     if (!transferRequest) {
+  //       message.error("Transfer request not found");
+  //       return;
+  //     }
 
-      const formData = new FormData();
-      formData.append("id", transferRequest.id);
-      formData.append("childId", transferRequest.childId);
-      formData.append("fromHouseId", transferRequest.fromHouseId);
-      formData.append("toHouseId", transferRequest.toHouseId);
-      formData.append("requestReason", transferRequest.requestReason);
-      formData.append("status", "DeclinedToTransfer");
-      formData.append("modifiedBy", localStorage.getItem("userId"));
-      //formData.append("directorNote", "Declined by House Mother");
+  //     const formData = new FormData();
+  //     formData.append("id", transferRequest.id);
+  //     formData.append("childId", transferRequest.childId);
+  //     formData.append("fromHouseId", transferRequest.fromHouseId);
+  //     formData.append("toHouseId", transferRequest.toHouseId);
+  //     formData.append("requestReason", transferRequest.requestReason);
+  //     formData.append("status", "DeclinedToTransfer");
+  //     formData.append("modifiedBy", localStorage.getItem("userId"));
+  //     //formData.append("directorNote", "Declined by House Mother");
 
-      await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+  //     await axios.put(
+  //       `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
+  //       formData,
+  //       {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       }
+  //     );
 
-      message.success("Transfer request declined successfully");
-      await fetchTransferRequests();
-      await fetchChildren();
-    } catch (error) {
-      console.error("Error declining transfer request:", error);
-      message.error(
-        error.response?.data?.message || "Failed to decline transfer request"
-      );
-    }
-  };
+  //     message.success("Transfer request declined successfully");
+  //     await fetchTransferRequests();
+  //     await fetchChildren();
+  //   } catch (error) {
+  //     console.error("Error declining transfer request:", error);
+  //     message.error(
+  //       error.response?.data?.message || "Failed to decline transfer request"
+  //     );
+  //   }
+  // };
 
   // QUAN TRỌNG: dataIndex và key phải giống với tên của các biến trong API.
   const columns = [
@@ -755,7 +755,7 @@ const ChildrenManagement = () => {
                 >
                   History
                 </Button>
-                {renderTransferButton(record)}
+                {/* {renderTransferButton(record)} */}
               </>
             )}
 
@@ -957,10 +957,10 @@ const ChildrenManagement = () => {
           <Form.Item
             name="schoolId"
             label="School"
-            rules={[{ required: true, message: "Please select a director" }]}
+            rules={[{ required: true, message: "Please select a school" }]}
           >
             <Select
-              placeholder="Select a director"
+              placeholder="Select a school"
               allowClear
               loading={loading}
             >
@@ -1195,7 +1195,7 @@ const ChildrenManagement = () => {
         onClose={() => setIsDetailModalVisible(false)}
       />
 
-      <ChildrenTransfer
+      {/* <ChildrenTransfer
         isVisible={isTransferModalVisible}
         onClose={() => setIsTransferModalVisible(false)}
         child={selectedChild}
@@ -1203,7 +1203,7 @@ const ChildrenManagement = () => {
           await fetchTransferRequests(); // Ensure this completes first
           await fetchChildren(); // Then fetch children
         }}
-      />
+      /> */}
     </div>
   );
 };
