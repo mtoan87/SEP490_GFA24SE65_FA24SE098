@@ -7,15 +7,15 @@ const { Title, Paragraph, Text } = Typography;
 const HistoryPage = () => {
   return (
     <>
-      {/* Content Container: Image and History */}
-      <div className="content-container">
-        <div className="image-container">
+      {/* Content container1: Image and History */}
+      <div className="content-container1">
+        <div className="image-container1">
           <Image
             src="https://sosvietnam.org/getmedia/6d39223f-815f-4206-add5-beba9f750761/Asia_Jordan_HGA-Archives_Alexander_Gabriel_42-Jordanien-3-1984_1.jpg?width=1920"
             alt="Hermann Gmeiner with children"
           />
         </div>
-        <div className="text-container">
+        <div className="text-container1">
           <Title className="title">History</Title>
           <Paragraph className="paragraph">
             Hermann Gmeiner, the founder of SOS Children's Villages, once said:{" "}
@@ -33,7 +33,7 @@ const HistoryPage = () => {
       <Divider />
 
       {/* Development Journey Section */}
-      <div className="journey-container">
+      <div className="journey-container1">
         <Title level={3} style={{ color: '#000', fontSize: '40px', textAlign: "center" }}>
           Development Journey
         </Title>
@@ -49,7 +49,7 @@ const HistoryPage = () => {
       <Divider />
 
       {/* Timeline Section */}
-      <div className="timeline-container">
+      <div className="timeline-container1">
         <Title level={3} style={{ fontSize: '40px', color: '#000', textAlign: 'center' }}>
           SOS Children's Villages in Vietnam Through the Years
         </Title>
@@ -153,9 +153,9 @@ const HistoryPage = () => {
         </div>
       </div>
 
-      {/* Content Container: Images */}
-      <div className="content-container">
-        <div className="image-container">
+      {/* Content container1: Images */}
+      <div className="content-container1">
+        <div className="image-container1">
           <Image
             src="https://sosvietnam.org/getmedia/53378eb3-e6c6-4cf1-b832-d5c0c9c934cc/Hermann-Gmeiner-2.jpg?amp;height=300&width=425"
             alt="Hermann Gmeiner"
@@ -169,7 +169,7 @@ const HistoryPage = () => {
             </div>
           </div>
         </div>
-        <div className="image-container">
+        <div className="image-container1">
           <Image
             src="https://sosvietnam.org/getmedia/15ec17b8-37dd-44f3-9916-01667ae58784/Hoang-The-Thien-01.jpg?amp;height=285&width=425"
             alt="Helmut Kutin"
