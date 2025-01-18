@@ -19,21 +19,51 @@ const api = axios.create({
 //     return [];
 //   }
 // };
-export const getChildWithImages = async (showDeleted = false, search = "") => {
+
+// export const getChildWithImages = async (showDeleted = false, search = "") => {
+//   try {
+//     let endpoint = showDeleted 
+//       ? "/api/Children/GetAllChildIsDelete" 
+//       : "/api/Children/GetAllChildWithImg";
+
+//     // Nếu có tham số tìm kiếm, gọi API Search
+//     if (search) {
+//       endpoint = `/api/Children/SearchChildren?searchTerm=${encodeURIComponent(search)}`;
+//     }
+
+//     const response = await api.get(endpoint);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching User Account:", error);
+//     throw error;
+//   }
+// };
+
+export const getChildWithImages = async (search = "", showDeleted = false) => {
   try {
-    let endpoint = showDeleted 
-      ? "/api/Children/GetAllChildIsDelete" 
+    let endpoint = showDeleted
+      ? "/api/Children/GetAllChildIsDelete"
       : "/api/Children/GetAllChildWithImg";
 
-    // Nếu có tham số tìm kiếm, gọi API Search
+    // Nếu có tham số tìm kiếm, thêm nó vào endpoint
     if (search) {
-      endpoint = `/api/Children/SearchChildren?searchTerm=${encodeURIComponent(search)}`;
+      endpoint = `${endpoint}?searchTerm=${encodeURIComponent(search)}`;
     }
 
-    const response = await api.get(endpoint);
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    const response = await api.get(endpoint, {
+      headers: {
+        // Đảm bảo gửi kèm JWT Token và role trong Header
+        Authorization: `Bearer ${token}`,
+        "Role": role,  // Gửi role từ localStorage
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching User Account:", error);
+    console.error("Error fetching children with images:", error);
     throw error;
   }
 };
