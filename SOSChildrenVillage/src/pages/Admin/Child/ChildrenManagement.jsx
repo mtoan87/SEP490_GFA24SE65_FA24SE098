@@ -115,18 +115,36 @@ const ChildrenManagement = () => {
     const fetchHouses = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses");
-        const villageData = Array.isArray(response.data.$values)
-          ? response.data.$values
+        // Lấy userAccountId từ localStorage
+        const userAccountId = localStorage.getItem("userId");
+    
+        if (!userAccountId) {
+          message.error("User ID not found in localStorage");
+          setLoading(false);
+          return;
+        }
+    
+        // Gọi API với userAccountId
+        const response = await axios.get(
+          `https://soschildrenvillage.azurewebsites.net/api/Houses/GetHouseNameByAccountId?userAccountId=${userAccountId}`
+        );
+    
+        // Xử lý dữ liệu trả về
+        const houseData = Array.isArray(response.data)
+          ? response.data
           : [];
-        setHouses(villageData);
+    
+        // Cập nhật danh sách houses
+        setHouses(houseData);
       } catch (error) {
-        message.error("Failed to fetch villages");
-        console.error("Error fetching villages:", error);
+        // Hiển thị thông báo lỗi
+        message.error("Failed to fetch houses");
+        console.error("Error fetching houses:", error);
       } finally {
+        // Tắt trạng thái loading
         setLoading(false);
       }
-    };
+    };    
 
     fetchSchools();
     fetchHouses();
@@ -461,9 +479,8 @@ const ChildrenManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-              `Unable to ${
-                editingChild ? "update" : "create"
-              } child. Please try again.`
+            `Unable to ${editingChild ? "update" : "create"
+            } child. Please try again.`
           );
         }
       })
@@ -503,7 +520,7 @@ const ChildrenManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                    "Unable to delete user. Please try again."
+                  "Unable to delete user. Please try again."
                 );
               }
             }}
@@ -519,6 +536,14 @@ const ChildrenManagement = () => {
         </div>
       ),
     });
+  };
+  const disabledDate = (current) => {
+    const today = moment(); // Ngày hiện tại
+    const eighteenYearsAgo = today.clone().subtract(18, "years"); // 18 năm trước
+    const zeroYearsAgo = today.clone(); // Ngày hiện tại (để tính tuổi 0)
+
+    // Chỉ cho phép chọn ngày từ 0 đến 18 tuổi
+    return current && (current > zeroYearsAgo || current < eighteenYearsAgo);
   };
 
   const handleRestore = async (id) => {
@@ -961,14 +986,31 @@ const ChildrenManagement = () => {
           <Form.Item
             name="dob"
             label="Date of Birth"
-            rules={[{ required: true, message: "Please select date of birth" }]}
+            rules={[
+              { required: true, message: "Please select date of birth" },
+              {
+                validator: (_, value) => {
+                  if (!value) {
+                    return Promise.resolve(); // Không có giá trị, bỏ qua (đã có required check)
+                  }
+                  const age = moment().diff(value, "years");
+                  if (age < 0 || age > 18) {
+                    return Promise.reject("Age must be between 0 and 18 years");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              disabledDate={disabledDate} // Giới hạn ngày được chọn
+            />
           </Form.Item>
 
-          {healthStatus === "Bad" && (
-            <>
-              <Form.Item
+          {/* {healthStatus === "Bad" && ( */}
+          <>
+            {/* <Form.Item
                 name="walletType"
                 label="Wallets"
                 rules={[
@@ -987,13 +1029,13 @@ const ChildrenManagement = () => {
                     Necessities Wallet
                   </Option>
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item name="amount" label="Amount">
-                <Input type="number" />
-              </Form.Item>
-            </>
-          )}
+            <Form.Item name="amountLimit" label="Amount">
+              <Input type="number" />
+            </Form.Item>
+          </>
+          {/* )} */}
 
           {editingChild && currentImages.length > 0 && (
             <Form.Item label="Current Images">

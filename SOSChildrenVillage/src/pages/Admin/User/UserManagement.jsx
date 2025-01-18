@@ -67,19 +67,21 @@ const UserManagement = () => {
   const showModal = (account = null) => {
     setEditingAccount(account);
     if (account) {
+      console.log("Image URLs from account:", account.imageUrls);
       form.setFieldsValue({
         ...account,
         dob: account.dob ? moment(account.dob) : null,
       });
       // Update cái state currentImages khi mở modal edit
       setCurrentImages(
-        account.imageUrls?.map((url, index) => ({
-          uid: index,
+        account?.imageUrls?.map((url, index) => ({
+          uid: `${account.id}-${index}`,
           url: url,
           status: "done",
           name: `Image ${index + 1}`,
         })) || []
       );
+      
     } else {
       form.resetFields();
       setCurrentImages([]);
@@ -561,7 +563,7 @@ const UserManagement = () => {
                 {currentImages.map((image, index) => (
                   <div key={index} style={{ position: "relative" }}>
                     <img
-                      src={image.url}
+                      src={image.url || "/path/to/placeholder.jpg"}
                       alt={`Current ${index + 1}`}
                       style={{
                         width: "100px",

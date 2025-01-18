@@ -575,7 +575,10 @@ const VillageManagement = () => {
               { required: true, message: "Please select established date" },
             ]}
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current > moment().startOf('day')}
+            />
           </Form.Item>
 
           <Form.Item

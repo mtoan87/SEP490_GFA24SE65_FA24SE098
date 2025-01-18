@@ -69,7 +69,7 @@ function DonateNow() {
         message.error("Failed to create the payment link.");
       }
     } catch (error) {
-      message.error("An error occurred while creating the payment link.");
+      message.warning("This Wallet have so much donation, please choose other wallet!");
       console.error("Error:", error);
     }
   };

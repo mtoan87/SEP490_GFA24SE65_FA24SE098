@@ -88,18 +88,37 @@ const HouseManagement = () => {
     const fetchVillages = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Village");
-        const villageData = Array.isArray(response.data.$values)
-          ? response.data.$values
+        // Lấy userId từ localStorage
+        const userId = localStorage.getItem("userId");
+    
+        if (!userId) {
+          message.error("User ID not found in localStorage");
+          setLoading(false);
+          return;
+        }
+    
+        // Gọi API với userId
+        const response = await axios.get(
+          `https://soschildrenvillage.azurewebsites.net/api/Village/GetVillagesByUserId?userId=${userId}`
+        );
+    
+        // Xử lý dữ liệu trả về
+        const villageData = Array.isArray(response.data)
+          ? response.data
           : [];
+    
+        // Cập nhật danh sách villages
         setVillages(villageData);
       } catch (error) {
+        // Hiển thị thông báo lỗi
         message.error("Failed to fetch villages");
         console.error("Error fetching villages:", error);
       } finally {
+        // Tắt trạng thái loading
         setLoading(false);
       }
     };
+    
 
     fetchVillages();
   }, []);

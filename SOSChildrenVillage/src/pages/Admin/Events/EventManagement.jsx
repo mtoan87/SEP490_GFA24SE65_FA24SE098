@@ -51,6 +51,7 @@ const EventManagement = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [donors, setDonors] = useState([]);
+  const [userName, setUserName] = useState('');
   const [isDonorsVisible, setIsDonorsVisible] = useState(false);
 
   useEffect(() => {
@@ -222,15 +223,24 @@ const EventManagement = () => {
   };
 
   const handleOk = () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      message.error('User information not found');
+      return;
+    }
+    
     form.validateFields().then(async (values) => {
       try {
+        const userResponse = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`);
+        setUserName(userResponse.data.userName);
+        
         const formData = new FormData();
+        formData.append('createdBy', userName);
         formData.append("name", values.name);
         formData.append("description", values.description);
-        formData.append("eventCode", values.eventCode);
         formData.append("startTime", values.startTime.format("YYYY-MM-DD"));
         formData.append("endTime", values.endTime.format("YYYY-MM-DD"));
-        formData.append("currentAmount", values.currentAmount || 0);
+        // formData.append("currentAmount", values.currentAmount || 0);
         formData.append("amountLimit", values.amountLimit || 0);
         formData.append("villageId", values.villageId || "");
 
@@ -256,7 +266,11 @@ const EventManagement = () => {
           formData.append(wallet, wallet === values.wallet ? 1 : "");
         });
         console.log(values.wallet);
-        console.log("Form Values:", values);
+        // console.log("Form Values:", values);
+        console.log("FormData content:");
+        for (let [key, value] of formData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
 
         if (uploadFiles && uploadFiles.length > 0) {
           uploadFiles.forEach((file) => {
@@ -705,19 +719,14 @@ const EventManagement = () => {
           </Form.Item>
 
           <Form.Item
-            name="eventCode"
-            label="Event Code"
-            rules={[{ required: true, message: "Please enter event code" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
             name="startTime"
             label="Start Time"
             rules={[{ required: true, message: "Please select start time" }]}
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current < moment().startOf('day')}
+            />
           </Form.Item>
 
           <Form.Item
@@ -734,13 +743,11 @@ const EventManagement = () => {
                 },
               }),
             ]}
-
           >
-            <DatePicker format="YYYY-MM-DD" />
-          </Form.Item>
-
-          <Form.Item name="amount" label="Amount">
-            <Input type="number" />
+            <DatePicker
+              format="YYYY-MM-DD"
+              disabledDate={(current) => current && current < moment().startOf('day')}
+            />
           </Form.Item>
 
           <Form.Item name="amountLimit" label="Amount Limit">
