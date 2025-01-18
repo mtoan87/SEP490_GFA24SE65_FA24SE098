@@ -17,6 +17,10 @@ const ExpenseManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [form] = Form.useForm();
   const [roleId, setRoleId] = useState(null);
+  const [specialExpenses, setSpecialExpenses] = useState([]);
+  const [isSpecialExpenseModalVisible, setIsSpecialExpenseModalVisible] =
+    useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     const storedRoleId = localStorage.getItem("roleId");
@@ -74,6 +78,29 @@ const ExpenseManagement = () => {
       console.error("Error creating expense:", error);
       message.error("Failed to create expense");
     }
+  };
+
+  const handleSpecialExpense = async () => {
+    try {
+      const response = await axios.get(
+        "https://soschildrenvillage.azurewebsites.net/api/Expenses/getExpensewithEvent"
+      );
+      setSpecialExpenses(response.data);
+      setIsSpecialExpenseModalVisible(true);
+    } catch (error) {
+      console.error("Error fetching special expenses:", error);
+      message.error("Failed to fetch special expenses");
+    }
+  };
+
+  const renderWallets = (data) => {
+    const walletNames = [];
+    if (data.systemWalletId) walletNames.push("System Wallet");
+    if (data.facilitiesWalletId) walletNames.push("Facilities Wallet");
+    if (data.foodStuffWalletId) walletNames.push("Food Stuff Wallet");
+    if (data.healthWalletId) walletNames.push("Health Wallet");
+    if (data.necessitiesWalletId) walletNames.push("Necessities Wallet");
+    return walletNames.length > 0 ? walletNames.join(", ") : "N/A";
   };
 
   const handleDownloadReport = async () => {
@@ -134,12 +161,6 @@ const ExpenseManagement = () => {
       render: (amount) => `${amount.toLocaleString()} VND`,
     },
     {
-      title: "Amount Receive",
-      dataIndex: "amountReceive",
-      key: "amountReceive",
-      align: "center",
-    },
-    {
       title: "Description",
       dataIndex: "description",
       key: "description",
@@ -177,18 +198,6 @@ const ExpenseManagement = () => {
       align: "center",
     },
     {
-      title: "Event ID",
-      dataIndex: "eventId",
-      key: "eventId",
-      align: "center",
-    },
-    {
-      title: "Village ID",
-      dataIndex: "villageId",
-      key: "villageId",
-      align: "center",
-    },
-    {
       title: "Wallet",
       key: "wallet",
       align: "center",
@@ -217,21 +226,21 @@ const ExpenseManagement = () => {
     },
     ...(roleId === 1
       ? [
-          {
-            title: "Active",
-            key: "active",
-            align: "center",
-            render: (text, record) => (
-              <Button
-                type="primary"
-                onClick={() => handleConfirmExpense(record.id)}
-                disabled={record.status === "Confirmed"}
-              >
-                Confirm
-              </Button>
-            ),
-          },
-        ]
+        {
+          title: "Active",
+          key: "active",
+          align: "center",
+          render: (text, record) => (
+            <Button
+              type="primary"
+              onClick={() => handleConfirmExpense(record.id)}
+              disabled={record.status === "Confirmed"}
+            >
+              Confirm
+            </Button>
+          ),
+        },
+      ]
       : []),
   ];
 
@@ -272,8 +281,16 @@ const ExpenseManagement = () => {
               Add New Expense
             </Button>
             <Button
+              onClick={handleSpecialExpense}
+              type="default"
+              style={{ marginLeft: 8 }}
+            >
+              Special Expense
+            </Button>
+            <Button
               onClick={handleDownloadReport}
               type="default"
+              style={{ marginLeft: 8 }}
               icon={<DownloadOutlined />}
             >
               Download Report
@@ -340,6 +357,73 @@ const ExpenseManagement = () => {
             </Select>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        title="Special Expenses"
+        visible={isSpecialExpenseModalVisible}
+        onCancel={() => setIsSpecialExpenseModalVisible(false)}
+        footer={[
+
+        ]}
+        width={1000}
+      >
+        <Table
+          dataSource={specialExpenses}
+          rowKey="id"
+          pagination={{ pageSize: 5 }}
+          columns={[
+            {
+              title: "Expense Amount",
+              dataIndex: "expenseAmount",
+              key: "expenseAmount",
+              render: (amount) =>
+                amount != null ? `${amount.toLocaleString()} VND` : "N/A",
+            },
+            {
+              title: "Amount Receive",
+              dataIndex: "amountReceive",
+              key: "amountReceive",
+              render: (amount) =>
+                amount != null ? `${amount.toLocaleString()} VND` : "N/A",
+            },
+            {
+              title: "Description",
+              dataIndex: "description",
+              key: "description",
+            },
+            {
+              title: "Expense Day",
+              dataIndex: "expenseday",
+              key: "expenseday",
+              render: (date) => new Date(date).toLocaleDateString(),
+            },
+            {
+              title: "Expense Type",
+              dataIndex: "expenseType",
+              key: "expenseType",
+            },
+            {
+              title: "Status",
+              dataIndex: "status",
+              key: "status",
+            },
+            {
+              title: "Requested By",
+              dataIndex: "requestedBy",
+              key: "requestedBy",
+            },
+            {
+              title: "Approved By",
+              dataIndex: "approvedBy",
+              key: "approvedBy",
+            },
+            {
+              title: "Wallet",
+              key: "wallet",
+              render: (text, record) => renderWallets(record),
+            },
+          ]}
+        />
       </Modal>
     </div>
   );
