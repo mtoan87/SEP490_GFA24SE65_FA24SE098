@@ -25,45 +25,45 @@ const ChildrenBadManagement = () => {
     });
     const [uploadFiles, setUploadFiles] = useState([]);
 
+    const fetchData = async () => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            message.error('User information not found');
+            return;
+        }
+
+        try {
+            // Fetch user data and roleId
+            const userResponse = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`);
+            setUserName(userResponse.data.userName);
+            setRoleId(userResponse.data.roleId);
+
+            // Fetch appropriate data based on roleId
+            if (userResponse.data.roleId === 3) {
+                const childrenResponse = await axios.get(
+                    `https://soschildrenvillage.azurewebsites.net/api/Children/GetChildrenBadStatusByUserId?userAccountId=${userId}`
+                );
+                setChildrenData(childrenResponse.data);
+            } else if (userResponse.data.roleId === 4) {
+                const expensesResponse = await axios.get(
+                    `https://soschildrenvillage.azurewebsites.net/api/Expenses/GetUnConfirmHouseExpense`
+                );
+                setChildrenData(expensesResponse.data);
+            } else if (userResponse.data.roleId === 6) {
+                const villageExpensesResponse = await axios.get(
+                    `https://soschildrenvillage.azurewebsites.net/api/Expenses/GetUnComfirmVillageExpense`
+                );
+                setChildrenData(villageExpensesResponse.data);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            message.error('Not found!');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                message.error('User information not found');
-                return;
-            }
-
-            try {
-                // Fetch user data and roleId
-                const userResponse = await axios.get(`https://soschildrenvillage.azurewebsites.net/api/UserAccount/GetUserById/${userId}`);
-                setUserName(userResponse.data.userName);
-                setRoleId(userResponse.data.roleId);
-
-                // Fetch appropriate data based on roleId
-                if (userResponse.data.roleId === 3) {
-                    const childrenResponse = await axios.get(
-                        `https://soschildrenvillage.azurewebsites.net/api/Children/GetChildrenBadStatusByUserId?userAccountId=${userId}`
-                    );
-                    setChildrenData(childrenResponse.data);
-                } else if (userResponse.data.roleId === 4) {
-                    const expensesResponse = await axios.get(
-                        `https://soschildrenvillage.azurewebsites.net/api/Expenses/GetUnConfirmHouseExpense`
-                    );
-                    setChildrenData(expensesResponse.data);
-                } else if (userResponse.data.roleId === 6) {
-                    const villageExpensesResponse = await axios.get(
-                        `https://soschildrenvillage.azurewebsites.net/api/Expenses/GetUnComfirmVillageExpense`
-                    );
-                    setChildrenData(villageExpensesResponse.data);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                message.error('Not found!');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -219,6 +219,7 @@ const ChildrenBadManagement = () => {
             .then(() => {
                 message.success('Expense request created successfully');
                 setIsModalVisible(false);
+                fetchData();
             })
             .catch((error) => {
                 console.error('Error creating expense request:', error);
@@ -256,6 +257,7 @@ const ChildrenBadManagement = () => {
             .then(() => {
                 message.success('Expenses confirmed successfully');
                 setIsModalVisible(false);
+                fetchData();
             })
             .catch((error) => {
                 console.error('Error confirming expense:', error);
@@ -303,6 +305,7 @@ const ChildrenBadManagement = () => {
             .then(() => {
                 message.success('Event created successfully');
                 setIsModalVisible(false);
+                fetchData();
             })
             .catch((error) => {
                 console.error('Error creating event:', error);
