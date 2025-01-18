@@ -91,16 +91,16 @@ useEffect(() => {
   };
 
   const expenseColumns = [
-    { title: 'Expense Amount', dataIndex: 'expenseAmount', key: 'expenseAmount' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Expense Day', dataIndex: 'expenseday', key: 'expenseday' },
-    { title: 'House ID', dataIndex: 'houseId', key: 'houseId' },
+    { title: 'Expense Amount', dataIndex: 'expenseAmount', key: 'expenseAmount',align: "center" },
+    { title: 'Description', dataIndex: 'description', key: 'description',align: "center" },
+    { title: 'Expense Day', dataIndex: 'expenseday', key: 'expenseday',align: "center" },
+    { title: 'House ID', dataIndex: 'houseId', key: 'houseId',align: "center" },
   ];
 
   const incomeColumns = [
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-    { title: 'Receive Day', dataIndex: 'receiveday', key: 'receiveday' },
-    { title: 'User Account ID', dataIndex: 'userAccountId', key: 'userAccountId' },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount',align: "center" },
+    { title: 'Receive Day', dataIndex: 'receiveday', key: 'receiveday', align: "center" },
+    { title: 'User Account ID', dataIndex: 'userAccountId', key: 'userAccountId', align: "center" },
   ];
 
   return (

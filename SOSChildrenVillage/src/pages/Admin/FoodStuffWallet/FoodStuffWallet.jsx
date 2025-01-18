@@ -102,16 +102,16 @@ const FoodStuffWallet = () => {
 
   // Define columns for Expense and Income tables
   const expenseColumns = [
-    { title: 'Expense Amount', dataIndex: 'expenseAmount', key: 'expenseAmount' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Expense Day', dataIndex: 'expenseday', key: 'expenseday' },
-    { title: 'House Name', dataIndex: 'houseName', key: 'houseName' },
+    { title: 'Expense Amount', dataIndex: 'expenseAmount', key: 'expenseAmount',align: "center" },
+    { title: 'Description', dataIndex: 'description', key: 'description',align: "center" },
+    { title: 'Expense Day', dataIndex: 'expenseday', key: 'expenseday',align: "center" },
+    { title: 'House Name', dataIndex: 'houseName', key: 'houseName',align: "center" },
   ];
 
   const incomeColumns = [
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-    { title: 'Receive Day', dataIndex: 'receiveday', key: 'receiveday' },
-    { title: 'User Account ID', dataIndex: 'userAccountId', key: 'userAccountId' },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount',align: "center" },
+    { title: 'Receive Day', dataIndex: 'receiveday', key: 'receiveday',align: "center" },
+    { title: 'User Account ID', dataIndex: 'userAccountId', key: 'userAccountId',align: "center" },
   ];
 
   return (
