@@ -97,10 +97,11 @@ export const getChildDetail = async (childId) => {
 //     return [];
 //   }
 // };
+
 export const getHouseWithImages = async (showDeleted = false, search = "") => {
   try {
-    let endpoint = showDeleted 
-      ? "/api/Houses/GetAllHousesIsDelete" 
+    let endpoint = showDeleted
+      ? "/api/Houses/GetAllHousesIsDelete"
       : "/api/Houses/GetAllHousesWithImg";
 
     // Nếu có tham số tìm kiếm, gọi API Search
@@ -108,10 +109,17 @@ export const getHouseWithImages = async (showDeleted = false, search = "") => {
       endpoint = `/api/Houses/SearchHouse?searchTerm=${encodeURIComponent(search)}`;
     }
 
-    const response = await api.get(endpoint);
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
+
+    const response = await api.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi JWT token kèm theo header
+      },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error fetching User Account:", error);
+    console.error("Error fetching houses with images:", error);
     throw error;
   }
 };

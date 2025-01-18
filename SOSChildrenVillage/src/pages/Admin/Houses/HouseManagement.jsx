@@ -76,7 +76,7 @@ const HouseManagement = () => {
       setHouses(Array.isArray(data) ? data : []);
       console.log("Fetched house data with images:", data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       message.error("Cannot get houses data with images");
       setHouses([]);
     } finally {
