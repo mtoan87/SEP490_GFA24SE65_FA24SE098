@@ -15,8 +15,8 @@ const ChildTrends = () => {
       if (response) {
         const transformedData = Array.from({ length: 12 }, (_, i) => ({
           month: monthAbbreviations[i],
-          "2023": response.data2023.$values[i].count,
-          "2024": response.data2024.$values[i].count,
+          // "2023": response.data2023.$values[i].count,
+          // "2024": response.data2024.$values[i].count,
           "2025": response.data2025.$values[i].count,
         }));
         setChartData(transformedData);
@@ -26,7 +26,8 @@ const ChildTrends = () => {
     fetchData();
   }, []);
 
-  const years = ["2023", "2024", "2025"];
+  //const years = ["2023", "2024", "2025"];
+  const years = ["2025"];
 
   return (
     <Card title="Child Trend Over Time">

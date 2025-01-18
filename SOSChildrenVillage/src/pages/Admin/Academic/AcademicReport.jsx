@@ -41,6 +41,8 @@ const AcademicReport = () => {
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
   const messageShown = useRef(false);
+  const [children, setChildren] = useState([]);
+  const [schools, setSchools] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -122,6 +124,10 @@ const AcademicReport = () => {
       .validateFields()
       .then(async (values) => {
         try {
+          if (!editingReports && !values.status) {
+            values.status = "Active";
+          }
+
           const formData = new FormData();
 
           formData.append("diploma", values.diploma || "");
@@ -134,7 +140,7 @@ const AcademicReport = () => {
           formData.append("academicYear", values.academicYear || "");
           formData.append("remarks", values.remarks || "");
           formData.append("achievement", values.achievement || "");
-          formData.append("status", values.status || "");
+          formData.append("status", values.status || "Active");
           formData.append("class", values.class || "");
           formData.append("feedback", values.feedback || "");
 
@@ -173,7 +179,7 @@ const AcademicReport = () => {
             });
 
             console.log("Update response:", updateResponse.data);
-            message.success("Update health report Successfully");
+            message.success("Update Academic Report Successfully");
           } else {
             const createResponse = await axios.post(
               "https://soschildrenvillage.azurewebsites.net/api/AcademicReport/CreateAcademicReport",
@@ -185,7 +191,7 @@ const AcademicReport = () => {
               }
             );
             console.log("Create response:", createResponse.data);
-            message.success("Add Children Successfully");
+            message.success("Add Academic Report Successfully");
           }
           setIsModalVisible(false);
           setUploadFiles([]);
@@ -265,6 +271,43 @@ const AcademicReport = () => {
       message.error("Unable to restore Academic report");
     }
   };
+
+  useEffect(() => {
+    const fetchSchools = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/School");
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
+        setSchools(villageData);
+      } catch (error) {
+        message.error("Failed to fetch Schools");
+        console.error("Error fetching Schools:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchChildren = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Children");
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
+        setChildren(villageData);
+      } catch (error) {
+        message.error("Failed to fetch children");
+        console.error("Error fetching children:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchools();
+    fetchChildren();
+  }, []);
 
   const columns = [
     {
@@ -521,41 +564,117 @@ const AcademicReport = () => {
         ]}
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="diploma"
-            label="Diploma"
-            rules={[{ required: true, message: "Please enter diploma" }]}
-          >
+          {/* <Form.Item name="diploma" label="Diploma">
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
-          <Form.Item
+          {/* <Form.Item
             name="childId"
             label="Child Id"
             rules={[{ required: true, message: "Please enter child ID" }]}
           >
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
+            name="childId"
+            label="Child"
+            rules={[{ required: true, message: "Please select a child" }]}
+          >
+            <Select placeholder="Select a child" allowClear loading={loading}>
+              {children.map((child) => (
+                <Option key={child.id} value={child.id}>
+                  {child.childName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          {/* <Form.Item
             name="gpa"
             label="GPA"
             rules={[{ required: true, message: "Please enter GPA" }]}
           >
             <Input type="number" step="0.01" />
+          </Form.Item> */}
+
+          <Form.Item
+            name="gpa"
+            label="GPA"
+          >
+            <Select>
+              <Option value="0">0</Option>
+              <Option value="1">1</Option>
+              <Option value="2">2</Option>
+              <Option value="3">3</Option>
+              <Option value="4">4</Option>
+              <Option value="5">5</Option>
+              <Option value="6">6</Option>
+              <Option value="7">7</Option>
+              <Option value="8">8</Option>
+              <Option value="9">9</Option>
+              <Option value="10">10</Option>
+            </Select>
           </Form.Item>
 
-          <Form.Item name="schoolLevel" label="School Level">
+          {/* <Form.Item name="schoolLevel" label="School Level">
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
-          <Form.Item name="schoolId" label="School Id">
-            <Input />
+          {/* <Form.Item name="schoolLevel" label="School Level">
+            <Select>
+              <Option value="schoolLevel">Elementary School</Option>
+              <Option value="schoolLevel">Middle School</Option>
+              <Option value="schoolLevel">High School</Option>
+            </Select>
+          </Form.Item> */}
+
+          <Form.Item
+            name="schoolLevel"
+            label="School Level"
+          >
+            <Select>
+            <Option value="Elementary">Elementary School</Option>
+              <Option value="Middle">Middle School</Option>
+              <Option value="High">High School</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item name="semester" label="Semester">
-            <Input />
+            <Select>
+              <Option value="1">Semester 1</Option>
+              <Option value="2">Semester 2</Option>
+            </Select>
           </Form.Item>
+
+          {/* <Form.Item name="schoolId" label="School Id">
+            <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="schoolId"
+            label="School"
+            rules={[{ required: true, message: "Please select a school" }]}
+          >
+            <Select placeholder="Select a school" allowClear loading={loading}>
+              {schools.map((school) => (
+                <Option key={school.id} value={school.id}>
+                  {school.schoolName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          {/* <Form.Item name="semester" label="Semester">
+            <Input />
+          </Form.Item> */}
+
+          {/* <Form.Item name="semester" label="Semester">
+            <Select>
+              <Option value="Semester">Semester 1</Option>
+              <Option value="Semester">Semester 2</Option>
+            </Select>
+          </Form.Item> */}
 
           <Form.Item name="academicYear" label="Academic Year">
             <Input />
@@ -569,7 +688,15 @@ const AcademicReport = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
+          <Form.Item name="diploma" label="Diploma">
+            <Select>
+              <Option value="1">Primary Education</Option>
+              <Option value="2">Secondary Education</Option>
+              <Option value="3">Tertiary Education</Option>
+            </Select>
+          </Form.Item>
+
+          {/* <Form.Item
             name="status"
             label="Status"
             rules={[
@@ -580,7 +707,7 @@ const AcademicReport = () => {
               <Option value="Active">Active</Option>
               <Option value="Inactive">Inactive</Option>
             </Select>
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item name="class" label="Class">
             <Input />
