@@ -26,6 +26,8 @@ import ViewDetailsVillage from "./ViewDetailsVillage";
 import axios from "axios";
 import moment from "moment";
 
+const userRole = localStorage.getItem("roleId");
+
 const { Option } = Select;
 const { Dragger } = Upload;
 
@@ -312,129 +314,127 @@ const VillageManagement = () => {
     }
   };
 
-  const columns = [
-    {
-      title: "Village Id",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-    },
-    {
-      title: "Village Name",
-      dataIndex: "villageName",
-      key: "villageName",
-      align: "center",
-    },
-    {
-      title: "Established Date",
-      dataIndex: "establishedDate",
-      key: "establishedDate",
-      align: "center",
-      render: (date) =>
-        moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-      align: "center",
-    },
-    {
-      title: "Contact Number",
-      dataIndex: "contactNumber",
-      key: "contactNumber",
-      align: "center",
-    },
-    {
-      title: "Total Houses",
-      dataIndex: "totalHouses",
-      key: "totalHouses",
-      align: "center",
-    },
-    {
-      title: "Total Children",
-      dataIndex: "totalChildren",
-      key: "totalChildren",
-      align: "center",
-    },
-    // {
-    //   title: "User account Id",
-    //   dataIndex: "userAccountId",
-    //   key: "userAccountId",
-    // },
-    {
-      title: "Director",
-      dataIndex: "userName",
-      key: "userName",
-      align: "center",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      align: "center",
-    },
-    {
-      title: "Image",
-      dataIndex: "imageUrls",
-      key: "imageUrls",
-      align: "center",
-      render: (imageUrls) => (
-        <Button
-          type="link"
-          onClick={() => {
-            setSelectedImages(imageUrls || []);
-            setIsImageModalVisible(true);
-          }}
-          style={{
-            padding: 0,
-            margin: 0,
-            display: "block",
-            width: "100%",
-          }}
-        >
-          View
-        </Button>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "action",
-      align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          {!showDeleted && (
-            <>
-              <Button
-                key={`edit-${record.id}`}
-                onClick={() => showModal(record)}
-                icon={<EditOutlined />}
-              />
-
-              <Button
-                key={`view-${record.id}`}
-                onClick={() => fetchVillageDetail(record.id)}
-                icon={<EyeOutlined />}
-              ></Button>
-
-              <Button
-                key={`delete-${record.id}`}
-                onClick={() => handleDelete(record.id)}
-                icon={<DeleteOutlined />}
-                danger
-              />
-            </>
-          )}
-
-          {showDeleted && (
+  const getVillageColumns = () => {
+    const baseColumns = [
+      {
+        title: "Village Id",
+        dataIndex: "id",
+        key: "id",
+        align: "center",
+      },
+      {
+        title: "Village Name",
+        dataIndex: "villageName",
+        key: "villageName",
+        align: "center",
+      },
+      {
+        title: "Established Date",
+        dataIndex: "establishedDate",
+        key: "establishedDate",
+        align: "center",
+        render: (date) =>
+          moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : "",
+      },
+      {
+        title: "Location",
+        dataIndex: "location",
+        key: "location",
+        align: "center",
+      },
+      {
+        title: "Contact Number",
+        dataIndex: "contactNumber",
+        key: "contactNumber",
+        align: "center",
+      },
+      {
+        title: "Total Houses",
+        dataIndex: "totalHouses",
+        key: "totalHouses",
+        align: "center",
+      },
+      {
+        title: "Total Children",
+        dataIndex: "totalChildren",
+        key: "totalChildren",
+        align: "center",
+      },
+      {
+        title: "Director",
+        dataIndex: "userName",
+        key: "userName",
+        align: "center",
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        align: "center",
+      },
+      {
+        title: "Image",
+        dataIndex: "imageUrls",
+        key: "imageUrls",
+        align: "center",
+        render: (imageUrls) => (
+          <Button
+            type="link"
+            onClick={() => {
+              setSelectedImages(imageUrls || []);
+              setIsImageModalVisible(true);
+            }}
+            style={{
+              padding: 0,
+              margin: 0,
+              display: "block",
+              width: "100%",
+            }}
+          >
+            View
+          </Button>
+        ),
+      },
+    ];
+  
+    // Chỉ thêm cột Actions nếu roleId khác 3
+    if (userRole !== "3") { 
+      baseColumns.push({
+        title: "Actions",
+        key: "action",
+        align: "center",
+        render: (_, record) => (
+          <Space size="middle">
+            <Button
+              key={`edit-${record.id}`}
+              onClick={() => showModal(record)}
+              icon={<EditOutlined />}
+            />
+            <Button
+              key={`view-${record.id}`}
+              onClick={() => fetchVillageDetail(record.id)}
+              icon={<EyeOutlined />}
+            />
+            <Button
+              key={`delete-${record.id}`}
+              onClick={() => handleDelete(record.id)}
+              icon={<DeleteOutlined />}
+              danger
+            />
+            {showDeleted && (
             <Button type="primary" onClick={() => handleRestore(record.id)}>
               Restore
             </Button>
           )}
-        </Space>
-      ),
-    },
-  ];
+          </Space>
+        ),
+      });
+    }
+  
+    return baseColumns;
+  };
+  
+  const columns = getVillageColumns();
 
   return (
     <div>

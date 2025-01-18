@@ -711,10 +711,7 @@ const HouseManagement = () => {
           </Form.Item>
 
           {/* Maintenance Status */}
-          <Form.Item
-            name="maintenanceStatus"
-            label="Maintenance Status"
-          >
+          <Form.Item name="maintenanceStatus" label="Maintenance Status">
             <Select>
               <Option value="Male">Good</Option>
               <Option value="Female">Fair</Option>

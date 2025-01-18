@@ -554,7 +554,7 @@ const ChildrenManagement = () => {
       //formData.append("directorNote", "Accepted by House Mother");
 
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -594,7 +594,7 @@ const ChildrenManagement = () => {
       //formData.append("directorNote", "Declined by House Mother");
 
       await axios.put(
-        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequest/${transferRequest.id}`,
+        `https://soschildrenvillage.azurewebsites.net/api/TransferRequest/UpdateTransferRequestVer1/${transferRequest.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
