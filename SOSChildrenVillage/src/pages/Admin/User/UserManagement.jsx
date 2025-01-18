@@ -533,6 +533,7 @@ const UserManagement = () => {
               <Option value={2}>Sponsor</Option>
               <Option value={4}>Accountant</Option>
               <Option value={3}>HouseMother</Option>
+              <Option value={6}>Director</Option>
             </Select>
           </Form.Item>
 
