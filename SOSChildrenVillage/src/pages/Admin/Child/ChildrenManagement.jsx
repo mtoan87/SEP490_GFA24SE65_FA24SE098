@@ -55,7 +55,7 @@ const ChildrenManagement = () => {
   const [selectedChild, setSelectedChild] = useState(null);
   const [transferRequests, setTransferRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [healthStatus, setHealthStatus] = useState('Good');
+  const [healthStatus, setHealthStatus] = useState("Good");
   const [schools, setSchools] = useState([]);
   const [houses, setHouses] = useState([]);
   const [donors, setDonors] = useState([]);
@@ -83,11 +83,11 @@ const ChildrenManagement = () => {
   const fetchChildren = async () => {
     try {
       setLoading(true);
-      const data = await getChildWithImages(showDeleted, searchTerm);
+      const data = await getChildWithImages(searchTerm, showDeleted);
       setChildren(Array.isArray(data) ? data : []);
       console.log("Fetched children data with images:", data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching children data:", error);
       message.error("Can not get children data with images");
       setChildren([]);
     } finally {
@@ -100,7 +100,9 @@ const ChildrenManagement = () => {
       setLoading(true);
       try {
         const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/School");
-        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
         setSchools(villageData);
       } catch (error) {
         message.error("Failed to fetch villages");
@@ -114,7 +116,9 @@ const ChildrenManagement = () => {
       setLoading(true);
       try {
         const response = await axios.get("https://soschildrenvillage.azurewebsites.net/api/Houses");
-        const villageData = Array.isArray(response.data.$values) ? response.data.$values : [];
+        const villageData = Array.isArray(response.data.$values)
+          ? response.data.$values
+          : [];
         setHouses(villageData);
       } catch (error) {
         message.error("Failed to fetch villages");
@@ -169,7 +173,12 @@ const ChildrenManagement = () => {
     return transferRequests.some(
       (request) =>
         request.childId === childId &&
-        ["Pending", "InProcess", "ReadyToTransfer", "DeclinedToTransfer"].includes(request.status)
+        [
+          "Pending",
+          "InProcess",
+          "ReadyToTransfer",
+          "DeclinedToTransfer",
+        ].includes(request.status)
     );
   };
 
@@ -177,7 +186,12 @@ const ChildrenManagement = () => {
     const request = transferRequests.find(
       (req) =>
         req.childId === childId &&
-        ["Pending", "InProcess", "ReadyToTransfer", "DeclinedToTransfer"].includes(req.status)
+        [
+          "Pending",
+          "InProcess",
+          "ReadyToTransfer",
+          "DeclinedToTransfer",
+        ].includes(req.status)
     );
 
     if (!request) return null;
@@ -223,9 +237,7 @@ const ChildrenManagement = () => {
         icon={<SwapOutlined />}
         disabled={isChildInTransfer(record.id)}
         style={
-          isChildInTransfer(record.id)
-            ? { backgroundColor: "#f0f0f0" }
-            : {}
+          isChildInTransfer(record.id) ? { backgroundColor: "#f0f0f0" } : {}
         }
       >
         {getTransferStatus(record.id) || ""}
@@ -247,7 +259,7 @@ const ChildrenManagement = () => {
       const response = await axios.get(
         `https://soschildrenvillage.azurewebsites.net/api/Children/Child-donations/${childId}`
       );
-  
+
       // Kiểm tra xem $values có phải là mảng không
       if (Array.isArray(response.data.$values)) {
         const donorsData = response.data.$values.map((donor) => ({
@@ -259,13 +271,13 @@ const ChildrenManagement = () => {
       } else {
         console.error("Unexpected response format:", response.data);
       }
-  
+
       setIsDonorsVisible(true); // Hiển thị modal donors
     } catch (error) {
       console.error("Error fetching donor details:", error);
     }
   };
-  
+
   const showModal = (child = null) => {
     setEditingChild(child);
     if (child) {
@@ -310,18 +322,26 @@ const ChildrenManagement = () => {
 
   const formatCurrency = (amount) => {
     if (amount === undefined || amount === null) {
-      return 'N/A'; // Prevent error in case of null/undefined value
+      return "N/A"; // Prevent error in case of null/undefined value
     }
-    return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    return amount.toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
   };
 
   if (!event) {
     return <div className="loading">Loading...</div>;
   }
   const formatDate = (dateString) => {
-    const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+    const options = {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
     const date = new Date(dateString);
-    return date.toLocaleString('en-US', options).replace(',', ' •');
+    return date.toLocaleString("en-US", options).replace(",", " •");
   };
 
   const handleOk = () => {
@@ -350,7 +370,9 @@ const ChildrenManagement = () => {
 
             formData.append("amount", values.amount || 0);
           } else {
-            console.log("No walletType or amount needed as healthStatus is 'Good'");
+            console.log(
+              "No walletType or amount needed as healthStatus is 'Good'"
+            );
           }
 
           // Các giá trị khác
@@ -439,8 +461,9 @@ const ChildrenManagement = () => {
 
           message.error(
             error.response?.data?.message ||
-            `Unable to ${editingChild ? "update" : "create"
-            } child. Please try again.`
+              `Unable to ${
+                editingChild ? "update" : "create"
+              } child. Please try again.`
           );
         }
       })
@@ -480,7 +503,7 @@ const ChildrenManagement = () => {
 
                 message.error(
                   error.response?.data?.message ||
-                  "Unable to delete user. Please try again."
+                    "Unable to delete user. Please try again."
                 );
               }
             }}
@@ -860,10 +883,10 @@ const ChildrenManagement = () => {
           form={form}
           layout="vertical"
           onValuesChange={(changedValues) => {
-            if ('healthStatus' in changedValues) {
+            if ("healthStatus" in changedValues) {
               setHealthStatus(changedValues.healthStatus);
               // Reset wallet selection when health status changes
-              if (changedValues.healthStatus !== 'Bad') {
+              if (changedValues.healthStatus !== "Bad") {
                 form.setFieldsValue({ walletType: undefined });
               }
             }
@@ -943,22 +966,26 @@ const ChildrenManagement = () => {
             <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
 
-          {healthStatus === 'Bad' && (
+          {healthStatus === "Bad" && (
             <>
               <Form.Item
                 name="walletType"
                 label="Wallets"
-                rules={[{ required: true, message: 'Please select a wallet type' }]}
+                rules={[
+                  { required: true, message: "Please select a wallet type" },
+                ]}
               >
                 <Select
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   placeholder="Select wallet type"
                 >
                   <Option value="systemWalletId">System Wallet</Option>
                   <Option value="facilitiesWalletId">Facilities Wallet</Option>
                   <Option value="foodStuffWalletId">Food Stuff Wallet</Option>
                   <Option value="healthWalletId">Health Wallet</Option>
-                  <Option value="necessitiesWalletId">Necessities Wallet</Option>
+                  <Option value="necessitiesWalletId">
+                    Necessities Wallet
+                  </Option>
                 </Select>
               </Form.Item>
 
