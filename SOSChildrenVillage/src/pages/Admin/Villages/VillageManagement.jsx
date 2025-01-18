@@ -398,7 +398,7 @@ const VillageManagement = () => {
     ];
   
     // Chỉ thêm cột Actions nếu roleId khác 3
-    if (userRole !== "3") { 
+    if (["1", "6"].includes(userRole)) { 
       baseColumns.push({
         title: "Actions",
         key: "action",
