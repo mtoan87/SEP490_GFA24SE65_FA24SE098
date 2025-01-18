@@ -26,6 +26,7 @@ export const RegisterScreen = () => {
     formData.append("Dob", values.Dob.format("YYYY-MM-DD"));
     formData.append("Gender", values.Gender);
     formData.append("Country", values.Country);
+    formData.append("RoleId", 2);
 
     // Upload image
     if (imageList.length > 0 && imageList[0].originFileObj) {
