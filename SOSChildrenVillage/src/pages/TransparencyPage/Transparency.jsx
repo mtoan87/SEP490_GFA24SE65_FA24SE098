@@ -28,7 +28,7 @@ const Transparency = () => {
 
     const data = [
         { 
-            text: 'List of Sponsors for 2024', 
+            text: 'List Donation of Sponsors', 
             onClick: handleDownloadReport 
         },
     ];
