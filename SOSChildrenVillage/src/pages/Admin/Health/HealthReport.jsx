@@ -594,9 +594,9 @@ const HealthReport = () => {
             ]}
           >
             <Select>
-              <Option value="1">Poor</Option>
-              <Option value="2">Moderate</Option>
-              <Option value="3">Good</Option>
+              <Option value="Poor">Poor</Option>
+              <Option value="Moderate">Moderate</Option>
+              <Option value="Good">Good</Option>
             </Select>
           </Form.Item>
 
@@ -622,9 +622,9 @@ const HealthReport = () => {
             ]}
           >
             <Select>
-              <Option value="1">No Vaccination</Option>
-              <Option value="2">Partially completed</Option>
-              <Option value="3">Up to date</Option>
+              <Option value="No Vaccination">No Vaccination</Option>
+              <Option value="Partially completed">Partially completed</Option>
+              <Option value="Up to date">Up to date</Option>
             </Select>
           </Form.Item>
 
@@ -676,9 +676,9 @@ const HealthReport = () => {
             rules={[{ required: true, message: "Please enter Health status" }]}
           >
             <Select>
-              <Option value="1">Critical</Option>
-              <Option value="2">Moderate</Option>
-              <Option value="3">Healthy</Option>
+              <Option value="Critical">Critical</Option>
+              <Option value="Moderate">Moderate</Option>
+              <Option value="Healthy">Healthy</Option>
             </Select>
           </Form.Item>
 

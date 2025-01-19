@@ -634,9 +634,9 @@ const AcademicReport = () => {
             label="School Level"
           >
             <Select>
-            <Option value="Elementary">Elementary School</Option>
-              <Option value="Middle">Middle School</Option>
-              <Option value="High">High School</Option>
+            <Option value="Elementary School">Elementary School</Option>
+              <Option value="Middle School">Middle School</Option>
+              <Option value="High School">High School</Option>
             </Select>
           </Form.Item>
 
